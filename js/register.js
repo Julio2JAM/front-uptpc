@@ -7,12 +7,11 @@ document.getElementById("view").addEventListener("click", function(){
     view.forEach(element => element.type = (element.type == "password") ? "text" : "password");
 });
 
-document.getElementById("repet").addEventListener("keydown", event =>verifyPassword("repet"));
-document.getElementById("password").addEventListener("keydown", event =>verifyPassword("password"));
+document.getElementById("repet").addEventListener("input", event => verifyPassword("repet"));
+document.getElementById("password").addEventListener("input", event => verifyPassword("password"));
 
 function verifyPassword(value){
     let password = document.getElementById("password");
-    console.log(password.value);
     let repet = document.getElementById("repet");
 
     if(value == "password" && (password.value).length < 8 || (password.value).length > 16 ){
