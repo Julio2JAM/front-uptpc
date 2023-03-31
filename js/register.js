@@ -18,6 +18,16 @@ function verifyPassword(value){
     }
 
     if(value == "register"){
+        let username = document.getElementById("username");
+
+        fetch("http://localhost:3000/api/user",{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({username: username.value, password: password.value})
+        })
+        .then(response => console.log(response.json()))
+        .catch(error => console.log(error));
+
         console.log("REGISTER");
     }
 }

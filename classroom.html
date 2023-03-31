@@ -9,7 +9,7 @@
 <body>
     <!--CREAR CLASE-->
     <div>
-        <input type="text" id="name" placeholder="name">
+        <input type="text" id="seccion" placeholder="name">
         <input type="date" id="datetimeStart" placeholder="datetime start">
         <input type="date" id="datetimeEnd" placeholder="datetime end">
         <input type="submit" id="save" value="Save">
@@ -17,34 +17,31 @@
 
     <!--BUSCAR CLASE PARA ENCONTRAR TODO LO RELACIONADO, ES DECIR, MATERIAS, DOCENTES Y ESTUDIANTES-->
     <div>
-        <input type="text" id="searchClassroom" placeholder="searchClassroom">
-        <select name="Classroom" id="classroom">
+        <input type="text" id="search-classroom" placeholder="search classroom">
+        <select id="select-classroom">
             <option value="0">Select a classroom</option>
         </select>
-        <input type="submit" value="search">
+        <input type="submit" id="search" value="search">
     </div>
 
     <!--BUSCAR CLASE PARA ASIGNARLE ESTUDIANTES-->
     <div>
-        <input type="text" id="searchClassroom" placeholder="searchClassroom">
-        <input type="text" id="searchStudent" placeholder="searchStudent">
-        <input type="submit" value="search">
+        <input type="text" id="cedule-student" placeholder="cedule student">
+        <input type="text" id="name-student" placeholder="name student">
+        <input type="submit" value="search-student">
     </div>
 
     <!--CREAR CLASE PARA ASIGNARLE MATERIA Y DOCENTES-->
     <div>
-        <input type="text" id="searchClassroom" placeholder="searchClassroom">
-        <select name="searchClassroom" id="searchClassroom">
-            <option value="0">Select a classroom</option>
-        </select>
-
-        <input type="text" id="searchSubject" placeholder="searchSubject">
-        <select name="searchSubject" id="searchSubject">
+        <input type="text" id="name-subject" placeholder="name subject">
+        <input type="text" id="code-subject" placeholder="code subject">
+        <select id="select-subject">
             <option value="0">Select a Subject</option>
         </select>
 
-        <input type="text" id="searchProfessor" placeholder="searchProfessor">
-        <select name="searchProfessor" id="searchProfessor">
+        <input type="text" id="cedule-professor" placeholder="cedule professor">
+        <input type="text" id="name-professor" placeholder="name professor">
+        <select name="select-professor" id="searchProfessor">
             <option value="0">Select a Professor</option>
         </select>
         <input type="submit" value="search">
