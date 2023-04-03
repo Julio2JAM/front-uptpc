@@ -33,11 +33,15 @@ function verifyPassword(value){
 }
 
 //Funcion para cambiar los input de password a text y viceversa
-document.getElementById("view").addEventListener("click", function(){
+document.getElementById("view-btn").addEventListener("click", function(){
     let view = [
         document.getElementById("password"),
         document.getElementById("repet")
     ];
 
     view.forEach(element => element.type = (element.type == "password") ? "text" : "password");
+});
+
+document.getElementById("login-btn").addEventListener("click", () => {
+    location.href = "index.html"
 });
