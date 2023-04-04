@@ -2,6 +2,10 @@
 document.getElementById("repet").addEventListener("input", event => verifyPassword("repet"));
 document.getElementById("password").addEventListener("input", event => verifyPassword("password"));
 document.getElementById("register-btn").addEventListener("click", event => verifyPassword("register"));
+document.getElementById("name").addEventListener("input", event => validateInput(event, "char"));
+document.getElementById("lastname").addEventListener("input", event => validateInput(event, "char"));
+document.getElementById("cedule").addEventListener("input", event => validateInput(event, "number"));
+document.getElementById("phone").addEventListener("input", event => validateInput(event, "number"));
 
 function verifyPassword(value){
     let password = document.getElementById("password");
@@ -33,15 +37,26 @@ function verifyPassword(value){
 }
 
 //Funcion para cambiar los input de password a text y viceversa
-document.getElementById("view-btn").addEventListener("click", function(){
-    let view = [
-        document.getElementById("password"),
-        document.getElementById("repet")
-    ];
+const viewBtn = document.querySelectorAll(".view-btn");
+for (const iterator of viewBtn) {
+    iterator.addEventListener("click", function(){
 
-    view.forEach(element => element.type = (element.type == "password") ? "text" : "password");
-});
+        viewBtn.forEach(element => element.src = ((element.src == 'file:///home/julio/Documentos/front-se/source/ojo-no.png') ? 'source/ojo.png' : 'source/ojo-no.png'));
 
-document.getElementById("login-btn").addEventListener("click", () => {
-    location.href = "index.html"
-});
+        let view = [
+            document.getElementById("password"),
+            document.getElementById("repet")
+        ];
+
+        view.forEach(element => element.type = ((element.type == "password") ? "text" : "password")); 
+
+    });
+};
+
+function validateInput(event, type){
+    let regex = type == "char" ? /^[a-zA-Z]+$/ : /^[0-9]+$/;
+    let remplace = type == "char" ? /[^a-zA-Z]+$/ : /[^0-9]+$/;
+    if (!regex.test(event.target.value)) {
+        event.target.value = event.target.value.replace(remplace, ''); // Eliminar caracteres no permitidos
+    }
+}

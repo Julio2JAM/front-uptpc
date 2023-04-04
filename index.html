@@ -9,7 +9,11 @@
 </head>
 <body>
 
+
     <div class="container">
+
+        <h1>LOGIN</h1>
+        <hr class="solid">
 
         <div class="inputs">
             <span>Username:</span>
@@ -18,12 +22,16 @@
 
         <div class="inputs">
             <span>Password:</span>
-            <input type="password" id="password" placeholder="password" required/>
+            <div class="password-container">
+                <input type="password" id="password" placeholder="password" class="pass" required/>
+                <img src="source/ojo-no.png" alt="icono" class="view-btn">
+            </div>
         </div>
 
         <div class="buttons">
             <input type="button" value="Login" id="login-btn"/>
-            <input type="button" value="Register" id="register-btn"/>
+            <span>Don't have a account yet? <a href="register.html">Sign up</a></span>
+            <!--<input type="button" value="Register" id="register-btn"/>-->
         </div>
         
     </div>
