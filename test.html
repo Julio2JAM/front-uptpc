@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ejemplo</title>
+  <style>
+    .password {
+      position: relative;
+    }
+
+    .password input[type="password"] {
+      padding-right: 30px;
+    }
+
+    .password .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
+    .password .toggle-password:before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 2px;
+      background-color: black;
+      transition: width 0.2s ease-out;
+    }
+
+    .password .toggle-password.active:before {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="password">
+    <input type="password" placeholder="Contraseña">
+    <span class="toggle-password"></span>
+  </div>
+
+  <script>
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordInput = document.querySelector('input[type="password"]');
+
+    togglePassword.addEventListener('click', function() {
+      togglePassword.classList.toggle('active');
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    });
+  </script>
+</body>
+</html>
