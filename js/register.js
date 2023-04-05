@@ -1,6 +1,6 @@
 //Validacion de password y repet password, que sean iguales y que sea mayor a 8 caracteres y menor de 16
-document.getElementById("repet").addEventListener("input", event => verifyPassword("repet"));
-document.getElementById("password").addEventListener("input", event => verifyPassword("password"));
+document.getElementById("repet").addEventListener("blur", event => verifyPassword("repet"));
+document.getElementById("password").addEventListener("blur", event => verifyPassword("password"));
 document.getElementById("register-btn").addEventListener("click", event => verifyPassword("register"));
 document.getElementById("name").addEventListener("input", event => validateInput(event, "char"));
 document.getElementById("lastname").addEventListener("input", event => validateInput(event, "char"));
@@ -11,13 +11,23 @@ function verifyPassword(value){
     let password = document.getElementById("password");
     let repet = document.getElementById("repet");    
 
-    if((value == "password" || value == "register") && (password.value).length < 8 || (password.value).length > 16 ){
+    if(password.value.length < 8 || password.value.length > 16 ){
         console.log(password.value + " is not a valid password");
-        return;
+        password.style.cssText = "border-color: red !important";
+        validate = false;
+    }else{
+        password.style.cssText = "border-color: green !important";
     }
 
-    if(value == "repet" || value == "register" && repet.value != password.value){
+    if(repet.value != password.value && repet.value != ""){
         console.log("NO!");
+        repet.style.cssText = "border-color: red !important";
+        validate = false;
+    }else if(repet.value == password.value && repet.value != ""){
+        repet.style.cssText = "border-color: green !important";
+    }
+
+    if(!validate){
         return;
     }
 
