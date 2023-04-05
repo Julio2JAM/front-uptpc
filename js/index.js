@@ -4,23 +4,16 @@ document.getElementById("login-btn").addEventListener("click", () =>{
 
     fetch("http://localhost:3000/api/access",{
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({username: username, password: password})
     })
-    /*.then(response => {
-        console.log(response);
-    })
-    .catch(error => {
-        console.log(error);
-        alert("Error al iniciar sesión");
-    });*/
     .then(response => {
-        //const cookie = 
-        response.json();
-        console.log(response.json())
+        //const cookie =
+        console.log("ok");
     })
     .catch(error => console.error(error));
 });
+
 /*
 document.getElementById("register-btn").addEventListener("click", () => {
     location.href = "register.html";
