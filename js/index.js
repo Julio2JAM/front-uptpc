@@ -8,10 +8,11 @@ document.getElementById("login-btn").addEventListener("click", () =>{
         body: JSON.stringify({username: username, password: password})
     })
     .then(response => {
-        //const cookie =
         console.log("ok");
     })
-    .catch(error => console.error(error));
+    .catch(error =>{
+        console.log("error");
+    });
 });
 
 /*
