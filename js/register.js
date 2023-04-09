@@ -6,6 +6,22 @@ document.getElementById("name").addEventListener("input", event => validateInput
 document.getElementById("lastname").addEventListener("input", event => validateInput(event, "char"));
 document.getElementById("cedule").addEventListener("input", event => validateInput(event, "number"));
 document.getElementById("phone").addEventListener("input", event => validateInput(event, "number"));
+document.getElementById("username").addEventListener("input", event => {
+
+    let username = event.target;
+
+    if(username.value.length < 5){
+        username.style.cssText = "";
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/user/username/${username.value}`)
+    .then(response => response.json())
+    .then(data => {
+        username.style.cssText = (data.message == true) ? "border-color: red !important" : "border-color: green !important";
+    })
+    .catch(error => console.log("Conexion failed, try in some seconds"))
+})
 
 function verifyPassword(value){
     let password = document.getElementById("password");
@@ -17,6 +33,7 @@ function verifyPassword(value){
         validate = false;
     }else{
         password.style.cssText = "border-color: green !important";
+        console.log("The password must be between 8 and 16 caracteres");
     }
 
     if(repet.value != password.value && repet.value != ""){
@@ -25,6 +42,7 @@ function verifyPassword(value){
         validate = false;
     }else if(repet.value == password.value && repet.value != ""){
         repet.style.cssText = "border-color: green !important";
+        console.log("The passwords are not equals");
     }
 
     if(!validate){
