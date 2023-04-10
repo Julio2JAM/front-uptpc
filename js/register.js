@@ -19,6 +19,7 @@ document.getElementById("username").addEventListener("input", event => {
     .then(response => response.json())
     .then(data => {
         username.style.cssText = (data.message == true) ? "border-color: red !important" : "border-color: green !important";
+        //message("The username is already used. Please choose a different");
     })
     .catch(error => console.log("Conexion failed, try in some seconds"))
 })
@@ -30,19 +31,19 @@ function verifyPassword(value){
     if(password.value.length < 8 || password.value.length > 16 ){
         console.log(password.value + " is not a valid password");
         password.style.cssText = "border-color: red !important";
+        //message("The password must be between 8 and 16 caracteres");
         validate = false;
     }else{
         password.style.cssText = "border-color: green !important";
-        console.log("The password must be between 8 and 16 caracteres");
     }
 
     if(repet.value != password.value && repet.value != ""){
         console.log("NO!");
         repet.style.cssText = "border-color: red !important";
+        //message("The passwords are not equals");
         validate = false;
     }else if(repet.value == password.value && repet.value != ""){
         repet.style.cssText = "border-color: green !important";
-        console.log("The passwords are not equals");
     }
 
     if(!validate){
@@ -87,4 +88,20 @@ function validateInput(event, type){
     if (!regex.test(event.target.value)) {
         event.target.value = event.target.value.replace(remplace, ''); // Eliminar caracteres no permitidos
     }
+}
+
+function message(message){
+    const div = document.getElementsByClassName('container')[0];
+    const hr = document.querySelector('hr')
+
+    if(hr.length > 0){
+        hr.textContent = message;
+        return;
+    }
+
+    const newElement = document.createElement('span');
+    newElement.textContent = message;
+    newElement.classList.add('message');
+
+    div.insertBefore(newElement, hr);
 }
