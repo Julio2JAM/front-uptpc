@@ -8,27 +8,8 @@ document.getElementById("login-btn").addEventListener("click", () =>{
         body: JSON.stringify({username: username, password: password})
     })
     .then(response => response.json())
-    .then(data => {
-        // Validar que no se haya mostrado el mensaje de error
-        const message = document.getElementsByClassName("message");
-
-        if(message.length > 0){
-            return;
-        }
-
-        // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
-        const div = document.getElementsByClassName("container")[0];
-        const hr = div.querySelector("hr");
-
-        // Crear el elemento a agregar
-        const newElement = document.createElement("span");
-        newElement.textContent = data["message"];
-        newElement.classList.add("message");
-
-        // Agregar el nuevo elemento después del hr
-        div.insertBefore(newElement, hr.nextSibling);
-    })
-    .catch(error => console.log("Conexion failed, try in some seconds"))
+    .then(data => message(data["message"]))
+    .catch(error => message("Conexion failed, try in some seconds"))
 });
 
 //Funcion para cambiar los input de password a text y viceversa
@@ -39,6 +20,26 @@ viewBtn.addEventListener("click", function(){
     view.type = ((view.type == "password") ? "text" : "password");
 });
 
+function message(message){
+    // Validar que no se haya mostrado el mensaje de error
+    const message = document.getElementsByClassName("message");
+
+    if(message.length > 0){
+        message.textContent = message;
+    }
+
+    // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
+    const div = document.getElementsByClassName("container")[0];
+    const hr = div.querySelector("hr");
+
+    // Crear el elemento a agregar
+    const newElement = document.createElement("span");
+    newElement.textContent = message;
+    newElement.classList.add("message");
+
+    // Agregar el nuevo elemento después del hr
+    div.insertBefore(newElement, hr.nextSibling);
+}
 
 /*
 document.getElementById("register-btn").addEventListener("click", () => {
