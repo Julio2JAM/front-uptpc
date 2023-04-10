@@ -136,3 +136,13 @@ a{
 .right{
     margin-left: 5px;
 }
+
+.message{
+    text-align: center;
+    margin-top: -12px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #ff8e8e;
+    border: 1px solid #f55;
+    border-radius: 4px;
+}
