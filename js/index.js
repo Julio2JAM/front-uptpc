@@ -9,27 +9,26 @@ document.getElementById("login-btn").addEventListener("click", () =>{
     })
     .then(response => response.json())
     .then(data => {
-        
+        // Validar que no se haya mostrado el mensaje de error
+        const message = document.getElementsByClassName("message");
+
+        if(message.length > 0){
+            return;
+        }
+
         // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
         const div = document.getElementsByClassName("container")[0];
         const hr = div.querySelector("hr");
 
         // Crear el elemento a agregar
         const newElement = document.createElement("span");
-        newElement.textContent = 'Este es el nuevo elemento';
+        newElement.textContent = data["message"];
         newElement.classList.add("message");
 
         // Agregar el nuevo elemento después del hr
         div.insertBefore(newElement, hr.nextSibling);
-        
-        const keys = Object.keys(data).sort();
-        keys.forEach(key => {
-            console.log(key + ": " + data[key]);
-        });
     })
-    .catch(error =>{
-        console.log("Password or username incorrect");
-    });
+    .catch(error => console.log("Conexion failed, try in some seconds"))
 });
 
 //Funcion para cambiar los input de password a text y viceversa
