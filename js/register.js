@@ -18,8 +18,15 @@ document.getElementById("username").addEventListener("input", event => {
     fetch(`http://localhost:3000/api/user/username/${username.value}`)
     .then(response => response.json())
     .then(data => {
-        username.style.cssText = (data.message == true) ? "border-color: red !important" : "border-color: green !important";
-        //message("The username is already used. Please choose a different");
+
+        if(data.message == true){
+            username.style.cssText = "border-color: red !important";
+            handleMessage("The username is already used. Please choose a different");
+        }else{
+            username.style.cssText = "border-color: green !important";
+            handleMessage("");
+        }
+        
     })
     .catch(error => console.log("Conexion failed, try in some seconds"))
 })
@@ -31,18 +38,20 @@ function verifyPassword(value){
     if(password.value.length < 8 || password.value.length > 16 ){
         console.log(password.value + " is not a valid password");
         password.style.cssText = "border-color: red !important";
-        //message("The password must be between 8 and 16 caracteres");
+        handleMessage("The password must be between 8 and 16 caracteres");
         validate = false;
     }else{
+        handleMessage("");
         password.style.cssText = "border-color: green !important";
     }
 
     if(repet.value != password.value && repet.value != ""){
         console.log("NO!");
         repet.style.cssText = "border-color: red !important";
-        //message("The passwords are not equals");
+        handleMessage("The passwords are not equals");
         validate = false;
     }else if(repet.value == password.value && repet.value != ""){
+        handleMessage("");
         repet.style.cssText = "border-color: green !important";
     }
 
@@ -90,9 +99,13 @@ function validateInput(event, type){
     }
 }
 
-function showMessage(message){
+function handleMessage(message){
     // Obtener el elemento cuya clase sea "message"
     const span = document.querySelector(".message");
+
+    if(message == ""){
+        span.remove();
+    }
 
     // Validar que el elemento <span> exista, de ser asi, se cambia solo el su texto y se retorna
     if(span){
@@ -113,3 +126,4 @@ function showMessage(message){
     // Agregar el nuevo elemento después del hr
     div.insertBefore(newElement, hr.nextSibling);
 }
+
