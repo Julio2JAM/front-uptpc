@@ -90,18 +90,26 @@ function validateInput(event, type){
     }
 }
 
-function message(message){
-    const div = document.getElementsByClassName('container')[0];
-    const hr = document.querySelector('hr')
+function showMessage(message){
+    // Obtener el elemento cuya clase sea "message"
+    const span = document.querySelector(".message");
 
-    if(hr.length > 0){
-        hr.textContent = message;
+    // Validar que el elemento <span> exista, de ser asi, se cambia solo el su texto y se retorna
+    if(span){
+        span.textContent = message;
         return;
     }
+    
+    // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
+    //const div = document.getElementsByClassName("container")[0];
+    const div = document.querySelector('.container');
+    const hr = document.querySelector('hr')
 
+    // Crear el elemento a agregar
     const newElement = document.createElement('span');
     newElement.textContent = message;
     newElement.classList.add('message');
 
-    div.insertBefore(newElement, hr);
+    // Agregar el nuevo elemento después del hr
+    div.insertBefore(newElement, hr.nextSibling);
 }

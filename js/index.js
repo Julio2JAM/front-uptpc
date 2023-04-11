@@ -8,8 +8,8 @@ document.getElementById("login-btn").addEventListener("click", () =>{
         body: JSON.stringify({username: username, password: password})
     })
     .then(response => response.json())
-    .then(data => message(data["message"]))
-    .catch(error => message("Conexion failed, try in some seconds"))
+    .then(data => showMessage(data["message"]))
+    .catch(error => showMessage("Conexion failed, try in some seconds"))
 });
 
 //Funcion para cambiar los input de password a text y viceversa
@@ -20,16 +20,19 @@ viewBtn.addEventListener("click", function(){
     view.type = ((view.type == "password") ? "text" : "password");
 });
 
-function message(message){
-    // Validar que no se haya mostrado el mensaje de error
-    const message = document.getElementsByClassName("message");
+function showMessage(message){
+    // Obtener el elemento cuya clase sea "message"
+    const span = document.querySelector(".message");
 
-    if(message.length > 0){
-        message.textContent = message;
+    // Validar que el elemento <span> exista, de ser asi, se cambia solo el su texto y se retorna
+    if(span){
+        span.textContent = message;
+        return;
     }
 
     // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
-    const div = document.getElementsByClassName("container")[0];
+    //const div = document.getElementsByClassName("container")[0];
+    const div = document.querySelector(".container");
     const hr = div.querySelector("hr");
 
     // Crear el elemento a agregar
