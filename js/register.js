@@ -33,25 +33,24 @@ document.getElementById("username").addEventListener("input", event => {
 
 function verifyPassword(value){
     let password = document.getElementById("password");
-    let repet = document.getElementById("repet");    
+    let repet = document.getElementById("repet");
+    let validate = false;
 
     if(password.value.length < 8 || password.value.length > 16 ){
-        console.log(password.value + " is not a valid password");
         password.style.cssText = "border-color: red !important";
         handleMessage("The password must be between 8 and 16 caracteres");
-        validate = false;
     }else{
         handleMessage("");
+        validate = true;
         password.style.cssText = "border-color: green !important";
     }
 
     if(repet.value != password.value && repet.value != ""){
-        console.log("NO!");
         repet.style.cssText = "border-color: red !important";
         handleMessage("The passwords are not equals");
-        validate = false;
     }else if(repet.value == password.value && repet.value != ""){
         handleMessage("");
+        validate = true;
         repet.style.cssText = "border-color: green !important";
     }
 
@@ -103,8 +102,13 @@ function handleMessage(message){
     // Obtener el elemento cuya clase sea "message"
     const span = document.querySelector(".message");
 
-    if(message == ""){
+    // Validar si el mensaje esta vacio y el elemento existe, se elimina
+    if(message == "" && span){
         span.remove();
+
+    // Validar si el mensaje esta vacio y el elemento no existe, retorna
+    }else if(message == "" && !span){
+        return;
     }
 
     // Validar que el elemento <span> exista, de ser asi, se cambia solo el su texto y se retorna

@@ -8,9 +8,19 @@ document.getElementById("login-btn").addEventListener("click", () =>{
         body: JSON.stringify({username: username, password: password})
     })
     .then(response => response.json())
-    .then(data => showMessage(data["message"]))
-    .catch(error => showMessage("Conexion failed, try in some seconds"))
+    .then(data => {
+        
+        if(data.status == 400){
+            handleMessage(data.message);
+            return;
+        }
+
+        handleMessage("");
+        document.cookie = `token=${data.token}; SameSite=None; Secure;`;
+    })
+    .catch(error => handleMessage("Conexion failed, try in some seconds"))
 });
+    
 
 //Funcion para cambiar los input de password a text y viceversa
 const viewBtn = document.querySelector(".view-btn");
@@ -20,15 +30,25 @@ viewBtn.addEventListener("click", function(){
     view.type = ((view.type == "password") ? "text" : "password");
 });
 
-function showMessage(message){
+function handleMessage(message){
     // Obtener el elemento cuya clase sea "message"
     const span = document.querySelector(".message");
+
+    // Validar que el mensaje esta vacio y el elemento exista para eliminar
+    if(!message && span){
+        span.remove();
+
+    // Validar que el mensaje esta vacio y el elemento no exista para retornar
+    }else if(!message && !span){
+        return;
+    }
 
     // Validar que el elemento <span> exista, de ser asi, se cambia solo el su texto y se retorna
     if(span){
         span.textContent = message;
         return;
     }
+
 
     // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
     //const div = document.getElementsByClassName("container")[0];
