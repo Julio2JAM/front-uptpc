@@ -1,3 +1,42 @@
+// ! EN DESARROLLO
+document.getElementById("register-btn").addEventListener("click", () => {
+    //const div = document.getElementById("general-information");
+    //const input = div.querySelectorAll("input");
+    let name = document.getElementById("name");
+    let lastname = document.getElementById("lastname");
+    let cedule = document.getElementById("cedule");
+
+    if(name.value == "" && lastname == ""){
+        handleMessage("Please enter a name or lastname in the form.");
+        name.style.cssText = "border-color: red !important";
+        lastname.style.cssText = "border-color: red !important";
+        return;
+    }else if(name.value != "" && lastname != ""){
+        handleMessage("");
+    }
+
+    fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)
+    .then(response => response.json())
+    .then(data)
+    .catch(error => console.log("Conexion failed, try in some seconds"));
+
+    const inputs = document.querySelectorAll('#general-information input');
+
+    const values = {};
+    inputs.forEach(element => {
+
+        if(element.value == ""){
+            let element = document.getElementById(key);
+            element.style.cssText = "border-color: red !important";
+            element.focus();
+            return;
+        }
+        values[element.id] = element.value;
+        
+    })
+
+});
+
 //Validacion de password y repet password, que sean iguales y que sea mayor a 8 caracteres y menor de 16
 document.getElementById("repet").addEventListener("blur", event => verifyPassword("repet"));
 document.getElementById("password").addEventListener("blur", event => verifyPassword("password"));
@@ -130,4 +169,3 @@ function handleMessage(message){
     // Agregar el nuevo elemento después del hr
     div.insertBefore(newElement, hr.nextSibling);
 }
-
