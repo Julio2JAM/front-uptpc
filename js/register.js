@@ -1,75 +1,3 @@
-// ! FUNCIONA PERO SE REPITE MUCHO EL BLOQUE DE COIDGO DE ERROR
-document.getElementById("register-btn").addEventListener("click", () => {
-    //const div = document.getElementById("general-information");
-    //const input = div.querySelectorAll("input");
-    let name = document.getElementById("name");
-    let lastname = document.getElementById("lastname");
-    let cedule = document.getElementById("cedule");
-
-    if(name.value == "" && lastname.value == ""){
-        handleMessage("Please enter a name or lastname in the form.");
-        name.style.cssText = "border-color: red !important";
-        lastname.style.cssText = "border-color: red !important";
-        name.focus();
-        return;
-    }else{
-        name.style.cssText = "border-color: green !important";
-        lastname.style.cssText = "border-color: green !important";
-        handleMessage("");
-    }
-
-    if(cedule.value.length < 5){
-        handleMessage("Please enter a valid cedule.");
-        cedule.style.cssText = "border-color: red !important";
-        cedule.focus();
-        return;
-    }
-
-    fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)//${cedule.value}
-    .then(response => response.json())
-    .then(data => {
-
-        if(data.message){
-            handleMessage("Please enter a valid cedule.");
-            cedule.style.cssText = "border-color: red !important";
-            cedule.focus();
-        }else{
-            handleMessage("");
-            cedule.style.cssText = "border-color: green !important";
-        }
-
-    })
-    .catch(error => console.log("Conexion failed, try in some seconds"));
-
-    const inputs = document.querySelectorAll('#general-information input');
-    const values = {};
-    for (const key in inputs) {
-
-        let element;
-        if (Object.hasOwnProperty.call(inputs, key)) {
-            element = inputs[key];
-        }else{
-            return;
-        }
-        
-        if(element.id == name.id || element.id == lastname.id || element.id == cedule.id){
-            continue;
-        }
-        
-        if(element.value == ""){
-            element.style.cssText = "border-color: red !important";
-            element.focus();
-            return;
-        }else{
-            handleMessage("");
-            element.style.cssText = "border-color: green !important";
-        }
-    
-        values[element.id] = element.value;
-    }
-
-});
-    
 //Validacion de password y repet password, que sean iguales y que sea mayor a 8 caracteres y menor de 16
 document.getElementById("repet").addEventListener("blur", event => verifyPassword("repet"));
 document.getElementById("password").addEventListener("blur", event => verifyPassword("password"));
@@ -131,6 +59,8 @@ function verifyPassword(value){
     }
 
     if(value == "register"){
+        registerPerson();
+
         let username = document.getElementById("username");
 
         fetch("http://localhost:3000/api/user",{
@@ -202,3 +132,84 @@ function handleMessage(message){
     // Agregar el nuevo elemento después del hr
     div.insertBefore(newElement, hr.nextSibling);
 }
+
+function handleValidationErrors(obj,message){
+    handleMessage(message);
+    obj.style.cssText = "border-color: red !important";
+    obj.focus();
+    return;
+}
+
+function registerPerson(){
+    //const div = document.getElementById("general-information");
+    //const input = div.querySelectorAll("input");
+    let name = document.getElementById("name");
+    let lastname = document.getElementById("lastname");
+    let cedule = document.getElementById("cedule");
+
+    if(name.value == "" && lastname.value == ""){
+        handleValidationErrors(name,"Please enter a name or lastname in the form.")
+        lastname.style.cssText = "border-color: red !important";
+        return;
+    }else{
+        name.style.cssText = "border-color: green !important";
+        lastname.style.cssText = "border-color: green !important";
+        handleMessage("");
+    }
+
+    if(cedule.value.length < 5){
+        handleValidationErrors(cedule,"Please enter a valid cedule.")
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)//${cedule.value}
+    .then(response => response.json())
+    .then(data => {
+
+        if(data.message){
+            handleValidationErrors(cedule,"Please enter a valid cedule.")
+        }else{
+            handleMessage("");
+            cedule.style.cssText = "border-color: green !important";
+        }
+
+    })
+    .catch(error => console.log("Conexion failed, try in some seconds"));
+
+    const inputs = document.querySelectorAll('#general-information input');
+    const values = {};
+    for (const key in inputs) {
+
+        let element;
+        if (Object.hasOwnProperty.call(inputs, key)) {
+            element = inputs[key];
+        }else{
+            return;
+        }
+        
+        if(element.id == name.id || element.id == lastname.id || element.id == cedule.id){
+            continue;
+        }
+        
+        if(element.value == ""){
+            element.style.cssText = "border-color: red !important";
+            element.focus();
+            return;
+        }else{
+            handleMessage("");
+            element.style.cssText = "border-color: green !important";
+        }
+    
+        values[element.id] = element.value;
+    }
+
+    fetch(`http://localhost/api/student`,{
+        method: 'POST',
+        headers: { "content-type": "application/json" },
+        body: json.stringify(values)
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log("Conexion failed, try in some seconds"));
+
+};
