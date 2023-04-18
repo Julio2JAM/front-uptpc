@@ -1,22 +1,31 @@
-nav {
+body{
+    margin: 0;
+    padding: 0;
+}
+
+nav{
+    display: fixed;
     background-color: #333; /* Color de fondo del menú */
 }
-nav ul {
-    list-style: none; /* Quitar los puntos de la lista */
-    margin: 0; /* Quitar el margen */
-    padding: 0; /* Quitar el padding */
+
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
-nav li {
-    display: inline-block; /* Para que los elementos se muestren en línea */
+
+li{
+    display: inline-block;
 }
-nav a {
-    display: block; /* Para que los elementos ocupen todo el ancho del li */
-    color: white; /* Color del texto del menú */
-    text-align: center; /* Para centrar el texto */
-    padding: 14px 16px; /* Espacio entre el texto y el borde del elemento */
-    text-decoration: none; /* Sin subrayado en los enlaces */
+
+a{
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 10px;
 }
-nav a:hover {
+
+a:hover{
     background-color: #ddd; /* Color de fondo cuando se pasa el cursor sobre el elemento */
     color: black; /* Color del texto cuando se pasa el cursor sobre el elemento */
 }
