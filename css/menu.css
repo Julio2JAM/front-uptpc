@@ -1,3 +1,7 @@
+*{
+    font-family: sans-serif;
+}
+
 body{
     margin: 0;
     padding: 0;
@@ -28,4 +32,47 @@ a{
 a:hover{
     background-color: #ddd; /* Color de fondo cuando se pasa el cursor sobre el elemento */
     color: black; /* Color del texto cuando se pasa el cursor sobre el elemento */
+}
+
+.main{
+    display: flex;
+    flex-wrap: wrap;
+    /*width: 100%;*/
+    justify-content: center;
+}
+
+.container{
+    width: 50%;
+    /*background: aliceblue;*/
+    padding: 15px 20px;
+    text-align: center;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    box-sizing: border-box;
+    /*margin: 10px;*/
+}
+
+img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    object-position: 50% 15%;
+}
+
+.content{
+    /*border: 1px solid black;*/
+}
+
+h2{
+    margin: 0;
+}
+
+p{
+    margin: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+      width: 100% !important;
+    }
 }
