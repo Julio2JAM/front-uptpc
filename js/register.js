@@ -1,11 +1,182 @@
-//Validacion de password y repet password, que sean iguales y que sea mayor a 8 caracteres y menor de 16
-document.getElementById("repet").addEventListener("blur", event => verifyPassword("repet"));
-document.getElementById("password").addEventListener("blur", event => verifyPassword("password"));
-document.getElementById("register-btn").addEventListener("click", event => verifyPassword("register"));
+const inputs = document.querySelectorAll('#general-information input');
+for(const element of inputs){
+    if(element.id == "name" || element.id == "lastname"){
+        continue;
+    }
+
+    element.addEventListener('blur', () => {
+        element.value == "" ? null : element.style.cssText = "";
+    })
+}
+
+// Obtener los elementos name y lastname para validar que uno de los dos no este vacio
+document.getElementById("name").addEventListener("blur", event => doubleValidate(event, "lastname"));
+document.getElementById("lastname").addEventListener("blur", event => doubleValidate(event, "name"));
+
+// Funcion para validar 2 elementos eviados y que uno de los 2 no este vacio
+function doubleValidate(principal, secundary){
+    secundary = document.getElementById(secundary);
+
+    if(principal.value != "" || secundary.value != ""){
+        principal.style.cssText = "";
+        secundary.style.cssText = "";
+    }
+}
+
+function dataPerson(){
+    //const div = document.getElementById("general-information");
+    //const input = div.querySelectorAll("input");
+    let name = document.getElementById("name");
+    let lastname = document.getElementById("lastname");
+    let cedule = document.getElementById("cedule");
+
+    if(name.value == "" && lastname.value == ""){
+        handleValidationErrors(name,"Please enter a name or lastname in the form.")
+        lastname.style.cssText = "border-color: red !important";
+        return false;
+    }else{
+        name.style.cssText = "border-color: green !important";
+        lastname.style.cssText = "border-color: green !important";
+        handleMessage("");
+    }
+
+    if(cedule.value.length < 5){
+        handleValidationErrors(cedule,"Please enter a valid cedule.")
+        return false;
+    }
+    
+    fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)//${cedule.value}
+    .then(response => response.json())
+    .then(data => {
+
+        if(data.message){
+            handleValidationErrors(cedule,"Please enter a valid cedule.")
+            console.log("1");
+            return false;
+        }else{
+            handleMessage("");
+            cedule.style.cssText = "border-color: green !important";
+        }
+
+    })
+    .catch(error => console.log("Conexion failed, try in some seconds"));
+
+    console.log("2");
+    /*
+    const inputs = document.querySelectorAll('#general-information input');
+    const data = {};
+    for (const element of inputs) {
+        
+        if(element.id == name.id || element.id == lastname.id){
+            data[element.id] = element.value;
+        }
+        
+        if(element.value == ""){
+            element.style.cssText = "border-color: red !important";
+            element.focus();
+            return false;
+        }else{
+            handleMessage("");
+            element.style.cssText = "border-color: green !important";
+        }
+    
+        data[element.id] = element.value;
+    }
+    return data;*/
+
+};
+
+
+// Obtener los elementos password y repet para validarlos
+document.getElementById("repet").addEventListener("blur", event => verifyPassword());
+document.getElementById("password").addEventListener("blur", event => verifyPassword());
+
+// Funcion para validar ciertos parametros de password y repet
+function verifyPassword(){
+
+    let password = document.getElementById("password");
+    let repet = document.getElementById("repet");
+
+    if(password.value == ""){
+        handleMessage("");
+        password.style.cssText = "";
+        return false;
+    }
+
+    // Si password tiene una longitud menor de 8 o mayor a 16 caracteres, muestra un mensaje de error
+    if(password.value.length < 8 || password.value.length > 16 ){
+        handleValidationErrors(password, "The password must be between 8 and 16 caracteres");
+        return false;
+    }else{
+        handleMessage("");
+        password.style.cssText = "border-color: green !important";
+    }
+
+    if(repet.value == ""){
+        handleMessage("");
+        repet.style.cssText = "";
+        return false;
+    }
+
+    // Si repeat es diferente a password y repet no esta vacio, muestra un mensaje de error
+    if(repet.value != password.value){
+        handleValidationErrors(repet, "The passwords are not equals");
+        return false;
+    }else{
+        handleMessage("");
+        repet.style.cssText = "border-color: green !important";
+    }
+
+    return true;
+}
+
+
+document.getElementById("register-btn").addEventListener("click", () => {
+
+    let passwordIsValid = verifyPassword();
+    console.log("🚀 ~ file: register.js:134 ~ document.getElementById ~ passwordIsValid:", passwordIsValid)
+    let person = dataPerson();
+    console.log("🚀 ~ file: register.js:134 ~ document.getElementById ~ passwordIsValid:", person)
+
+    
+    if(!passwordIsValid || person){
+        return;
+    }
+    
+    let user = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    }
+    /*
+    fetch("http://localhost:3000/api/user/register",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({user: user, person: person})
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log(error));
+    */
+});
+
+
+
+// Obtener elementos del formulario para validar el tipo de dato que se le permite escribir
 document.getElementById("name").addEventListener("input", event => validateInput(event, "char"));
 document.getElementById("lastname").addEventListener("input", event => validateInput(event, "char"));
 document.getElementById("cedule").addEventListener("input", event => validateInput(event, "number"));
 document.getElementById("phone").addEventListener("input", event => validateInput(event, "number"));
+
+// Funcion que recive dos datos, el elemento a validar, y el tipo de dato que se le permite escribir
+function validateInput(event, type){
+    let regex = type == "char" ? /^[a-zA-Z]+$/ : /^[0-9]+$/; 
+    let remplace = type == "char" ? /[^a-zA-Z]+$/ : /[^0-9]+$/;
+    if (!regex.test(event.target.value)) {
+        event.target.value = event.target.value.replace(remplace, ''); // Eliminar caracteres no permitidos
+    }
+}
+
+// Obtener el elemento "username" para validar que no exista en la base de datos
 document.getElementById("username").addEventListener("input", event => {
 
     let username = event.target;
@@ -20,8 +191,7 @@ document.getElementById("username").addEventListener("input", event => {
     .then(data => {
 
         if(data.message == true){
-            username.style.cssText = "border-color: red !important";
-            handleMessage("The username is already used. Please choose a different");
+            handleValidationErrors(username, "The username is already used. Please choose a different");
         }else{
             username.style.cssText = "border-color: green !important";
             handleMessage("");
@@ -31,54 +201,10 @@ document.getElementById("username").addEventListener("input", event => {
     .catch(error => console.log("Conexion failed, try in some seconds"))
 })
 
-function verifyPassword(value){
-    let password = document.getElementById("password");
-    let repet = document.getElementById("repet");
-    let validate = false;
-
-    if(password.value.length < 8 || password.value.length > 16 ){
-        password.style.cssText = "border-color: red !important";
-        handleMessage("The password must be between 8 and 16 caracteres");
-    }else{
-        handleMessage("");
-        validate = true;
-        password.style.cssText = "border-color: green !important";
-    }
-
-    if(repet.value != password.value && repet.value != ""){
-        repet.style.cssText = "border-color: red !important";
-        handleMessage("The passwords are not equals");
-    }else if(repet.value == password.value && repet.value != ""){
-        handleMessage("");
-        validate = true;
-        repet.style.cssText = "border-color: green !important";
-    }
-
-    if(!validate){
-        return;
-    }
-
-    if(value == "register"){
-        registerPerson();
-
-        let username = document.getElementById("username");
-
-        fetch("http://localhost:3000/api/user",{
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({username: username.value, password: password.value})
-        })
-        .then(response => console.log(response.json()))
-        .catch(error => console.log(error));
-
-        console.log("REGISTER");
-    }
-}
-
-//Funcion para cambiar los input de password a text y viceversa
+// Funcion para cambiar los input de password a text y viceversa
 const viewBtn = document.querySelectorAll(".view-btn");
 for (const iterator of viewBtn) {
-    iterator.addEventListener("click", function(){
+    iterator.addEventListener("click", () => {
 
         viewBtn.forEach(element => element.src = ((element.src == 'file:///home/julio/Documentos/front-se/source/ojo-no.png') ? 'source/ojo.png' : 'source/ojo-no.png'));
 
@@ -91,14 +217,6 @@ for (const iterator of viewBtn) {
 
     });
 };
-
-function validateInput(event, type){
-    let regex = type == "char" ? /^[a-zA-Z]+$/ : /^[0-9]+$/;
-    let remplace = type == "char" ? /[^a-zA-Z]+$/ : /[^0-9]+$/;
-    if (!regex.test(event.target.value)) {
-        event.target.value = event.target.value.replace(remplace, ''); // Eliminar caracteres no permitidos
-    }
-}
 
 function handleMessage(message){
     // Obtener el elemento cuya clase sea "message"
@@ -139,77 +257,3 @@ function handleValidationErrors(obj,message){
     obj.focus();
     return;
 }
-
-function registerPerson(){
-    //const div = document.getElementById("general-information");
-    //const input = div.querySelectorAll("input");
-    let name = document.getElementById("name");
-    let lastname = document.getElementById("lastname");
-    let cedule = document.getElementById("cedule");
-
-    if(name.value == "" && lastname.value == ""){
-        handleValidationErrors(name,"Please enter a name or lastname in the form.")
-        lastname.style.cssText = "border-color: red !important";
-        return;
-    }else{
-        name.style.cssText = "border-color: green !important";
-        lastname.style.cssText = "border-color: green !important";
-        handleMessage("");
-    }
-
-    if(cedule.value.length < 5){
-        handleValidationErrors(cedule,"Please enter a valid cedule.")
-        return;
-    }
-
-    fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)//${cedule.value}
-    .then(response => response.json())
-    .then(data => {
-
-        if(data.message){
-            handleValidationErrors(cedule,"Please enter a valid cedule.")
-        }else{
-            handleMessage("");
-            cedule.style.cssText = "border-color: green !important";
-        }
-
-    })
-    .catch(error => console.log("Conexion failed, try in some seconds"));
-
-    const inputs = document.querySelectorAll('#general-information input');
-    const values = {};
-    for (const key in inputs) {
-
-        let element;
-        if (Object.hasOwnProperty.call(inputs, key)) {
-            element = inputs[key];
-        }else{
-            return;
-        }
-        
-        if(element.id == name.id || element.id == lastname.id || element.id == cedule.id){
-            continue;
-        }
-        
-        if(element.value == ""){
-            element.style.cssText = "border-color: red !important";
-            element.focus();
-            return;
-        }else{
-            handleMessage("");
-            element.style.cssText = "border-color: green !important";
-        }
-    
-        values[element.id] = element.value;
-    }
-
-    fetch(`http://localhost/api/student`,{
-        method: 'POST',
-        headers: { "content-type": "application/json" },
-        body: json.stringify(values)
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.log("Conexion failed, try in some seconds"));
-
-};
