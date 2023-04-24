@@ -24,7 +24,7 @@ function doubleValidate(principal, secundary){
     }
 }
 
-
+// Funcion para validar los datos personales
 async function dataPerson(){
     //const div = document.getElementById("general-information");
     //const input = div.querySelectorAll("input");
@@ -53,18 +53,14 @@ async function dataPerson(){
 
         if(data.message){
             handleValidationErrors(cedule,"Please enter a valid cedule.")
-            console.log("1");
             return false;
         }else{
-            console.log("1");
             handleMessage("");
             cedule.style.cssText = "border-color: green !important";
         }
 
     })
     .catch(error => console.log("Conexion failed, try in some seconds"));
-
-    console.log("2");
     
     const inputs = document.querySelectorAll('#general-information input');
     const data = {};
@@ -132,13 +128,13 @@ function verifyPassword(){
     return true;
 }
 
-
+// Obtener el boton de registro y asignarle una funcion ecnargada de llamar a las validaciones necesarias y hacer el registro
 document.getElementById("register-btn").addEventListener("click", async () => {
 
     let passwordIsValid = verifyPassword();
     let person = await dataPerson();
     
-    if(!passwordIsValid || person){
+    if(!passwordIsValid || !person){ // Verificar
         return;
     }
     
@@ -157,8 +153,6 @@ document.getElementById("register-btn").addEventListener("click", async () => {
     .catch(error => console.log(error));
 
 });
-
-
 
 // Obtener elementos del formulario para validar el tipo de dato que se le permite escribir
 document.getElementById("name").addEventListener("input", event => validateInput(event, "char"));
