@@ -7,11 +7,29 @@
     <title>Subject</title>
 </head>
 <body>
-    <input type="text" id="name" placeholder="name">
-    <input type="submit" value="save">
 
-    <input type="text" id="idStudent" placeholder="idStudent">
-    <input type="text" id="nameStudent" placeholder="nameStudent">
+    <input type="text" id="name" placeholder="name">
+    <select name="classroom" id="subject-status">
+        <option value="">Select a classroom</option>
+        <option value="-1">Deleted</option>
+        <option value="0">Unavailable</option>
+        <option value="1">Available</option>
+    </select>
+    <input type="submit" id="save" value="save">
+
+
+
+    <input type="text" id="subject" placeholder="subject name">
+    <select name="classroom" id="subject-select">
+        <option value="0">Select a subject</option>
+    </select>
+
+    <input type="text" id="classroom" placeholder="classroom name">
+    <select name="classroom" id="classroom-select">
+        <option value="0">Select a classroom</option>
+    </select>
     <input type="submit" value="search">
+
+
 </body>
 </html>
