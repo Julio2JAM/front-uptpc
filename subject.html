@@ -8,6 +8,7 @@
 </head>
 <body>
 
+    <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
     <input type="text" id="name" placeholder="name">
     <select name="classroom" id="subject-status">
         <option value="">Select a classroom</option>
@@ -17,13 +18,14 @@
     </select>
     <input type="submit" id="save" value="save">
 
-
-
+    <!-- mover a classroom -->
+    <!-- Buscar la materia por el nombre, automaticamente, se cambiara el select -->
     <input type="text" id="subject" placeholder="subject name">
     <select name="classroom" id="subject-select">
         <option value="0">Select a subject</option>
     </select>
 
+    <!-- Buscar la seccion por el nombre, automaticamente, se cambiara el select -->
     <input type="text" id="classroom" placeholder="classroom name">
     <select name="classroom" id="classroom-select">
         <option value="0">Select a classroom</option>
