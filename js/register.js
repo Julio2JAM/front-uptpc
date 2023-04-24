@@ -15,15 +15,17 @@ document.getElementById("lastname").addEventListener("blur", event => doubleVali
 
 // Funcion para validar 2 elementos eviados y que uno de los 2 no este vacio
 function doubleValidate(principal, secundary){
+    principal = principal.target;
     secundary = document.getElementById(secundary);
-
+    
     if(principal.value != "" || secundary.value != ""){
         principal.style.cssText = "";
         secundary.style.cssText = "";
     }
 }
 
-function dataPerson(){
+
+async function dataPerson(){
     //const div = document.getElementById("general-information");
     //const input = div.querySelectorAll("input");
     let name = document.getElementById("name");
@@ -44,8 +46,8 @@ function dataPerson(){
         handleValidationErrors(cedule,"Please enter a valid cedule.")
         return false;
     }
-    
-    fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)//${cedule.value}
+
+    await fetch(`http://localhost:3000/api/student/cedule/${cedule.value}`)//${cedule.value}
     .then(response => response.json())
     .then(data => {
 
@@ -54,6 +56,7 @@ function dataPerson(){
             console.log("1");
             return false;
         }else{
+            console.log("1");
             handleMessage("");
             cedule.style.cssText = "border-color: green !important";
         }
@@ -62,7 +65,7 @@ function dataPerson(){
     .catch(error => console.log("Conexion failed, try in some seconds"));
 
     console.log("2");
-    /*
+    
     const inputs = document.querySelectorAll('#general-information input');
     const data = {};
     for (const element of inputs) {
@@ -82,10 +85,9 @@ function dataPerson(){
     
         data[element.id] = element.value;
     }
-    return data;*/
+    return data;
 
 };
-
 
 // Obtener los elementos password y repet para validarlos
 document.getElementById("repet").addEventListener("blur", event => verifyPassword());
@@ -131,13 +133,10 @@ function verifyPassword(){
 }
 
 
-document.getElementById("register-btn").addEventListener("click", () => {
+document.getElementById("register-btn").addEventListener("click", async () => {
 
     let passwordIsValid = verifyPassword();
-    console.log("🚀 ~ file: register.js:134 ~ document.getElementById ~ passwordIsValid:", passwordIsValid)
-    let person = dataPerson();
-    console.log("🚀 ~ file: register.js:134 ~ document.getElementById ~ passwordIsValid:", person)
-
+    let person = await dataPerson();
     
     if(!passwordIsValid || person){
         return;
@@ -147,7 +146,7 @@ document.getElementById("register-btn").addEventListener("click", () => {
         username: document.getElementById("username").value,
         password: document.getElementById("password").value
     }
-    /*
+    
     fetch("http://localhost:3000/api/user/register",{
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -156,7 +155,7 @@ document.getElementById("register-btn").addEventListener("click", () => {
     .then(response => response.json())
     .then(data => console.log(data))
     .catch(error => console.log(error));
-    */
+
 });
 
 
