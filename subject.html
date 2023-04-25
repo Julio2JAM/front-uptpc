@@ -11,27 +11,20 @@
     <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
     <input type="text" id="name" placeholder="name">
     <input type="text" id="description" placeholder="description">
-    <select name="classroom" id="subject-status">
-        <option value="">Select a classroom</option>
+    <select name="status" id="status">
+        <option value="">Select a status</option>
         <option value="-1">Deleted</option>
         <option value="0">Unavailable</option>
         <option value="1">Available</option>
     </select>
     <input type="submit" id="save" value="save">
+    <input type="submit" id="search" value="search">
 
     <!-- mover a classroom -->
     <!-- Buscar la materia por el nombre, automaticamente, se cambiara el select -->
-    <input type="text" id="subject" placeholder="subject name">
-    <select name="classroom" id="subject-select">
+    <select name="subject" id="subject-select">
         <option value="0">Select a subject</option>
     </select>
-
-    <!-- Buscar la seccion por el nombre, automaticamente, se cambiara el select -->
-    <input type="text" id="classroom" placeholder="classroom name">
-    <select name="classroom" id="classroom-select">
-        <option value="0">Select a classroom</option>
-    </select>
-    <input type="submit" value="search">
 
     <script src="js/subject.js"></script>
 </body>

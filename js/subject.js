@@ -1,39 +1,17 @@
 window.addEventListener("load", async () => {
 
-    const classroomSelect = document.getElementById("classroom-select");
     const subjectSelect = document.getElementById("subject-select");
 
-    await fetch(`http://localhost:3000/api/classroom/`)
-    .then(response => {
-        if(response.status == 404){
-            throw new Error('Network response was not ok');
-        }
-        response.json();
-    })
-    .then(data => {
-        data.forEach(registro => {
-            const option = document.createElement('option');
-            option.value = registro.id;
-            option.text = registro.nombre;
-            classroomSelect.appendChild(option);
-        });
-    })
-    .catch(error => console.log("Conexion failed, try in some seconds"));
-
-
     await fetch(`http://localhost:3000/api/subject/`)
-    .then(response => {
-        if(response.status == 404){
-            throw new Error('Network response was not ok');
-        }
-        response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        data.forEach(registro => {
-            const option = document.createElement('option');
-            option.value = registro.id;
-            option.text = registro.nombre;
-            subjectSelect.appendChild(option);
+        data.forEach(row => {
+            const option = new Option(row.name, row.id);
+            /*const option = document.createElement('option');
+            option.value = row.id;
+            option.text = row.name;
+            //subjectSelect.appendChild(option);*/
+            subjectSelect.add(option);
         });
     })
     .catch(error => console.log("Conexion failed, try in some seconds"));
@@ -42,42 +20,49 @@ window.addEventListener("load", async () => {
 
 document.getElementById("save").addEventListener("click", async () => {
     let name = document.getElementById("name");
+    let description = document.getElementById("description");
 
-    await fetch(`http://localhost:3000/api/subject/name/${name.value}`)
+    await fetch("http://localhost:3000/api/subject", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({name:name.value, description: description.value})
+    })
+    
+});
+
+document.getElementById("search").addEventListener("click", async () => {
+    let name = document.getElementById("name");
+    search(name.value);
+});
+
+document.getElementById("subject-select").addEventListener("change", async (event) => {
+    console.log(event);
+    let name = event.target.value;
+    console.log(name);
+    search(name.value);
+});
+
+// CAMBIAR PARA QUE FUNCIONE CON ID Y CON NAME
+async function search(id,name){
+
+    if(name == ""){
+        return;
+    }
+
+    await fetch(`http://localhost:3000/api/subject/name/${name}`)
     .then(response => {
         if(response.status == 404){
             throw new Error('Network response was not ok');
         }
-        response.json();
+        return response.json();
     })
     .then(data => {
         let status = document.getElementById("status");
-        status.value = data.idStatus;
+        let nameInput = document.getElementById("name");
+        console.log(nameInput);
+        status.value = data.id_status;
+        nameInput.value = name;
+        console.log(nameInput);
     })
     .catch(error => null);
-
-});
-
-document.getElementById("classroom").addEventListener("input", async event => {
-
-    await fetch(`http://localhost:3000/api/classroom/name/${event.target.value}`)
-    .then(response => response.json())
-    .then(data => {
-        let select = document.getElementById(classroom-select);
-        select.value = data.id;
-    })
-    .catch(error => console.log("Conexion failed, try in some seconds"));
-
-})
-
-document.getElementById("subject").addEventListener("input", async event => {
-
-    await fetch(`http://localhost:3000/api/subject/name/${event.target.value}`)
-    .then(response => response.json())
-    .then(data => {
-        let select = document.getElementById(subject-select);
-        select.value = data.id;
-    })
-    .catch(error => console.log("Conexion failed, try in some seconds"));
-
-})
+}
