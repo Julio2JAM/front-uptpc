@@ -1,10 +1,15 @@
-document.onload(async () => {
+window.addEventListener("load", async () => {
 
     const classroomSelect = document.getElementById("classroom-select");
     const subjectSelect = document.getElementById("subject-select");
 
     await fetch(`http://localhost:3000/api/classroom/`)
-    .then(response => response.json())
+    .then(response => {
+        if(response.status == 404){
+            throw new Error('Network response was not ok');
+        }
+        response.json();
+    })
     .then(data => {
         data.forEach(registro => {
             const option = document.createElement('option');
@@ -17,7 +22,12 @@ document.onload(async () => {
 
 
     await fetch(`http://localhost:3000/api/subject/`)
-    .then(response => response.json())
+    .then(response => {
+        if(response.status == 404){
+            throw new Error('Network response was not ok');
+        }
+        response.json();
+    })
     .then(data => {
         data.forEach(registro => {
             const option = document.createElement('option');
@@ -34,12 +44,17 @@ document.getElementById("save").addEventListener("click", async () => {
     let name = document.getElementById("name");
 
     await fetch(`http://localhost:3000/api/subject/name/${name.value}`)
-    .then(response => response.json())
+    .then(response => {
+        if(response.status == 404){
+            throw new Error('Network response was not ok');
+        }
+        response.json();
+    })
     .then(data => {
         let status = document.getElementById("status");
         status.value = data.idStatus;
     })
-    .catch(error => console.log("Conexion failed, try in some seconds"));
+    .catch(error => null);
 
 });
 
