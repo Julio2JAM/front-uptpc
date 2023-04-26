@@ -1,3 +1,14 @@
+window.addEventListener("load", async () => {
+    await fetch("http://localhost:3000/api/classroom")
+    .then(response => response.json)
+    .then(data => {
+        data.array.forEach(element => {
+            const selectClassroom = document.getElementById("select-classroom");
+        });
+    })
+    .catch(error => console.log(error));
+});
+
 document.getElementById("save").addEventListener("click", () => {
     let name = document.getElementById("name").value;
     let datetimeStart = document.getElementById("datetimeStart").value;
@@ -17,7 +28,6 @@ document.getElementById("search").addEventListener("click", () => {
     let id = document.getElementById("search-classroom");
 
     let url = "http://localhost:3000/api/classroom";
-    id != null ? url += `/${id}` : url ;
     fetch(url/*, { 
         headers: { 'Authorization': 'Bearer ' + token } 
     }*/)

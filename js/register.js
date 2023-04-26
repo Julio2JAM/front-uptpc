@@ -68,6 +68,7 @@ async function dataPerson(){
         
         if(element.id == name.id || element.id == lastname.id){
             data[element.id] = element.value;
+            continue;
         }
         
         if(element.value == ""){

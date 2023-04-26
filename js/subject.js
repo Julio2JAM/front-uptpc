@@ -1,3 +1,4 @@
+// Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => {
 
     const subjectSelect = document.getElementById("subject-select");
@@ -18,38 +19,49 @@ window.addEventListener("load", async () => {
 
 });
 
+// Obtener el elemento "save" y agregarle un evento
 document.getElementById("save").addEventListener("click", async () => {
+    // Obtener los elementos "name" y "description"
     let name = document.getElementById("name");
     let description = document.getElementById("description");
 
+    // Gardar los elementos en la base de datos
     await fetch("http://localhost:3000/api/subject", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({name:name.value, description: description.value})
     })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos guardados: ', data);
+    })
+    .catch(error => console.error('Ha ocurrido un error: ', error));
     
 });
 
+// Al hacer click en search, obtener el elemento name y llamar a la funcion search
 document.getElementById("search").addEventListener("click", async () => {
     let name = document.getElementById("name");
     search(name.value);
 });
 
-document.getElementById("subject-select").addEventListener("change", async (event) => {
-    console.log(event);
-    let name = event.target.value;
-    console.log(name);
-    search(name.value);
-});
+// Al hacer cambiar el select, obtener el elemento y llamar a la funcion search
+document.getElementById("subject-select").addEventListener("change", async (event) => search(event.target.value));
 
-// CAMBIAR PARA QUE FUNCIONE CON ID Y CON NAME
-async function search(id,name){
+// Funcion para buscar un registro en la tabla search
+async function search(data){
 
-    if(name == ""){
+    // En caso de venir vacio, o que el id sea 0, retorna
+    if(!Boolean(data)){
         return;
     }
 
-    await fetch(`http://localhost:3000/api/subject/name/${name}`)
+    // Si es string, buscar el nombre, caso contrario, el id
+    let url = (typeof data == "string")
+    ? "http://localhost:3000/api/subject/name/"
+    : "http://localhost:3000/api/subject/"
+
+    await fetch(url+data)
     .then(response => {
         if(response.status == 404){
             throw new Error('Network response was not ok');
@@ -59,10 +71,8 @@ async function search(id,name){
     .then(data => {
         let status = document.getElementById("status");
         let nameInput = document.getElementById("name");
-        console.log(nameInput);
         status.value = data.id_status;
-        nameInput.value = name;
-        console.log(nameInput);
+        nameInput.value = data.name;
     })
     .catch(error => null);
 }
