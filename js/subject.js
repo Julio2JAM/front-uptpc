@@ -24,12 +24,13 @@ document.getElementById("save").addEventListener("click", async () => {
     // Obtener los elementos "name" y "description"
     let name = document.getElementById("name");
     let description = document.getElementById("description");
+    let id_status = document.getElementById("status");
 
     // Gardar los elementos en la base de datos
-    await fetch("http://localhost:3000/api/subject", {
+    await fetch("http://localhost:3000/api/subject/postOrUpdate", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({name:name.value, description: description.value})
+        body: JSON.stringify({name:name.value, description: description.value, id_status: id_status.value})
     })
     .then(response => response.json())
     .then(data => {
@@ -46,7 +47,7 @@ document.getElementById("search").addEventListener("click", async () => {
 });
 
 // Al hacer cambiar el select, obtener el elemento y llamar a la funcion search
-document.getElementById("subject-select").addEventListener("change", async (event) => search(event.target.value));
+document.getElementById("subject-select").addEventListener("change", async (event) => search(Number(event.target.value)));
 
 // Funcion para buscar un registro en la tabla search
 async function search(data){
@@ -71,8 +72,10 @@ async function search(data){
     .then(data => {
         let status = document.getElementById("status");
         let nameInput = document.getElementById("name");
-        status.value = data.id_status;
+        let description = document.getElementById("description");
         nameInput.value = data.name;
+        description.value = data.description;
+        status.value = data.id_status;
     })
     .catch(error => null);
 }
