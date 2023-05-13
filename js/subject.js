@@ -1,7 +1,16 @@
 // Al cargar el archivo, obtener todos los registros de la tabla subject
-window.addEventListener("load", async () => {
+window.addEventListener("load", async () => await loadSubject());
+
+async function loadSubject(){
 
     const subjectSelect = document.getElementById("subject-select");
+
+    while(subjectSelect.options.length > 0){
+        subjectSelect.remove(0);
+    }
+
+    const startOption = new Option("Select a subject", "");
+    subjectSelect.add(startOption);
 
     await fetch(`http://localhost:3000/api/subject/`)
     .then(response => response.json())
@@ -17,7 +26,7 @@ window.addEventListener("load", async () => {
     })
     .catch(error => console.log("Conexion failed, try in some seconds"));
 
-});
+}
 
 // Obtener el elemento "save" y agregarle un evento
 document.getElementById("save").addEventListener("click", async () => {
@@ -35,6 +44,7 @@ document.getElementById("save").addEventListener("click", async () => {
     .then(response => response.json())
     .then(data => {
         console.log('Datos guardados: ', data);
+        loadSubject();
     })
     .catch(error => console.error('Ha ocurrido un error: ', error));
     
@@ -47,7 +57,17 @@ document.getElementById("search").addEventListener("click", async () => {
 });
 
 // Al hacer cambiar el select, obtener el elemento y llamar a la funcion search
-document.getElementById("subject-select").addEventListener("change", async (event) => search(Number(event.target.value)));
+document.getElementById("subject-select").addEventListener("change", async (event) => {
+
+    if(event.target.value == 0){
+        document.getElementById("name").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("status").value = "";
+        return;
+    }
+
+    search(Number(event.target.value));
+});
 
 // Funcion para buscar un registro en la tabla search
 async function search(data){

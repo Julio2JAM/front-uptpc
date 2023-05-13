@@ -8,10 +8,16 @@
 </head>
 <body>
     <!--CREAR CLASE-->
-    <div>
-        <input type="text" id="seccion" placeholder="name">
-        <input type="date" id="datetimeStart" placeholder="datetime start">
-        <input type="date" id="datetimeEnd" placeholder="datetime end">
+    <div id="data-classroom">
+        <input type="text" id="name" placeholder="name">
+        <input type="date" id="datetime-start" placeholder="datetime start">
+        <input type="date" id="datetime-end" placeholder="datetime end">
+        <select name="status" id="status">
+            <option value="">Select a status</option>
+            <option value="-1">Deleted</option>
+            <option value="0">Unavailable</option>
+            <option value="1">Available</option>
+        </select>
         <input type="submit" id="save" value="Save">
     </div>
 
@@ -28,7 +34,7 @@
     <div>
         <input type="text" id="cedule-student" placeholder="cedule student">
         <input type="text" id="name-student" placeholder="name student">
-        <input type="submit" value="search-student">
+        <input type="submit" id="search-student" value="search-student">
     </div>
 
     <!--CREAR CLASE PARA ASIGNARLE MATERIA Y DOCENTES-->
