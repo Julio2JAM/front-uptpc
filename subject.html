@@ -5,26 +5,52 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subject</title>
+    <link rel="stylesheet" href="./css/card.css">
 </head>
 <body>
 
-    <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
-    <input type="text" id="name" placeholder="name">
-    <input type="text" id="description" placeholder="description">
-    <select name="status" id="status">
-        <option value="">Select a status</option>
-        <option value="-1">Deleted</option>
-        <option value="0">Unavailable</option>
-        <option value="1">Available</option>
-    </select>
-    <input type="submit" id="save" value="save">
-    <input type="submit" id="search" value="search">
+    <nav>
+        <ul>
+        <li><a href="student.html">Students</a></li>
+        <li><a href="professor.html">Professors</a></li>
+        <li><a href="classroom.html">Classroom</a></li>
+        <li><a href="subject.html">Subjects</a></li>
+        <li><a href="user.html">Users</a></li>
+        <li><a href="exi.html">Exit</a></li>
+        </ul>
+    </nav>
 
-    <!-- mover a classroom -->
-    <!-- Buscar la materia por el nombre, automaticamente, se cambiara el select -->
-    <select name="subject" id="subject-select">
-        <option value="0">Select a subject</option>
-    </select>
+    <div class="card-container">
+
+        <div class="horizontal-card">
+            <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
+            <img src="source/subject2.jpeg" alt="subject">
+            <div class="card-content">
+                <h3>Subject</h3><hr>
+                <span>Name</span>
+                <input type="text" id="name" placeholder="name">
+                <span>Description</span>
+                <input type="text" id="description" placeholder="description">
+                <span>Status</span>
+                <select name="status" id="status">
+                    <option value="">Select a status</option>
+                    <option value="-1">Deleted</option>
+                <option value="0">Unavailable</option>
+                <option value="1">Available</option>
+            </select>
+            <input type="submit" id="save" value="save">
+            <hr>
+            <select name="subject" id="subject-select">
+                <option value="0">Select a subject</option>
+            </select>
+            <input type="submit" id="search" value="search">
+
+        </div>
+            <!-- mover a classroom -->
+            <!-- Buscar la materia por el nombre, automaticamente, se cambiara el select -->
+        </div>
+        
+    </div>
 
     <script src="js/subject.js"></script>
 </body>

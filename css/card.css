@@ -1,13 +1,11 @@
 *{
+    margin: 0;
     font-family: sans-serif;
 }
 
 body{
-    margin: 0;
-    margin-bottom: 10px;
-    padding: 0;
-    height: 100%;
     background: linear-gradient(to top, #c7d7ff, #f3d6ff);
+    height: 100vh;
 }
 
 nav{
@@ -40,7 +38,7 @@ a:hover{
     color: black; /* Color del texto cuando se pasa el cursor sobre el elemento */
 }
 
-.card-container {
+.card-container{
     padding-top: 2.5rem;
     display: flex;
     flex-wrap: wrap;
@@ -50,47 +48,52 @@ a:hover{
     width: 100%;
 }
 
-.card {
-    background-color: #FFF;
-    width: 300px;
+.horizontal-card{
     margin: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
-    transition: all 0.5s ease;
-    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    background-color: #fff;
+    max-width: 400px;
+    border-radius: 4px;
 }
 
-.card img {
+.horizontal-card input[type="text"],
+.horizontal-card select{
+    margin: 0.5rem 0px;
+    padding: 5px;
     width: 100%;
-    height: 200px;
+    box-sizing: border-box;
+}
+
+.horizontal-card input[type="submit"]{
+    padding: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    border: 1px solid #fdfdfd;
+
+}
+
+.horizontal-card img{
+    width: 100%;
     object-fit: cover;
-    border-radius: 10px 10px 0 0;
+    border-radius: 4px 0px 0px 4px;
 }
 
-.card p {
-    margin: 1rem;
-    text-align: justify;
+.card-content {
+    padding: 10px;
 }
-
-.card h3{
-    margin: 0.5rem;
+.card-content h3 {
+    font-size: 24px;
+    padding-top: 10px;
     text-align: center;
 }
 
-.card p{
+hr{
+    width: 100%;
+    margin: 10px 0px;
+}
+
+span{
     font-size: 14px;
-}
-
-.card:hover {
-    cursor: pointer;
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-}
-
-.card:hover img {
-    opacity: 0.8;
-}
-
-.card img {
-    transition: all 0.5s ease;
+    width: 100%;
 }
