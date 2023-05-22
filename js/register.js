@@ -246,6 +246,11 @@ function handleMessage(message){
 }
 
 function handleValidationErrors(obj,message){
+    // Validar que el objeto enviado ya haya sido evaluado
+    if(obj.style.borderColor == "red"){
+        return;
+    }
+
     handleMessage(message);
     obj.style.cssText = "border-color: red !important";
     obj.focus();
