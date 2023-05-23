@@ -39,7 +39,8 @@ a:hover{
 }
 
 .card-container{
-    padding-top: 2.5rem;
+    height: 100%;
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -53,30 +54,34 @@ a:hover{
     display: flex;
     flex-direction: row;
     background-color: #fff;
-    max-width: 400px;
-    border-radius: 4px;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 .horizontal-card input[type="text"],
 .horizontal-card select{
+    border: 1px solid #8f8f9d;
+    border-radius: 4px;
     margin: 0.5rem 0px;
-    padding: 5px;
+    padding: 8px;
     width: 100%;
     box-sizing: border-box;
 }
 
 .horizontal-card input[type="submit"]{
-    padding: 5px;
+    width: 100%;
+    padding: 8px;
     border-radius: 5px;
     display: inline-block;
     border: 1px solid #fdfdfd;
-
+    background-color: #ff4136;
 }
 
 .horizontal-card img{
     width: 100%;
     object-fit: cover;
-    border-radius: 4px 0px 0px 4px;
+    border-radius: 8px 0px 0px 8px;
 }
 
 .card-content {
