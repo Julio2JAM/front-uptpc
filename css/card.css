@@ -74,8 +74,18 @@ a:hover{
     padding: 8px;
     border-radius: 5px;
     display: inline-block;
-    border: 1px solid #fdfdfd;
-    background-color: #ff4136;
+    border: none;
+    background: linear-gradient(to bottom right, #F08080, #FFA07A);
+    font-size: 14px;
+    transition: box-shadow 0.2s;
+}
+  
+input[type="submit"]:active {
+    background: linear-gradient(to bottom right, #D2691E, #CD853F);
+}
+
+input[type="submit"]:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 .horizontal-card img{
@@ -93,6 +103,14 @@ a:hover{
     text-align: center;
 }
 
+.card-content h4 {
+    font-size: 22px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+fieldset{
+    margin-top: 20px;
+}
 hr{
     width: 100%;
     margin: 10px 0px;

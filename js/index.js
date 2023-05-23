@@ -1,3 +1,4 @@
+console.log(document.cookie);
 /*if(document.cookie.indexOf("token") !== -1){
     windows.location.href("text.html");
 }*/

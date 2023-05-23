@@ -26,28 +26,31 @@
             <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
             <img src="source/subject2.jpeg" alt="subject">
             <div class="card-content">
-                <h3>Subject</h3><hr>
-                <span>Name</span>
-                <input type="text" id="name" placeholder="name">
-                <span>Description</span>
-                <input type="text" id="description" placeholder="description">
-                <span>Status</span>
-                <select name="status" id="status">
-                    <option value="">Select a status</option>
-                    <option value="-1">Deleted</option>
-                <option value="0">Unavailable</option>
-                <option value="1">Available</option>
-            </select>
-            <input type="submit" id="save" value="save">
-            <hr>
-            <select name="subject" id="subject-select">
-                <option value="0">Select a subject</option>
-            </select>
-            <input type="submit" id="search" value="search">
 
-        </div>
-            <!-- mover a classroom -->
-            <!-- Buscar la materia por el nombre, automaticamente, se cambiara el select -->
+                <h3>Subject</h3><hr>
+                <fieldset><legend>Data subject</legend>
+                    <span>Name</span>
+                    <input type="text" id="name" placeholder="name">
+                    <span>Description</span>
+                    <input type="text" id="description" placeholder="description">
+                    <span>Status</span>
+                    <select name="status" id="status">
+                        <option value="">Select a status</option>
+                        <option value="-1">Deleted</option>
+                        <option value="0">Unavailable</option>
+                        <option value="1">Available</option>
+                    </select>
+                    <input type="submit" id="save" value="save">
+                </fieldset>
+
+                <fieldset><legend>Search subject</legend>
+                    <select name="subject" id="subject-select">
+                        <option value="0">Select a subject</option>
+                    </select>
+                    <input type="submit" id="search" value="search">
+                </fieldset>
+
+            </div>
         </div>
         
     </div>
