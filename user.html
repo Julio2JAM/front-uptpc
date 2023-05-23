@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject</title>
+    <link rel="stylesheet" href="./css/card.css">
+</head>
+<body>
+
+    <nav>
+        <ul>
+        <li><a href="student.html">Students</a></li>
+        <li><a href="professor.html">Professors</a></li>
+        <li><a href="classroom.html">Classroom</a></li>
+        <li><a href="subject.html">Subjects</a></li>
+        <li><a href="user.html">Users</a></li>
+        <li><a href="exi.html">Exit</a></li>
+        </ul>
+    </nav>
+
+    <div class="card-container">
+        <div class="horizontal-card">
+            <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
+            <img src="source/users.jpeg" alt="subject">
+            <div class="card-content">
+                <h3>User</h3><hr>
+                <fieldset><legend>Data User</legend>
+                    <span>Username</span>
+                    <input type="text" id="name" placeholder="name">
+                    <span>Password</span>
+                    <input type="text" id="name" placeholder="name">
+                    <select name="level" id="level-select">
+                        <option value="0">Select a rol</option>
+                    </select>
+                    <input type="submit" id="user" value="user">
+                </fieldset>
+                <fieldset><legend>Search user</legend>
+                    <select name="subject" id="user-select">
+                        <option value="0">Select a user</option>
+                    </select>
+                    <input type="submit" id="user" value="user">
+                </fieldset>
+                <div class="card-content">
+                    <h3>Information</h3><hr>
+                    <fieldset><legend>Personal data</legend>
+                        <div class="double">
+                            <span>Name:</span>
+                            <input type="text" id="name" placeholder="Name" required/>
+                        
+                            <span>Lastname:</span>
+                            <input type="text" id="lastname" placeholder="lastname" required/>
+                        </div>
+            
+                            <span>Cedule:</span>
+                            <input type="text" id="cedule" placeholder="Cedule" required/>
+                        
+                            <span>Phone number:</span>
+                            <input type="text" id="phone" placeholder="Phone number" required/>
+            
+                            <span>Email:</span>
+                            <input type="email" id="email" placeholder="Email" required/>
+            
+                        <div class="birthday">
+                            <span>Birthday:</span>
+                            <input type="date" id="birthday" placeholder="Birthday" required/>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/subject.js"></script>
+</body>
+</html>
