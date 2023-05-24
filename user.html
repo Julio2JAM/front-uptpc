@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subject</title>
+    <title>Users</title>
     <link rel="stylesheet" href="./css/card.css">
 </head>
 <body>
@@ -21,58 +21,62 @@
     </nav>
 
     <div class="card-container">
-        <div class="horizontal-card">
-            <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
-            <img src="source/users.jpeg" alt="subject">
+        <div class="horizontal-card with-table">
             <div class="card-content">
-                <h3>User</h3><hr>
-                <fieldset><legend>Data User</legend>
-                    <span>Username</span>
-                    <input type="text" id="name" placeholder="name">
-                    <span>Password</span>
-                    <input type="text" id="name" placeholder="name">
-                    <select name="level" id="level-select">
-                        <option value="0">Select a rol</option>
-                    </select>
-                    <input type="submit" id="user" value="user">
-                </fieldset>
-                <fieldset><legend>Search user</legend>
-                    <select name="subject" id="user-select">
-                        <option value="0">Select a user</option>
-                    </select>
-                    <input type="submit" id="user" value="user">
-                </fieldset>
-                <div class="card-content">
-                    <h3>Information</h3><hr>
-                    <fieldset><legend>Personal data</legend>
-                        <div class="double">
-                            <span>Name:</span>
-                            <input type="text" id="name" placeholder="Name" required/>
-                        
-                            <span>Lastname:</span>
-                            <input type="text" id="lastname" placeholder="lastname" required/>
-                        </div>
-            
-                            <span>Cedule:</span>
-                            <input type="text" id="cedule" placeholder="Cedule" required/>
-                        
-                            <span>Phone number:</span>
-                            <input type="text" id="phone" placeholder="Phone number" required/>
-            
-                            <span>Email:</span>
-                            <input type="email" id="email" placeholder="Email" required/>
-            
-                        <div class="birthday">
-                            <span>Birthday:</span>
-                            <input type="date" id="birthday" placeholder="Birthday" required/>
-                        </div>
-                    </fieldset>
-                </div>
+
+            <div class="filter-buttons">
+                <button class="filter-button active" data-filter="all">All</button>
+                <button class="filter-button" data-filter="view-only">View Only</button>
+                <button class="filter-button" data-filter="edit">Edit</button>
+                <button class="filter-button" data-filter="admin">Admin</button>
             </div>
+                        
+            <table class="table">
+            <thead>
+                <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>ID Number</th>
+                <th>Permissions</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="filter-item view-only">
+                <td>John</td>
+                <td>Doe</td>
+                <td>123456</td>
+                <td>
+                    <select>
+                      <option value="view">View Only</option>
+                      <option value="edit">Edit</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                </td>
+                <td><button class="view-button">View</button></td>
+                </tr>
+                <tr class="filter-item edit">
+                <td>Jane</td>
+                <td>Smith</td>
+                <td>789012</td>
+                <td>
+                    <select>
+                      <option value="view">View Only</option>
+                      <option value="edit">Edit</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                </td>
+                <td><button class="view-button">View</button></td>
+                </tr>
+            </tbody>
+            <div class="color-table"></div>
+            </table>
+            <button id="save-button" class="save-button" disabled>Save Changes</button>
+                        
             </div>
         </div>
     </div>
 
-    <script src="js/subject.js"></script>
+    <script src="js/users.js"></script>
 </body>
 </html>
