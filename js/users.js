@@ -1,3 +1,55 @@
+window.addEventListener("load", () => {});
+
+async function loadData(){
+
+  const table = document.getElementsByTagName("tbody");
+  const select = await levels();
+
+  const button = document.createElement('button');
+  button.innerHTML = "View";
+  button.className = "view-button";
+
+  await fetch(`http://localhost:3000/api/user`)
+  .then(response => response)
+  .then(data => {
+    data.forEach(element => {
+
+      var row = table.insertRow(-1);
+      row.className = "filter-item "+element.id_level;
+      
+      const name = row.insertCell(0);
+      name.innerHTML = element.name;
+      const lastName = row.insertCell(1);
+      const cedule = row.insertCell(2);
+      const level = select;
+      const view = button;
+    });
+  })
+  .catch(err => err);
+
+}
+
+async function levels(){
+
+  const select = document.createElement("select");
+  select.id = "permissions";
+  select.name = "Permissions";
+
+  await fetch(`http://localhost:3000/api/level`)
+  .then(response => response)
+  .then(data => {
+    data.forEach(element => {
+      const option = document.createElement("option");
+      option1.value = element.id;
+      option1.text = element.name;
+      select.appendChild(option1);
+    });
+  })
+  .catch(err => err);
+
+  return select
+}
+
 // Get the filter buttons
 const filterButtons = document.querySelectorAll('.filter-button');
 

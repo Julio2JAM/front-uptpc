@@ -99,6 +99,9 @@ input[type="submit"]:hover {
     /*TABLE*/
     width: 100%;
     /*TABLE*/
+    /*TABLE*/
+    overflow: auto;
+    /*TABLE*/
 }
 .card-content h3 {
     font-size: 24px;
@@ -112,7 +115,7 @@ input[type="submit"]:hover {
     text-align: center;
 }
 fieldset{
-    margin-top: 20px;
+    margin-top: 10px;
 }
 hr{
     width: 100%;
@@ -168,6 +171,10 @@ span{
     height: 80%;
 }
 
+.button-table{
+  width: auto !important;
+}
+
 .table select {
     padding: 8px 12px;
     border-radius: 4px;
@@ -191,11 +198,11 @@ span{
     border-bottom: 4px solid #e8e8e8;
     padding: 12px 15px;
   }
-  
+  /*
   .table tbody tr:last-child td {
     border-bottom: none;
   }
-  
+  */
   .view-button {
     background-color: #007bff;
     border: none;
@@ -228,6 +235,7 @@ span{
     cursor: pointer;
     border-radius: 5px;
     transition: all 0.3s ease;
+    margin-top: 10px;
   }
   
   .save-button[disabled] {
@@ -235,11 +243,20 @@ span{
     background-color: #6c757d;
     cursor: not-allowed;
   }
+  
   .color-table{
-    background-color: #000;
+    background-color: #f4f4f4;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 100px);
+    border-radius: 8px;
+    display: inline-table;
   }
+
+@media only screen and (max-width: 600px) {
+  .filter-button {
+    flex-direction: column;
+  }
+}
   /*
 
 .filter-buttons {
