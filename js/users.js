@@ -1,4 +1,4 @@
-window.addEventListener("load", () => {});
+window.addEventListener("load", await loadData);
 
 async function loadData(){
 
