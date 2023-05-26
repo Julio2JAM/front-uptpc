@@ -16,26 +16,31 @@ nav{
 }
 
 ul{
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 li{
-    display: inline-block;
+  display: inline-block;
 }
 
 a{
-    text-decoration: none;
-    color: #000;
-    display: block;
-    padding: 10px;
+  text-decoration: none;
+  color: #1abc9c;
+  display: block;
+  padding: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: border 0.2s ease;
+  border-bottom: 4px solid #fff;
+  border-top: 4px solid #fff;
 }
 
 a:hover{
-    background-color: #ddd; /* Color de fondo cuando se pasa el cursor sobre el elemento */
-    color: black; /* Color del texto cuando se pasa el cursor sobre el elemento */
+  border-bottom: 4px solid #1abc9c;
 }
 
 .card-container{
@@ -60,6 +65,8 @@ a:hover{
 }
 
 .horizontal-card input[type="text"],
+.horizontal-card input[type="email"],
+.horizontal-card input[type="date"],
 .horizontal-card select{
     border: 1px solid #8f8f9d;
     border-radius: 4px;
@@ -146,6 +153,11 @@ span{
     color: #fff;
   }
   
+  table {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
   .table {
     width: 100%;
     margin: auto;
@@ -240,9 +252,10 @@ span{
   .color-table{
     background-color: #f4f4f4;
     width: 100%;
+    max-height: calc(100% - 100px);
     height: calc(100% - 100px);
     border-radius: 8px;
-    display: inline-table;
+    overflow-y: auto;
   }
 
 @media only screen and (max-width: 600px) {
