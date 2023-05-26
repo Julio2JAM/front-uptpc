@@ -1,53 +1,70 @@
-window.addEventListener("load", await loadData);
+window.addEventListener("load", async () => await loadData());
+
+
+async function levels(){
+
+  const select = document.createElement("select");
+  select.innerHTML = "";
+
+  const startOption = new Option("Select a permission", "");
+  select.add(startOption);
+
+  await fetch(`http://localhost:3000/api/level`)
+  .then(response => response.json())
+  .then(data => {
+    data.forEach(element => {
+      const option = new Option(element.name, element.id);
+      select.add(option);
+    });
+  })
+  .catch(err => err);
+  
+  return select
+}
 
 async function loadData(){
 
-  const table = document.getElementsByTagName("tbody");
-  const select = await levels();
+  const table = document.getElementById("table");
+  const selectLevel = await levels();
 
+
+  // Crear boton de view
   const button = document.createElement('button');
   button.innerHTML = "View";
   button.className = "view-button";
 
   await fetch(`http://localhost:3000/api/user`)
-  .then(response => response)
+  .then(response => response.json())
   .then(data => {
     data.forEach(element => {
+    
+      const clonedSelect = selectLevel.cloneNode(true);
+      clonedSelect.selectedIndex = (element.level !== null) ? element.level.id : 0;
 
-      var row = table.insertRow(-1);
-      row.className = "filter-item "+element.id_level;
+      console.log("🚀 ~ file: users.js:40 ~ loadData ~ element:", element)
+      // Insertar en la ultima posicion
+      const row = table.insertRow(-1);
+      row.className = "filter-item";//+element.id_level;
       
+      // Crear columnas
       const name = row.insertCell(0);
-      name.innerHTML = element.name;
+      name.innerHTML = element.username;
+
       const lastName = row.insertCell(1);
+      //lastName.innerHTML = element.lastName;
+
       const cedule = row.insertCell(2);
-      const level = select;
-      const view = button;
+      //cedule.innerHTML = element.cedule;
+
+      const level = row.insertCell(3);
+      level.appendChild(clonedSelect);
+
+      const view = row.insertCell(4);
+      view.appendChild(button.cloneNode(true));
     });
   })
   .catch(err => err);
 
-}
-
-async function levels(){
-
-  const select = document.createElement("select");
-  select.id = "permissions";
-  select.name = "Permissions";
-
-  await fetch(`http://localhost:3000/api/level`)
-  .then(response => response)
-  .then(data => {
-    data.forEach(element => {
-      const option = document.createElement("option");
-      option1.value = element.id;
-      option1.text = element.name;
-      select.appendChild(option1);
-    });
-  })
-  .catch(err => err);
-
-  return select
 }
 
 // Get the filter buttons
