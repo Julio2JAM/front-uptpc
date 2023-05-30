@@ -309,6 +309,11 @@ table select{
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
+th:first-child,
+td:first-child {
+  width: 5%;
+}
+
   /*
 
 .filter-buttons {
