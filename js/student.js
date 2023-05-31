@@ -83,4 +83,4 @@ document.getElementById("new").addEventListener("click", (event) => {
     modalContent.appendChild(cardContent);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
-})
+});

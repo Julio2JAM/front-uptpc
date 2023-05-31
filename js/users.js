@@ -27,7 +27,6 @@ async function loadData(){
   const table = document.getElementById("table");
   const selectLevel = await levels();
 
-
   // Crear boton de view
   const button = document.createElement('button');
   button.innerHTML = "View";
