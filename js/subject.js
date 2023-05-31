@@ -47,6 +47,11 @@ function dataTable(data) {
         selectStatus.add(new Option(option.label, option.value));
     }
 
+    // Crear boton de view
+    const button = document.createElement('button');
+    button.innerHTML = "View";
+    button.className = "view-button";
+
     data.forEach(element => {
         // Insertar en la ultima posicion
         const row = tableBody.insertRow(-1);
@@ -66,6 +71,7 @@ function dataTable(data) {
         status.appendChild(clonedSelect);
 
         const action = row.insertCell(4);
+        action.appendChild(button.cloneNode(true));
     });
 }
 
@@ -98,10 +104,10 @@ document.getElementById("new").addEventListener("click", () => {
     var input12 = document.createElement("input");
     var option = document.createElement("option");
 
-    var fieldset2 = document.createElement("fieldset");
+    /*var fieldset2 = document.createElement("fieldset");
     var legend2 = document.createElement("legend");
     var select2 = document.createElement("select");
-    var option2_1 = document.createElement("option");
+    var option2_1 = document.createElement("option");*/
     var input2 = document.createElement("input");
     
     // Configurar los elementos
@@ -115,19 +121,18 @@ document.getElementById("new").addEventListener("click", () => {
     option.value = "";
     option.text = "Select a status";
 
-
     span12.textContent = "Description";
     input12.type = "text";
     input12.id = "Description";
     input12.placeholder = "Description";
     
-    legend2.textContent = "Search subject";
+   /* legend2.textContent = "Search subject";
     option2_1.value = "0";
     option2_1.textContent = "Selecciona un tema";
-    select2.appendChild(option2_1);
+    select2.appendChild(option2_1);*/
     input2.type = "submit";
-    input2.id = "search";
-    input2.value = "search";
+    input2.id = "save";
+    input2.value = "save";
     
     // Agregar los elementos al DOM
     select1.appendChild(option);
@@ -145,11 +150,11 @@ document.getElementById("new").addEventListener("click", () => {
     fieldset1.appendChild(select1);
     
     cardContent.appendChild(fieldset1);
-
-    fieldset2.appendChild(legend2);
+    
+    fieldset1.appendChild(input2);
+    /*fieldset2.appendChild(legend2);
     fieldset2.appendChild(select2);
-    fieldset2.appendChild(input2);
-    cardContent.appendChild(fieldset2);
+    cardContent.appendChild(fieldset2);*/
 
     modalContent.appendChild(cardContent);
     modal.appendChild(modalContent);
