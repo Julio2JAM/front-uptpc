@@ -23,51 +23,43 @@
     <div class="card-container">
         <div class="horizontal-card with-table">
             <div class="card-content">
-
+            <!--
             <div class="filter-buttons">
                 <button class="filter-button active" data-filter="all">All</button>
                 <button class="filter-button" data-filter="view-only">View Only</button>
                 <button class="filter-button" data-filter="edit">Edit</button>
                 <button class="filter-button" data-filter="admin">Admin</button>
             </div>
+            -->
+            <div class="filter-container">
+                <input type="text" placeholder="Filter by Username" id="filter-username">
+                <select id="filter-permission">
+                    <option value="">Select a permissions</option>
+                </select>
+                <select id="filter-status">
+                <option value="">Select a status</option>
+                <option value="-1">Deleted</option>
+                <option value="0">Unavailable</option>
+                <option value="1">Available</option>
+                </select>
+                <button type="button" id="search" class="filter-button active">Filter</button>
+            </div>
                         
             <div class="color-table">
             <table class="table" id="table">
             <thead>
                 <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>ID Number</th>
-                <th>Permissions</th>
-                <th>status</th>
-                <th>Actions</th>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Permissions</th>
+                    <th>status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="filter-item view-only">
+                <td>1</td>
                 <td>John</td>
-                <td>Doe</td>
-                <td>123456</td>
-                <td>
-                    <select>
-                      <option value="view">View Only</option>
-                      <option value="edit">Edit</option>
-                      <option value="admin">Administrator</option>
-                    </select>
-                </td>
-                <td>
-                    <select>
-                      <option value="view">View Only</option>
-                      <option value="edit">Edit</option>
-                      <option value="admin">Administrator</option>
-                    </select>
-                </td>
-                <td><button class="view-button">View</button></td>
-                </tr>
-                <tr class="filter-item edit">
-                <td>Jane</td>
-                <td>Smith</td>
-                <td>789012</td>
                 <td>
                     <select>
                       <option value="view">View Only</option>
@@ -89,8 +81,6 @@
             </table>
             </div>
             <input type="submit" id="new" value="New user" class="button-table">
-            <button id="save-button" class="save-button" disabled>Save Changes</button>
-                        
             </div>
         </div>
     </div>

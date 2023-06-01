@@ -121,6 +121,9 @@ input[type="submit"]:hover,
     overflow-y: auto;
     /*TABLE*/
 }
+.card-content .id{
+  display: none;
+}
 .card-content h3 {
     font-size: 24px;
     padding-top: 5px;

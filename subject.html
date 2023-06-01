@@ -21,34 +21,36 @@
     </nav>
 
     <div class="card-container">
-
-        <div class="horizontal-card">
-            <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
-            <img src="source/subject2.jpeg" alt="subject">
+        <div class="horizontal-card with-table">
             <div class="card-content">
 
-                <fieldset><legend>Data subject</legend>
-                    <span>Name</span>
-                    <input type="text" id="name" placeholder="name">
-                    <span>Description</span>
-                    <input type="text" id="description" placeholder="description">
-                    <span>Status</span>
-                    <select name="status" id="status">
-                        <option value="">Select a status</option>
-                        <option value="-1">Deleted</option>
-                        <option value="0">Unavailable</option>
-                        <option value="1">Available</option>
+                <div class="filter-container">
+                    <input type="text" placeholder="Filter by Name" id="filter-name">
+                    <input type="text" placeholder="Filter by Description" id="filter-description">
+                    <select id="filter-status">
+                    <option value="">Select a status</option>
+                    <option value="-1">Deleted</option>
+                    <option value="0">Unavailable</option>
+                    <option value="1">Available</option>
                     </select>
-                    <input type="submit" id="save" value="save">
-                </fieldset>
+                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </div>
 
-                <fieldset><legend>Search subject</legend>
-                    <select name="subject" id="subject-select">
-                        <option value="0">Select a subject</option>
-                    </select>
-                    <input type="submit" id="search" value="search">
-                </fieldset>
-
+                <div class="color-table">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button id="new" class="modal-box-buttom button-table">New subject</button>
             </div>
         </div>
         

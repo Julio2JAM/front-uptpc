@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students</title>
+    <title>Subject</title>
     <link rel="stylesheet" href="./css/card.css">
 </head>
 <body>
@@ -21,50 +21,37 @@
     </nav>
 
     <div class="card-container">
-
-        <div class="horizontal-card">
-            <!-- Buscar la materia por el nombre, de existir, se asignan los datos correspondientes, caso contrario, se crea -->
-            <img src="source/students.jpeg" alt="subject">
+        <div class="horizontal-card with-table">
             <div class="card-content">
 
-                <h3>Subject</h3>
-                <fieldset><legend>Data subject</legend>
-
-                    <span>Name</span>
-                    <input type="text" id="name" placeholder="name">
-
-                    <span>lastname</span>
-                    <input type="text" id="lastname" placeholder="lastname">
-                    
-                    <span>ID number</span>
-                    <input type="text" id="cedule" placeholder="cedule">
-
-                    <span>Phone number:</span>
-                    <input type="text" id="phone" placeholder="Phone number" required/>
-
-                    <span>Email:</span>
-                    <input type="email" id="email" placeholder="Email" required/>
-
-                    <span>Birthday:</span>
-                    <input type="date" id="birthday" placeholder="Birthday" required/>
-
-                    <span>Status</span>
-                    <select name="status" id="status">
-                        <option value="">Select a status</option>
-                        <option value="-1">Deleted</option>
-                        <option value="0">Unavailable</option>
-                        <option value="1">Available</option>
+                <div class="filter-container">
+                    <input type="text" placeholder="Filter by Name" id="filter-name">
+                    <input type="text" placeholder="Filter by Description" id="filter-lastname">
+                    <input type="text" placeholder="Filter by Description" id="filter-cedule">
+                    <select id="filter-status">
+                    <option value="">Select a status</option>
+                    <option value="-1">Deleted</option>
+                    <option value="0">Unavailable</option>
+                    <option value="1">Available</option>
                     </select>
-                    <input type="submit" id="save" value="save">
-                </fieldset>
+                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </div>
 
-                <fieldset><legend>Search student</legend>
-                    <select name="student" id="student-select">
-                        <option value="0">Select a student</option>
-                    </select>
-                    <input type="submit" id="search" value="search">
-                </fieldset>
-
+                <div class="color-table">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Last name</th>
+                                <th>ID number</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button id="new" class="modal-box-buttom button-table">New subject</button>
             </div>
         </div>
         

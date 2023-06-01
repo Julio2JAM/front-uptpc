@@ -120,6 +120,9 @@ function createModalBox(data){
     var img = document.createElement("img");
     img.src = "source/subject2.jpeg";
     
+    var spanId = document.createElement("span");
+    var inputId = document.createElement("input");
+
     var spanName = document.createElement("span");
     var inputName = document.createElement("input");
     
@@ -138,11 +141,19 @@ function createModalBox(data){
     inputSubmit.addEventListener("click", async () => await save());
 
     // Configurar los elementos
+    spanId.textContent = "id";
+    spanId.className = "id";
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.className = "id";
+    inputId.placeholder = "id";
+    inputId.value = data?.id ?? "";
+    
     spanName.textContent = "Name";
     inputName.type = "text";
     inputName.id = "name";
     inputName.placeholder = "name";
-    inputName.value = (data?.name ?? "");
+    inputName.value = data?.name ?? "";
     
     spanDescription.textContent = "Description";
     inputDescription.type = "text";
@@ -164,6 +175,9 @@ function createModalBox(data){
     // Agregar los elementos al DOM
     modalContent.appendChild(img);
 
+    cardContent.appendChild(spanId);
+    cardContent.appendChild(inputId);
+    
     cardContent.appendChild(spanName);
     cardContent.appendChild(inputName);
 
@@ -189,22 +203,39 @@ function createModalBox(data){
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
     // Obtener los elementos "name" y "description"
+    let id = document.getElementById("id").value;
     let name = document.getElementById("name").value;
     let description = document.getElementById("description").value;
     let id_status = document.getElementById("status").value;
 
-    console.log(name, description, id_status);
+    // Actulizar tabla dinamicamente, no terminado.
+    let updateRow = "";
+    if(id){
+        let tableBody = document.querySelector("tbody");
+        for (const row of tableBody.rows) {
+            if(row.cells[0].innerText === id){
+                updateRow = row;
+                break;
+            }
+        }
+    }
+
     // Gardar los elementos en la base de datos
-    /*await fetch("http://localhost:3000/api/subject/postOrUpdate", {
+    await fetch("http://localhost:3000/api/subject/postOrUpdate", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({name:name.value, description: description.value, id_status: id_status.value})
+        body: JSON.stringify({
+            id:id,
+            name:name, 
+            description:description, 
+            id_status:id_status
+        })
     })
     .then(response => response.json())
     .then(data => {
         console.log('Datos guardados: ', data);
         loadSubject();
     })
-    .catch(error => console.error('Ha ocurrido un error: ', error));*/
+    .catch(error => console.error('Ha ocurrido un error: ', error));
     
 };

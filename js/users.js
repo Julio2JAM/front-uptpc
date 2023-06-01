@@ -1,9 +1,18 @@
 window.addEventListener("load", async () => await loadData());
 
+const filter = document.querySelectorAll("filter-input");
+
+// Funcion que recive dos datos, el elemento a validar, y el tipo de dato que se le permite escribir
+function validateInput(event, type){
+  let remplace = type == "char" ? /[^a-zA-Z]+$/ : /[^0-9]+$/;
+  if (!remplace.test(event.target.value)) {
+      event.target.value = event.target.value.replace(remplace, ''); // Eliminar caracteres no permitidos
+  }
+}
 
 async function levels(){
 
-  const select = document.createElement("select");
+  const select = document.getElementById("filter-permission");
   select.innerHTML = "";
 
   const startOption = new Option("Select a permission", "");
@@ -18,19 +27,28 @@ async function levels(){
     });
   })
   .catch(err => err);
-  
-  return select
 }
 
 async function loadData(){
 
   const table = document.getElementById("table");
-  const selectLevel = await levels();
+  const selectLevel = document.getElementById("filter-permission");
+
+  const dataLevel = {};
+  for (const option of selectLevel.options) {
+    dataLevel[option.id] = option.value;
+  }
 
   // Crear boton de view
   const button = document.createElement('button');
   button.innerHTML = "View";
   button.className = "view-button";
+
+  const dataStatus = {
+    "-1": "Deleted",
+    "0": "Unavailable",
+    "1": "Available"
+  };
 
   await fetch(`http://localhost:3000/api/user`)
   .then(response => response.json())
@@ -46,17 +64,17 @@ async function loadData(){
       row.className = "filter-item";//+element.id_level;
       
       // Crear columnas
-      const name = row.insertCell(0);
-      name.innerHTML = element.username;
+      const id = row.insertCell(0);
+      id.innerHTML = element.id;
 
-      const lastName = row.insertCell(1);
-      //lastName.innerHTML = element.lastName;
+      const username = row.insertCell(1);
+      username.innerHTML = element.username;
 
-      const cedule = row.insertCell(2);
-      //cedule.innerHTML = element.cedule;
+      const level = row.insertCell(2);
+      lastName.innerHTML = dataLevel[element.id_level] ?? "";
 
-      const level = row.insertCell(3);
-      level.appendChild(clonedSelect);
+      const status = row.insertCell(3);
+      status.innerHTML = dataStatus[element.id_status];
 
       const view = row.insertCell(4);
       view.appendChild(button.cloneNode(true));
@@ -66,72 +84,123 @@ async function loadData(){
 
 }
 
-// Get the filter buttons
-const filterButtons = document.querySelectorAll('.filter-button');
+// Agregar evento de click a todos los botones de view
+function addEvents(){
+  const buttons = document.querySelectorAll("tbody button");
+  buttons.forEach(button => button.addEventListener("click", (event) => detail(event)));
+}
 
-// Add click event listeners to the filter buttons
-filterButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Remove the active class from all filter buttons
-    filterButtons.forEach(button => {
-      button.classList.remove('active');
-    });
+// Obtener todos los datos de un elemento
+async function detail(event){
 
-    // Add the active class to the clicked filter button
-    button.classList.add('active');
+  const row = event.target.closest('tr');
+  const id = row.cells[0].textContent;
 
-    // Get the filter value
-    const filterValue = button.dataset.filter;
+  await fetch(`http://localhost:3000/api/user/${id}`)
+  .then(response => response.json())
+  .then(data => createModalBox(data))
+  .catch(err => console.error(err));
 
-    // Show or hide table rows based on the filter value
-    const tableRows = document.querySelectorAll('.filter-item');
-    tableRows.forEach(row => {
-      if (filterValue === 'all' || row.classList.contains(filterValue)) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
+}
+
+document.getElementById("new").addEventListener("click", () => createModalBox(null));
+
+function createModalBox(data){
+
+  // Crear divs contenedores
+  var modal = document.createElement("div");
+  modal.className = "modal-box";
+  modal.id = "modal-box";
+
+  var modalContent = document.createElement("div");
+  modalContent.className = "horizontal-card";
+  modalContent.id = "modal-content";
+
+  var cardContent = document.createElement("div");
+  cardContent.className = "card-content";
+  cardContent.id = "card-content";
+
+  // Crear elementos del DOM
+  var img = document.createElement("img");
+  img.src = "source/subject2.jpeg";
+  
+  var spanId = document.createElement("span");
+  var inputId = document.createElement("input");
+
+  var spanName = document.createElement("span");
+  var inputName = document.createElement("input");
+  
+  var spanDescription = document.createElement("span");
+  var inputDescription = document.createElement("input");
+  
+  var spanStatus = document.createElement("span");
+  var selectStatus = document.createElement("select");
+  var options = [
+      {value: -1, label: "Deleted"},
+      {value: 0, label: "Unavailable"},
+      {value: 1, label: "Available"}
+  ];
+
+  var inputSubmit = document.createElement("input");
+  inputSubmit.addEventListener("click", async () => await save());
+
+  // Configurar los elementos
+  spanId.textContent = "id";
+  spanId.className = "id";
+  inputId.type = "text";
+  inputId.id = "id";
+  inputId.className = "id";
+  inputId.placeholder = "id";
+  inputId.value = data?.id ?? "";
+  
+  spanName.textContent = "Name";
+  inputName.type = "text";
+  inputName.id = "name";
+  inputName.placeholder = "name";
+  inputName.value = data?.name ?? "";
+  
+  spanDescription.textContent = "Description";
+  inputDescription.type = "text";
+  inputDescription.id = "description";
+  inputDescription.placeholder = "Description";
+  inputDescription.value = data?.description ?? "";
+  
+  spanStatus.textContent = "Status";
+  selectStatus.id = "status";
+  for (var option of options) {
+      selectStatus.add(new Option(option.label, option.value));
+  }
+  selectStatus.value = data?.id_status ?? 1;
+
+  inputSubmit.type = "submit";
+  inputSubmit.id = "save";
+  inputSubmit.value = "save";
+  
+  // Agregar los elementos al DOM
+  modalContent.appendChild(img);
+
+  cardContent.appendChild(spanId);
+  cardContent.appendChild(inputId);
+  
+  cardContent.appendChild(spanName);
+  cardContent.appendChild(inputName);
+
+  cardContent.appendChild(spanDescription);
+  cardContent.appendChild(inputDescription);
+
+  cardContent.appendChild(spanStatus);
+  cardContent.appendChild(selectStatus);
+
+  cardContent.appendChild(inputSubmit);
+
+  modalContent.appendChild(cardContent);
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", (event) => {
+      if(event.target.id === "modal-box"){
+          event.target.remove();
       }
-    });
   });
-});
 
-// Get the view buttons
-const viewButtons = document.querySelectorAll('.view-button');
-
-// Add click event listeners to the view buttons
-viewButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Get the row
-    const row = button.parentElement.parentElement;
-
-    // Get the data
-    const firstName = row.querySelector('td:nth-child(1)').textContent;
-    const lastName = row.querySelector('td:nth-child(2)').textContent;
-    const idNumber = row.querySelector('td:nth-child(3)').textContent;
-    const permissions = row.querySelector('td:nth-child(4)').textContent;
-
-    // Show the complete information
-    alert(`First Name: ${firstName}\nLast Name: ${lastName}\nID Number: ${idNumber}\nPermissions: ${permissions}`);
-  });
-});
-
-// Get the save button
-const saveButton = document.getElementById('save-button');
-
-// Add click event listener to the save button
-saveButton.addEventListener('click', () => {
-  // Save the changes
-  alert('Changes saved successfully!');
-
-  // Disable the save button
-  saveButton.disabled = true;
-});
-
-// Add change event listener to the table rows
-const tableRows = document.querySelectorAll('.filter-item');
-tableRows.forEach(row => {
-  row.addEventListener('change', () => {
-    // Enable the save button
-    saveButton.disabled = false;
-  });
-});
+}
