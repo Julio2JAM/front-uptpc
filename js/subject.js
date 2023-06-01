@@ -1,6 +1,7 @@
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadSubject());
 
+// Obtener todos los registros de la tabla
 async function loadSubject(){
     await fetch(`http://localhost:3000/api/subject/`)
     .then(response => response.json())
@@ -14,38 +15,42 @@ document.getElementById("search").addEventListener("click", async () => await se
 // Funcion para buscar un registro en la tabla search
 async function search(){
 
-    // Obtener los de los elementos de busqueda su contenido
+    // Obtener de los elementos de busqueda su contenido
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
     const data = new Object;
     for(const element of elements) {
-        console.log(element);
-        data[element.id] = element.value;
+        data[element.id.replace("filter-","")] = element.value;
     }
 
+    const validateData = Object.values(data).every(value => !value);
+    if(validateData){
+        await loadSubject();
+        return;
+    }
+
+    // En caso de no enviar algun dato, remplazar // por /
     var url = `http://localhost:3000/api/subject/name/${data["name"]}/description/${data["description"]}/status/${data["status"]}`;
     url = url.replace(/\/\//g, "/");
 
+    console.log(url);
+    // Obtener los datos de la busqueda
     await fetch(url)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
 }
 
+// Funcion para llenar la tabla
 function dataTable(data) {
 
     const tableBody = document.querySelector("tbody");
     tableBody.innerHTML = "";
 
-    const selectStatus = document.createElement("select");
-    const options = [
-        {value: -1, label: "Deleted"},
-        {value: 0, label: "Unavailable"},
-        {value: 1, label: "Available"}
-    ];
-
-    for (const option of options) {
-        selectStatus.add(new Option(option.label, option.value));
-    }
+    const options = {
+        "-1": "Deleted",
+        "0": "Unavailable",
+        "1": "Available"
+    };
 
     // Crear boton de view
     const button = document.createElement('button');
@@ -66,16 +71,37 @@ function dataTable(data) {
         description.innerHTML = element.description;
 
         const status = row.insertCell(3);
-        const clonedSelect = selectStatus.cloneNode(true);
-        clonedSelect.value = element.id_status;
-        status.appendChild(clonedSelect);
+        status.innerHTML = options[element.id_status];
 
         const action = row.insertCell(4);
         action.appendChild(button.cloneNode(true));
     });
+
+    addEvents();
 }
 
-document.getElementById("new").addEventListener("click", () => {
+// Agregar evento de click a todos los botones de view
+function addEvents(){
+    const buttons = document.querySelectorAll("tbody button");
+    buttons.forEach(button => button.addEventListener("click", (event) => detail(event)));
+}
+
+// Obtener todos los datos de un elemento
+async function detail(event){
+
+    const row = event.target.closest('tr');
+    const id = row.cells[0].textContent;
+
+    await fetch(`http://localhost:3000/api/subject/${id}`)
+    .then(response => response.json())
+    .then(data => createModalBox(data))
+    .catch(err => console.error(err));
+
+}
+
+document.getElementById("new").addEventListener("click", () => createModalBox(null));
+
+function createModalBox(data){
 
     // Crear divs contenedores
     var modal = document.createElement("div");
@@ -83,7 +109,7 @@ document.getElementById("new").addEventListener("click", () => {
     modal.id = "modal-box";
 
     var modalContent = document.createElement("div");
-    modalContent.className = "modal-content";
+    modalContent.className = "horizontal-card";
     modalContent.id = "modal-content";
 
     var cardContent = document.createElement("div");
@@ -93,84 +119,83 @@ document.getElementById("new").addEventListener("click", () => {
     // Crear elementos del DOM
     var img = document.createElement("img");
     img.src = "source/subject2.jpeg";
-
-    var fieldset1 = document.createElement("fieldset");
-    var legend1 = document.createElement("legend");
-    var select1 = document.createElement("select");
-    var span11 = document.createElement("span");
-    var span12 = document.createElement("span");
-    var span13 = document.createElement("span");
-    var input11 = document.createElement("input");
-    var input12 = document.createElement("input");
-    var option = document.createElement("option");
-
-    /*var fieldset2 = document.createElement("fieldset");
-    var legend2 = document.createElement("legend");
-    var select2 = document.createElement("select");
-    var option2_1 = document.createElement("option");*/
-    var input2 = document.createElement("input");
     
+    var spanName = document.createElement("span");
+    var inputName = document.createElement("input");
+    
+    var spanDescription = document.createElement("span");
+    var inputDescription = document.createElement("input");
+    
+    var spanStatus = document.createElement("span");
+    var selectStatus = document.createElement("select");
+    var options = [
+        {value: -1, label: "Deleted"},
+        {value: 0, label: "Unavailable"},
+        {value: 1, label: "Available"}
+    ];
+
+    var inputSubmit = document.createElement("input");
+    inputSubmit.addEventListener("click", async () => await save());
+
     // Configurar los elementos
-    legend1.textContent = "Data subject";
-    span11.textContent = "Name";
-    input11.type = "text";
-    input11.id = "name";
-    input11.placeholder = "name";
+    spanName.textContent = "Name";
+    inputName.type = "text";
+    inputName.id = "name";
+    inputName.placeholder = "name";
+    inputName.value = (data?.name ?? "");
     
-    span13.textContent = "Status";
-    option.value = "";
-    option.text = "Select a status";
+    spanDescription.textContent = "Description";
+    inputDescription.type = "text";
+    inputDescription.id = "description";
+    inputDescription.placeholder = "Description";
+    inputDescription.value = data?.description ?? "";
+    
+    spanStatus.textContent = "Status";
+    selectStatus.id = "status";
+    for (var option of options) {
+        selectStatus.add(new Option(option.label, option.value));
+    }
+    selectStatus.value = data?.id_status ?? 1;
 
-    span12.textContent = "Description";
-    input12.type = "text";
-    input12.id = "Description";
-    input12.placeholder = "Description";
-    
-   /* legend2.textContent = "Search subject";
-    option2_1.value = "0";
-    option2_1.textContent = "Selecciona un tema";
-    select2.appendChild(option2_1);*/
-    input2.type = "submit";
-    input2.id = "save";
-    input2.value = "save";
+    inputSubmit.type = "submit";
+    inputSubmit.id = "save";
+    inputSubmit.value = "save";
     
     // Agregar los elementos al DOM
-    select1.appendChild(option);
     modalContent.appendChild(img);
 
-    fieldset1.appendChild(legend1);
+    cardContent.appendChild(spanName);
+    cardContent.appendChild(inputName);
 
-    fieldset1.appendChild(span11);
-    fieldset1.appendChild(input11);
+    cardContent.appendChild(spanDescription);
+    cardContent.appendChild(inputDescription);
 
-    fieldset1.appendChild(span12);
-    fieldset1.appendChild(input12);
+    cardContent.appendChild(spanStatus);
+    cardContent.appendChild(selectStatus);
 
-    fieldset1.appendChild(span13);
-    fieldset1.appendChild(select1);
-    
-    cardContent.appendChild(fieldset1);
-    
-    fieldset1.appendChild(input2);
-    /*fieldset2.appendChild(legend2);
-    fieldset2.appendChild(select2);
-    cardContent.appendChild(fieldset2);*/
+    cardContent.appendChild(inputSubmit);
 
     modalContent.appendChild(cardContent);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
-});
 
-/*
+    modal.addEventListener("click", (event) => {
+        if(event.target.id === "modal-box"){
+            event.target.remove();
+        }
+    });
+}
+
 // Obtener el elemento "save" y agregarle un evento
-document.getElementById("save").addEventListener("click", async () => {
+async function save (){
     // Obtener los elementos "name" y "description"
-    let name = document.getElementById("name");
-    let description = document.getElementById("description");
-    let id_status = document.getElementById("status");
+    let name = document.getElementById("name").value;
+    let description = document.getElementById("description").value;
+    let id_status = document.getElementById("status").value;
 
+    console.log(name, description, id_status);
     // Gardar los elementos en la base de datos
-    await fetch("http://localhost:3000/api/subject/postOrUpdate", {
+    /*await fetch("http://localhost:3000/api/subject/postOrUpdate", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({name:name.value, description: description.value, id_status: id_status.value})
@@ -180,7 +205,6 @@ document.getElementById("save").addEventListener("click", async () => {
         console.log('Datos guardados: ', data);
         loadSubject();
     })
-    .catch(error => console.error('Ha ocurrido un error: ', error));
+    .catch(error => console.error('Ha ocurrido un error: ', error));*/
     
-});
-*/
+};
