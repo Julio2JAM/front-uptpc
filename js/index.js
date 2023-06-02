@@ -1,3 +1,8 @@
+console.log(document.cookie);
+/*if(document.cookie.indexOf("token") !== -1){
+    windows.location.href("text.html");
+}*/
+
 document.getElementById("login-btn").addEventListener("click", () =>{
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
