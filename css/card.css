@@ -208,6 +208,12 @@ table {
   border-bottom: 4px solid #e8e8e8;
   padding: 12px 15px;
 }
+
+thead{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
   /*
   .table tbody tr:last-child td {
     border-bottom: none;

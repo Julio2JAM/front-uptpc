@@ -46,7 +46,7 @@ function dataTable(data) {
     const tableBody = document.querySelector("tbody");
     tableBody.innerHTML = "";
 
-    const options = {
+    const statusData = {
         "-1": "Deleted",
         "0": "Unavailable",
         "1": "Available"
@@ -71,7 +71,7 @@ function dataTable(data) {
         description.innerHTML = element.description;
 
         const status = row.insertCell(3);
-        status.innerHTML = options[element.id_status];
+        status.innerHTML = statusData[element.id_status];
 
         const action = row.insertCell(4);
         action.appendChild(button.cloneNode(true));
@@ -83,7 +83,7 @@ function dataTable(data) {
 // Agregar evento de click a todos los botones de view
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
-    buttons.forEach(button => button.addEventListener("click", (event) => detail(event)));
+    buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
 // Obtener todos los datos de un elemento
@@ -211,6 +211,8 @@ async function save (){
     // Actulizar tabla dinamicamente, no terminado.
     let updateRow = "";
     if(id){
+        const method = "PUT";
+
         let tableBody = document.querySelector("tbody");
         for (const row of tableBody.rows) {
             if(row.cells[0].innerText === id){
@@ -218,18 +220,28 @@ async function save (){
                 break;
             }
         }
-    }
 
-    // Gardar los elementos en la base de datos
-    await fetch("http://localhost:3000/api/subject/postOrUpdate", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
+        const jsonData = {
             id:id,
             name:name, 
             description:description, 
             id_status:id_status
-        })
+        };
+
+    }else{
+        const method = "POST";
+        const jsonData = {
+            name:name, 
+            description:description, 
+            id_status:id_status
+        };
+    }
+
+    // Gardar los elementos en la base de datos
+    await fetch("http://localhost:3000/api/subject", {
+        method: method,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
     .then(data => {

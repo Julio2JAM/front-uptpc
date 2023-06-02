@@ -1,15 +1,5 @@
 window.addEventListener("load", async () => await loadData());
 
-const filter = document.querySelectorAll("filter-input");
-
-// Funcion que recive dos datos, el elemento a validar, y el tipo de dato que se le permite escribir
-function validateInput(event, type){
-  let remplace = type == "char" ? /[^a-zA-Z]+$/ : /[^0-9]+$/;
-  if (!remplace.test(event.target.value)) {
-      event.target.value = event.target.value.replace(remplace, ''); // Eliminar caracteres no permitidos
-  }
-}
-
 async function levels(){
 
   const select = document.getElementById("filter-permission");
@@ -27,16 +17,53 @@ async function levels(){
     });
   })
   .catch(err => err);
+
+  return select;
 }
 
 async function loadData(){
 
-  const table = document.getElementById("table");
-  const selectLevel = document.getElementById("filter-permission");
+  const selectLevel = await levels();
+  const table = document.querySelector("tbody");
 
-  const dataLevel = {};
+  var dataLevel = {};
+  for (const option of selectLevel) {
+    dataLevel[option.value] = option.textContent;
+  }
+
+  await fetch(`http://localhost:3000/api/user`)
+  .then(response => response.json())
+  .then(data => dataTable(data))
+  .catch(err => err);
+
+}
+
+document.getElementById('search').addEventListener('click', async () => await search());
+
+async function search() {
+
+  const elements = document.querySelectorAll(".filter-container input, select");
+  const data = {};
+  for (const element of elements) {
+    data[element.id.replace("filter-", "")] = element.value;
+  }
+  
+  const url = `http://localhost/api/user/username/${data["username"]}/level/${data["level"]}/status/${data["status"]}`;
+  url = url.replace(/\/\//g, "/");
+
+  fetch(url)
+  .then(response => response.json())
+  .then(data => dataTable(data))
+  .catch(error => console.log(error));
+}
+
+async function dataTable(data) {
+
+  const table = document.querySelector("tbody");
+  const selectLevel = document.getElementById("filter-permission");
+  const dataLevel = new Object();
   for (const option of selectLevel.options) {
-    dataLevel[option.id] = option.value;
+    dataLevel[option.value] = option.innerText;
   }
 
   // Crear boton de view
@@ -49,45 +76,38 @@ async function loadData(){
     "0": "Unavailable",
     "1": "Available"
   };
+  
+  data.forEach( element => {
 
-  await fetch(`http://localhost:3000/api/user`)
-  .then(response => response.json())
-  .then(data => {
-    data.forEach(element => {
+    // Insertar en la ultima posicion
+    const row = table.insertRow(-1);
+    row.className = "filter-item";//+element.id_level;
     
-      const clonedSelect = selectLevel.cloneNode(true);
-      clonedSelect.selectedIndex = (element.level !== null) ? element.level.id : 0;
+    // Crear columnas
+    const id = row.insertCell(0);
+    id.innerHTML = element.id;
+  
+    const username = row.insertCell(1);
+    username.innerHTML = element.username;
+  
+    const level = row.insertCell(2);
+    level.innerHTML = dataLevel[element.id_level] ?? "No select";
+  
+    const status = row.insertCell(3);
+    status.innerHTML = dataStatus[element.id_status];
+  
+    const view = row.insertCell(4);
+    view.appendChild(button.cloneNode(true));
+    
+  });
 
-      console.log("🚀 ~ file: users.js:40 ~ loadData ~ element:", element)
-      // Insertar en la ultima posicion
-      const row = table.insertRow(-1);
-      row.className = "filter-item";//+element.id_level;
-      
-      // Crear columnas
-      const id = row.insertCell(0);
-      id.innerHTML = element.id;
-
-      const username = row.insertCell(1);
-      username.innerHTML = element.username;
-
-      const level = row.insertCell(2);
-      lastName.innerHTML = dataLevel[element.id_level] ?? "";
-
-      const status = row.insertCell(3);
-      status.innerHTML = dataStatus[element.id_status];
-
-      const view = row.insertCell(4);
-      view.appendChild(button.cloneNode(true));
-    });
-  })
-  .catch(err => err);
-
+  addEvents();
 }
 
 // Agregar evento de click a todos los botones de view
 function addEvents(){
   const buttons = document.querySelectorAll("tbody button");
-  buttons.forEach(button => button.addEventListener("click", (event) => detail(event)));
+  buttons.forEach(button => button.addEventListener("click", event => detail(event)));
 }
 
 // Obtener todos los datos de un elemento
@@ -122,17 +142,18 @@ function createModalBox(data){
 
   // Crear elementos del DOM
   var img = document.createElement("img");
-  img.src = "source/subject2.jpeg";
+  img.src = "source/users.jpeg";
   
   var spanId = document.createElement("span");
   var inputId = document.createElement("input");
 
-  var spanName = document.createElement("span");
-  var inputName = document.createElement("input");
+  var spanUsername = document.createElement("span");
+  var inputUsername = document.createElement("input");
   
-  var spanDescription = document.createElement("span");
-  var inputDescription = document.createElement("input");
-  
+  var spanLevel = document.createElement("span");
+  var selectLevel = document.getElementById("filter-permission");
+  selectLevel = selectLevel.cloneNode(true);
+
   var spanStatus = document.createElement("span");
   var selectStatus = document.createElement("select");
   var options = [
@@ -153,18 +174,16 @@ function createModalBox(data){
   inputId.placeholder = "id";
   inputId.value = data?.id ?? "";
   
-  spanName.textContent = "Name";
-  inputName.type = "text";
-  inputName.id = "name";
-  inputName.placeholder = "name";
-  inputName.value = data?.name ?? "";
+  spanUsername.textContent = "Username";
+  inputUsername.type = "text";
+  inputUsername.id = "username";
+  inputUsername.placeholder = "username";
+  inputUsername.value = data?.username ?? "";
   
-  spanDescription.textContent = "Description";
-  inputDescription.type = "text";
-  inputDescription.id = "description";
-  inputDescription.placeholder = "Description";
-  inputDescription.value = data?.description ?? "";
-  
+  spanLevel.textContent = "Level";
+  selectLevel.id = "level";
+  selectLevel.value = data?.id_level ?? "";
+
   spanStatus.textContent = "Status";
   selectStatus.id = "status";
   for (var option of options) {
@@ -182,11 +201,11 @@ function createModalBox(data){
   cardContent.appendChild(spanId);
   cardContent.appendChild(inputId);
   
-  cardContent.appendChild(spanName);
-  cardContent.appendChild(inputName);
+  cardContent.appendChild(spanUsername);
+  cardContent.appendChild(inputUsername);
 
-  cardContent.appendChild(spanDescription);
-  cardContent.appendChild(inputDescription);
+  cardContent.appendChild(spanLevel);
+  cardContent.appendChild(selectLevel);
 
   cardContent.appendChild(spanStatus);
   cardContent.appendChild(selectStatus);
@@ -204,3 +223,48 @@ function createModalBox(data){
   });
 
 }
+
+// Obtener el elemento "save" y agregarle un evento
+async function save (){
+  // Obtener los elementos "name" y "description"
+  let id = document.getElementById("id").value;
+  let name = document.getElementById("username").value;
+  let description = document.getElementById("level").value;
+  let id_status = document.getElementById("status").value;
+
+  // Actulizar tabla dinamicamente, no terminado.
+  let updateRow = "";
+  if(id){
+      let tableBody = document.querySelector("tbody");
+      for (const row of tableBody.rows) {
+          if(row.cells[0].innerText === id){
+              updateRow = row;
+              break;
+          }
+      }
+  }
+
+  // Gardar los elementos en la base de datos
+  await fetch("http://localhost:3000/api/user", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+          id:id,
+          name:name, 
+          description:description, 
+          id_status:id_status
+      })
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log('Datos guardados: ', data);
+
+      if(updateRow){
+      }else{
+        loadSubject();
+      }
+
+  })
+  .catch(error => console.error('Ha ocurrido un error: ', error));
+  
+};
