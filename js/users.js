@@ -47,8 +47,14 @@ async function search() {
   for (const element of elements) {
     data[element.id.replace("filter-", "")] = element.value;
   }
-  
-  const url = `http://localhost/api/user/username/${data["username"]}/level/${data["level"]}/status/${data["status"]}`;
+
+  const validateData = Object.values(data).every(value => !value);
+  if(validateData){
+      await loadData();
+      return;
+  }
+
+  let url = `http://localhost:3000/api/user/username/${data["username"]}/level/${data["permission"]}/status/${data["status"]}`;
   url = url.replace(/\/\//g, "/");
 
   fetch(url)
@@ -60,6 +66,7 @@ async function search() {
 async function dataTable(data) {
 
   const table = document.querySelector("tbody");
+  table.innerHTML = "";
   const selectLevel = document.getElementById("filter-permission");
   const dataLevel = new Object();
   for (const option of selectLevel.options) {
@@ -91,7 +98,7 @@ async function dataTable(data) {
     username.innerHTML = element.username;
   
     const level = row.insertCell(2);
-    level.innerHTML = dataLevel[element.id_level] ?? "No select";
+    level.innerHTML = dataLevel[element.level?.id] ?? "No select";
   
     const status = row.insertCell(3);
     status.innerHTML = dataStatus[element.id_status];
@@ -182,7 +189,7 @@ function createModalBox(data){
   
   spanLevel.textContent = "Level";
   selectLevel.id = "level";
-  selectLevel.value = data?.id_level ?? "";
+  selectLevel.value = data.level?.id ?? "";
 
   spanStatus.textContent = "Status";
   selectStatus.id = "status";
@@ -227,42 +234,69 @@ function createModalBox(data){
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
   // Obtener los elementos "name" y "description"
-  let id = document.getElementById("id").value;
-  let name = document.getElementById("username").value;
-  let description = document.getElementById("level").value;
-  let id_status = document.getElementById("status").value;
+  let id = document.getElementById("id");
+  let username = document.getElementById("username");
+  let id_level = document.getElementById("level");
+  let id_status = document.getElementById("status");
 
   // Actulizar tabla dinamicamente, no terminado.
   let updateRow = "";
-  if(id){
+  if(id.value){
       let tableBody = document.querySelector("tbody");
+
       for (const row of tableBody.rows) {
-          if(row.cells[0].innerText === id){
-              updateRow = row;
-              break;
+        if(row.cells[0].textContent == id.value){
+            updateRow = row;
+            break;
           }
       }
+
+      var method = "put";
+      var dataUser = {
+        id:id.value,
+        username:username.value,
+        level:id_level.value,
+        id_status:id_status.value,
+      }
+  }else{
+    var method = "post";
+    var dataUser = {
+      username:username.value,
+      level:id_level.value,
+      id_status:id_status.value,
+    }
   }
 
   // Gardar los elementos en la base de datos
   await fetch("http://localhost:3000/api/user", {
-      method: "POST",
+      method: method,
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-          id:id,
-          name:name, 
-          description:description, 
-          id_status:id_status
-      })
+      body: JSON.stringify(dataUser)
   })
   .then(response => response.json())
   .then(data => {
-      console.log('Datos guardados: ', data);
 
-      if(updateRow){
-      }else{
-        loadSubject();
+    if(updateRow){
+
+      const selectLevel = document.getElementById("filter-permission");
+      const dataLevel = new Object();
+      for (const option of selectLevel.options) {
+        dataLevel[option.value] = option.innerText;
       }
+
+      const dataStatus = {
+        "-1": "Deleted",
+        "0": "Unavailable",
+        "1": "Available"
+      };
+
+      updateRow.cells[1].innerText = data.username;
+      updateRow.cells[2].innerText = dataLevel[data.level?.id] ?? "No select";
+      updateRow.cells[3].innerText = dataStatus[data.id_status];
+
+    }else{
+      loadData();
+    }
 
   })
   .catch(error => console.error('Ha ocurrido un error: ', error));

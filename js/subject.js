@@ -159,7 +159,7 @@ function createModalBox(data){
     inputDescription.type = "text";
     inputDescription.id = "description";
     inputDescription.placeholder = "Description";
-    inputDescription.value = data?.description ?? "";
+    inputDescription.value = data?.description ?? "No description";
     
     spanStatus.textContent = "Status";
     selectStatus.id = "status";
@@ -211,17 +211,17 @@ async function save (){
     // Actulizar tabla dinamicamente, no terminado.
     let updateRow = "";
     if(id){
-        const method = "PUT";
 
         let tableBody = document.querySelector("tbody");
         for (const row of tableBody.rows) {
-            if(row.cells[0].innerText === id){
+            if(row.cells[0].innerText == id){
                 updateRow = row;
                 break;
             }
         }
 
-        const jsonData = {
+        var method = "PUT";
+        var jsonData = {
             id:id,
             name:name, 
             description:description, 
@@ -229,8 +229,8 @@ async function save (){
         };
 
     }else{
-        const method = "POST";
-        const jsonData = {
+        var method = "POST";
+        var jsonData = {
             name:name, 
             description:description, 
             id_status:id_status
@@ -245,8 +245,17 @@ async function save (){
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Datos guardados: ', data);
-        loadSubject();
+
+      const dataStatus = {
+        "-1": "Deleted",
+        "0": "Unavailable",
+        "1": "Available"
+      };
+
+      updateRow.cells[1].innerText = data.name;
+      updateRow.cells[2].innerText = data.description ?? "No description";
+      updateRow.cells[3].innerText = dataStatus[data.id_status];
+
     })
     .catch(error => console.error('Ha ocurrido un error: ', error));
     
