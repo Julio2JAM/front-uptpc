@@ -189,7 +189,7 @@ function createModalBox(data){
   
   spanLevel.textContent = "Level";
   selectLevel.id = "level";
-  selectLevel.value = data.level?.id ?? "";
+  selectLevel.value = data?.level?.id ?? "";
 
   spanStatus.textContent = "Status";
   selectStatus.id = "status";
