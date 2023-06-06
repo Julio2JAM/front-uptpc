@@ -1,3 +1,7 @@
+if(document.cookie.indexOf("token") !== -1){
+    location.href = "menu.html";
+}
+
 const inputs = document.querySelectorAll('#general-information input');
 for(const element of inputs){
     if(element.id == "name" || element.id == "lastname"){
