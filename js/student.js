@@ -88,8 +88,10 @@ function createModalBox(data){
     // Id
     var spanId = document.createElement("span");
     spanId.innerText = "ID";
+    spanId.className = "id";
     var inputId = document.createElement("input");
     inputId.type = "text";
+    inputId.className = "id";
     inputId.value = data?.id ?? "";
 
     cardContent.appendChild(spanId);
@@ -132,8 +134,8 @@ function createModalBox(data){
     inputEmail.type = "email";
     inputEmail.value = data?.email ?? "";
 
-    cardContent.appendChild(spanCedule);
-    cardContent.appendChild(inputCedule);
+    cardContent.appendChild(spanEmail);
+    cardContent.appendChild(inputEmail);
 
     // Phone
     var spanPhone = document.createElement("span");

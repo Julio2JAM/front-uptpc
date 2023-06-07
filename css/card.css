@@ -4,8 +4,8 @@
 }
 
 body{
-    background: linear-gradient(to top, #c7d7ff, #f3d6ff);
-    height: 100vh;
+  background: linear-gradient(to top, #c7d7ff, #f3d6ff);
+  height: 100vh;
 }
 
 .card-container{
@@ -31,6 +31,8 @@ body{
 }
 
 .horizontal-card input[type="text"],
+.horizontal-card input[type="email"],
+.horizontal-card input[type="date"],
 .modal-content input[type="text"],
 .modal-content input[type="email"],
 .modal-content input[type="date"],
@@ -52,22 +54,16 @@ body{
   width: 100%;
   padding: 8px;
   border-radius: 5px;
-  display: inline-block;
   border: none;
-  background: linear-gradient(to bottom right, #FF7F50, #FF6347);
   font-size: 14px;
-  transition: box-shadow 0.2s;
-}
-  
-input[type="submit"]:active,
-.horizontal-card .modal-box-buttom:active{
-  background: linear-gradient(to bottom right, #F08080, #FFA07A);
-  box-shadow: 0px 0px 5px #F4A85E !important;
+  color: white;
+  background: #1abc9c;
+  border: 1px solid white;
 }
 
-input[type="submit"]:hover,
+.horizontal-card input[type="submit"]:hover,
 .horizontal-card .modal-box-buttom:hover{
-  box-shadow: 0px 0px 5px #F08080;
+  border: 1px solid #00997b;
 }
 
 .horizontal-card img,
@@ -104,35 +100,45 @@ span{
     font-size: 14px;
     width: 100%;
 }
-
+/*
 .filter-buttons {
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
 }
-  
+*/
 .filter-button {
   background-color: #f1f1f1;
   border: none;
-  color: black;
   padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
   font-size: 14px;
-  margin: 4px 2px;
   cursor: pointer;
   border-radius: 5px;
-  transition: all 0.3s ease;
+  float: right;
+  margin-left: 10px;
+  border: 1px solid #ccc;
 }
 
-.filter-button:not(.active):hover {  
-  background-color: #aad4ff;
+.filter-button:not(.active):hover {
+  border: 1px solid #6fb6ff !important;
 }
 
 .filter-button.active {
   background-color: #007bff;
+  border: 1px solid white;
   color: #fff;
+}
+.filter-button.active:hover {
+  border: 1px solid #0055aa;
+}
+
+input:not([type="submit"]):focus,
+input:not([type="submit"]):hover,
+select:focus,
+select:hover{
+  outline: none;
+  border: 1px solid #6fb6ff !important;
+  background-color: white !important;
 }
 
 table {
@@ -161,7 +167,7 @@ table {
 }
 
 .table thead tr th {
-  font-weight: bold;
+  font-weight: initial;
   text-transform: uppercase;
   color: #fff;
   background-color: #007bff;
@@ -257,6 +263,7 @@ table select{
   margin: 5px 10px 5px 0px !important;
   border-radius: 5px;
   width: auto !important;
+  background-color: #fbfbfb;
 }
 
 .modal-box {

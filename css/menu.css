@@ -22,8 +22,8 @@ a{
     color: #1abc9c;
     display: block;
     padding: 10px;
-    font-weight: bold;
-    text-transform: uppercase;
+    /*font-weight: bold;
+    text-transform: uppercase;*/
 }
 
 a:hover{

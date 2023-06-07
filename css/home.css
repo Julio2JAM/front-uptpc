@@ -6,8 +6,9 @@ body{
     margin: 0;
     margin-bottom: 10px;
     padding: 0;
-    height: 100%;
     background: linear-gradient(to top, #c7d7ff, #f3d6ff);
+    background-attachment: fixed;
+    background-size: 100% 100%;
 }
 
 .card-container {
