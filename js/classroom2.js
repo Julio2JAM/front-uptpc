@@ -4,7 +4,7 @@ async function loadData(){
 
     await fetch("http://localhost:3000/api/classroom/")
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => dataTable(data))
     .catch(error => error);
 
 }
@@ -23,22 +23,25 @@ function dataTable(data){
     button.innerText = "View";
 
     for (const element of data) {
-        
+
         const row = tbody.insertRow(-1);
         
-        const name = row.insertCell(0);
-        name.textContent = element.name ?? "";
+        const id = row.insertCell(0);
+        id.innerHTML = element.id ?? "";
 
-        const datetimeStart = row.insertCell(1);
-        datetimeStart.textContent = element.datetime_start ?? "";
+        const name = row.insertCell(1);
+        name.innerHTML = element.name ?? "test";
 
-        const datetimeEnd = row.insertCell(2);
-        name.textContent = element.datetime_end ?? "";
+        const datetimeStart = row.insertCell(2);
+        datetimeStart.textContent = element.datetime_start ?? "No datetime start";
 
-        const status = row.insertCell(3);
+        const datetimeEnd = row.insertCell(3);
+        datetimeEnd.textContent = element.datetime_end ?? "No datetime end";
+
+        const status = row.insertCell(4);
         status.textContent = statusData[element.id_status] ?? "";
 
-        const view = row.insertCell(4);
+        const view = row.insertCell(5);
         view.appendChild(button.cloneNode(true));
 
     }
@@ -54,14 +57,16 @@ function addEvents(){
 async function detail(event) {
 
     const row = event.target.closest("tr");
-    const id = row.cells[0];
+    const id = row.cells[0].innerHTML;
 
-    await fetch(`https://localhost:3000/api/classroom/${id}`)
+    await fetch(`http://localhost:3000/api/classroom/${id}`)
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => createModalBox(data))
     .catch(error => console.error(error));
 
 }
+
+document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
 function createModalBox(data) {
 
@@ -88,6 +93,7 @@ function createModalBox(data) {
     spanId.innerText = "ID";
     spanId.className = "id";
     var inputId = document.createElement("input");
+    inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
     inputId.value = data?.id ?? "";
@@ -102,6 +108,7 @@ function createModalBox(data) {
     inputName.id = "name";
     inputName.type = "text";
     inputName.value = data?.name ?? "";
+    inputName.placeholder = "Name";
 
     cardContent.appendChild(spanName);
     cardContent.appendChild(inputName);
@@ -110,6 +117,7 @@ function createModalBox(data) {
     var spanDatetimeStart = document.createElement("span");
     spanDatetimeStart.innerHTML = "Datetime end";
     var inputDatetimeStart = document.createElement("input");
+    inputDatetimeStart.id = "datetime_start";
     inputDatetimeStart.type = "date";
     inputDatetimeStart.value = data?.datetime_end ?? "";
 
@@ -120,6 +128,7 @@ function createModalBox(data) {
     var spanDatetimeEnd = document.createElement("span");
     spanDatetimeEnd.innerHTML = "Datetime end";
     var inputDatetimeEnd = document.createElement("input");
+    inputDatetimeEnd.id = "datetime_end";
     inputDatetimeEnd.type = "date";
     inputDatetimeEnd.value = data?.datetime_end ?? "";
 
@@ -131,6 +140,7 @@ function createModalBox(data) {
     spanStatus.innerText = "Status";
     var selectStatus = document.createElement("select");
     var options = [
+        {value: "", label: "Select a status"},
         {value: -1, label: "Deleted"},
         {value: 0, label: "Unavailable"},
         {value: 1, label: "Available"}
@@ -138,6 +148,7 @@ function createModalBox(data) {
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
+    selectStatus.id = "status";
     selectStatus.value = data?.id_status ?? "";
 
     cardContent.appendChild(spanStatus);
@@ -173,20 +184,52 @@ async function save(){
     const status  = document.getElementById("status");
 
     const method = id ? "PUT" : "POST";
-    var jsonData = {
-        name:name, 
-        datetime_start:datetime_start, 
-        datetime_end:datetime_end,
-        id_status:status
+    const jsonData = {
+        name:name.value, 
+        datetime_start:datetime_start.value, 
+        datetime_end:datetime_end.value,
+        id_status:status.value
     };
 
+    if(id){
+
+        let tableBody = document.querySelector("tbody");
+        for (const row of tableBody.rows) {
+            if(row.cells[0].innerText == id.value){
+                let updateRow = row;
+                break;
+            }
+        }
+
+        jsonData.id = id.value;
+    }
+
     await fetch("http://localhost:3000/api/classroom", {
-        method: "method",
+        method: method,
         headers: {"content-type": "application/json"},
-        body: JSON.stringify()
+        body: JSON.stringify({
+            id:id.value,
+            name:name.value, 
+            datetime_start:datetime_start.value, 
+            datetime_end:datetime_end.value,
+            id_status:status.value
+        })
     })
     .then(response => response.json())
-    .then(data => data)
-    .catch(error => error);
+    .then(data => {
+
+        const dataStatus = {
+            "-1": "Deleted",
+            "0": "Unavailable",
+            "1": "Available"
+        };
+    
+        updateRow.cells[1].innerText = data.name;
+        updateRow.cells[2].innerText = data.datetime_start ?? "No datetime available";
+        updateRow.cells[3].innerText = data.datetime_end ?? "No datetime available";
+        updateRow.cells[4].innerText = dataStatus[data.datetime_end];
+
+    })
+    .catch(error => console.log(error));
 
 }
