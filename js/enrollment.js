@@ -38,23 +38,30 @@ async function createModalList(data){
         }
     });
 
+    const ul = document.createElement("ul");
     await fetch("http://localhost:3000/api/classroom/")
     .then(response => response.json())
-    .then(data => data.forEach(element => {
-            
-        const div = document.createElement("div");
+    .then(data => {
+        data.forEach(element => {
 
-        const text = document.createElement("a");
-        text.innerHTML = element.name;
-        text.id = element.id;
-        div.appendChild(text);
+            const li = document.createElement("li");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            li.appendChild(checkbox);
 
-        const hr = document.createElement("hr");
+            const text = document.createElement("a");
+            text.innerHTML = element.name;
+            text.id = element.id;
+            li.appendChild(text);
 
-        fieldset.appendChild(div);
-        fieldset.appendChild(hr);
+            //const hr = document.createElement("hr");
 
-    }))
+
+            ul.appendChild(li);    
+        });
+
+        fieldset.appendChild(ul);
+    })
     .catch(error => error);
 
 }
