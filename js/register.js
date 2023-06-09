@@ -148,7 +148,7 @@ document.getElementById("register-btn").addEventListener("click", async () => {
         password: document.getElementById("password").value
     }
     
-    fetch("http://localhost:3000/api/user/register",{
+    await fetch("http://localhost:3000/api/user/register",{
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({user: user, person: person})
@@ -175,7 +175,7 @@ function validateInput(event, type){
 }
 
 // Obtener el elemento "username" para validar que no exista en la base de datos
-document.getElementById("username").addEventListener("input", event => {
+document.getElementById("username").addEventListener("input", async (event) => {
 
     let username = event.target;
 
@@ -184,7 +184,7 @@ document.getElementById("username").addEventListener("input", event => {
         return;
     }
 
-    fetch(`http://localhost:3000/api/user/username/${username.value}`)
+    await fetch(`http://localhost:3000/api/user/username/${username.value}`)
     .then(response => response.json())
     .then(data => {
 

@@ -164,6 +164,7 @@ table {
 
 .button-table{
   width: auto !important;
+  margin: 0px !important;
 }
 
 .table thead tr th {

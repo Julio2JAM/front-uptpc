@@ -34,11 +34,11 @@ async function verifyToken(){
     }
 }
 
-document.getElementById("login-btn").addEventListener("click", () =>{
+document.getElementById("login-btn").addEventListener("click", async () => {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
-    fetch("http://localhost:3000/api/access",{
+    await fetch("http://localhost:3000/api/access",{
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({username: username, password: password})

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom</title>
+    <title>Classroom/professor/subject</title>
     <link rel="stylesheet" href="./css/card.css">
     <link rel="stylesheet" href="./css/menu.css">
 </head>
@@ -27,9 +27,10 @@
             <div class="card-content">
 
                 <div class="filter-container">
+                    <input type="text" placeholder="Filter by Name" id="filter-subject">
                     <input type="text" placeholder="Filter by Name" id="filter-name">
-                    <input type="text" placeholder="Filter by Datetime start" id="filter-datetime_start">
-                    <input type="text" placeholder="Filter by Datetime end" id="filter-datetime_end">
+                    <input type="text" placeholder="Filter by Last name" id="filter-lastname">
+                    <input type="text" placeholder="Filter by ID number" id="filter-cedule">
                     <select id="filter-status">
                     <option value="">Select a status</option>
                     <option value="-1">Deleted</option>
@@ -44,9 +45,10 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Subject</th>
                                 <th>Name</th>
-                                <th>Datetime start</th>
-                                <th>Datetime end</th>
+                                <th>Last Name</th>
+                                <th>ID Number</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -54,9 +56,10 @@
                         <tbody></tbody>
                     </table>
                 </div>
-                <button id="new" class="modal-box-buttom button-table">New subject</button>
-                <button class="filter-button active" data-filter="all">Classroom</button>
-                <button class="filter-button" data-filter="admin">Classroom/student</button>
+                <button id="new" class="modal-box-buttom button-table">New</button>
+                <button id="Load" class="modal-box-buttom button-table">Load</button>
+                <button class="filter-button" data-filter="all">Classroom</button>
+                <button class="filter-button active" data-filter="admin">Classroom/student</button>
                 <button class="filter-button" data-filter="admin">Classroom/professor</button>
             </div>
         </div>

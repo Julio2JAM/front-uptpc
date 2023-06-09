@@ -57,7 +57,7 @@ async function search() {
   let url = `http://localhost:3000/api/user/username/${data["username"]}/level/${data["permission"]}/status/${data["status"]}`;
   url = url.replace(/\/\//g, "/");
 
-  fetch(url)
+  await fetch(url)
   .then(response => response.json())
   .then(data => dataTable(data))
   .catch(error => console.log(error));
@@ -160,7 +160,8 @@ function createModalBox(data){
   var spanLevel = document.createElement("span");
   var selectLevel = document.getElementById("filter-permission");
   selectLevel = selectLevel.cloneNode(true);
-
+  selectLevel.remove(0);
+  
   var spanStatus = document.createElement("span");
   var selectStatus = document.createElement("select");
   var options = [

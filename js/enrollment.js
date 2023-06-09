@@ -1,8 +1,19 @@
 window.addEventListener('load', async () => await loadData());
+document.getElementById("classroom").addEventListener("click", async () => await loadClassroom());
+
+async function loadClassroom(){
+
+    await fetch("http://localhost:3000/api/enrollment/")
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => error);
+
+}
 
 async function loadData() {
+    const classroom = 1;
 
-    await fetch("http://localhost:3000/api/student/")
+    await fetch("http://localhost:3000/api/enrollment/")
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -28,13 +39,13 @@ function dataTable(data) {
         const row = table.insertRow(-1);
 
         const name = row.insertCell(0);
-        name.innerText = element.name;
+        name.innerText = element.student.name;
 
         const lastname = row.insertCell(1);
-        lastname.innerText = element.lastname;
+        lastname.innerText = element.student.lastname;
 
         const cedule = row.insertCell(2);
-        cedule.innerText = element.cedule;
+        cedule.innerText = element.student.cedule;
 
         const status = row.insertCell(3);
         status.innerText = statusData[element.id_status];
@@ -56,7 +67,7 @@ async function detail(event){
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`http://localhost:3000/api/student/${id}`)
+    await fetch(`http://localhost:3000/api/enrollment/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
     .catch(error => console.log(error));

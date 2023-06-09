@@ -5,58 +5,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom</title>
-
-    <link rel="stylesheet" type="text/css" href="libs/css/select2.css">
-    <script src="libs/jquery-3.7.0.min.js"></script>
-    <script src="libs/js/select2.js"></script>
+    <link rel="stylesheet" href="./css/card.css">
+    <link rel="stylesheet" href="./css/menu.css">
 </head>
 <body>
-    <!--CREAR CLASE-->
-    <div id="data-classroom">
-        <input type="text" id="name" placeholder="name">
-        <input type="date" id="datetime-start" placeholder="datetime start">
-        <input type="date" id="datetime-end" placeholder="datetime end">
-        <select name="status" id="status">
-            <option value="">Select a status</option>
-            <option value="-1">Deleted</option>
-            <option value="0">Unavailable</option>
-            <option value="1">Available</option>
-        </select>
-        <input type="submit" id="save" value="Save">
-    </div>
 
-    <!--BUSCAR CLASE PARA ENCONTRAR TODO LO RELACIONADO, ES DECIR, MATERIAS, DOCENTES Y ESTUDIANTES-->
-    <div>
-        <input type="text" id="search-classroom" placeholder="search classroom">
-        <select id="select-classroom">
-            <option value="0">Select a classroom</option>
-        </select>
-        <input type="submit" id="search" value="search">
-    </div>
+    <nav>
+        <ul>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="student.html">Students</a></li>
+        <li><a href="professor.html">Professors</a></li>
+        <li class="selected"><a href="classroom.html">Classroom</a></li>
+        <li><a href="subject.html">Subjects</a></li>
+        <li><a href="user.html">Users</a></li>
+        <li><a href="exi.html">Exit</a></li>
+        </ul>
+    </nav>
 
-    <!--BUSCAR CLASE PARA ASIGNARLE ESTUDIANTES-->
-    <div>
-        <input type="text" id="cedule-student" placeholder="cedule student">
-        <input type="text" id="name-student" placeholder="name student">
-        <select name="select-student" id="select-student">
-            <option value="0">Select a student</option>
-        </select>
-        <input type="submit" id="search-student" value="search-student">
-    </div>
+    <div class="card-container">
+        <div class="horizontal-card with-table">
+            <div class="card-content">
 
-    <!--CREAR CLASE PARA ASIGNARLE MATERIA Y DOCENTES-->
-    <div>
-        <input type="text" id="name-subject" placeholder="name subject">
-        <select id="select-subject">
-            <option value="0">Select a Subject</option>
-        </select>
+                <div class="filter-container">
+                    <input type="text" placeholder="Filter by Name" id="filter-name">
+                    <input type="text" placeholder="Filter by Datetime start" id="filter-datetime_start">
+                    <input type="text" placeholder="Filter by Datetime end" id="filter-datetime_end">
+                    <select id="filter-status">
+                    <option value="">Select a status</option>
+                    <option value="-1">Deleted</option>
+                    <option value="0">Unavailable</option>
+                    <option value="1">Available</option>
+                    </select>
+                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </div>
 
-        <input type="text" id="cedule-professor" placeholder="cedule professor">
-        <input type="text" id="name-professor" placeholder="name professor">
-        <select id="select-professor" name="select-professor" id="searchProfessor">
-            <option value="0">Select a Professor</option>
-        </select>
-        <input type="submit" value="search">
+                <div class="color-table">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Datetime start</th>
+                                <th>Datetime end</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button id="new" class="modal-box-buttom button-table">New subject</button>
+                <button class="filter-button active" data-filter="all">Classroom</button>
+                <button class="filter-button" data-filter="admin">Classroom/student</button>
+                <button class="filter-button" data-filter="admin">Classroom/professor</button>
+            </div>
+        </div>
+        
     </div>
 
     <script src="js/classroom.js"></script>
