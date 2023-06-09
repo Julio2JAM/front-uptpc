@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link rel="stylesheet" href="./css/card.css">
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+
+    <nav>
+        <ul>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="student.html">Students</a></li>
+        <li><a href="professor.html">Professors</a></li>
+        <li><a href="classroom.html">Classroom</a></li>
+        <li><a href="subject.html">Subjects</a></li>
+        <li class="selected"><a href="user.html">Users</a></li>
+        <li><a href="exi.html">Exit</a></li>
+        </ul>
+    </nav>
+
+    <div class="card-container">
+        <div class="horizontal-card with-table">
+            <div class="card-content">
+            <!--
+            <div class="filter-buttons">
+                <button class="filter-button active" data-filter="all">All</button>
+                <button class="filter-button" data-filter="view-only">View Only</button>
+                <button class="filter-button" data-filter="edit">Edit</button>
+                <button class="filter-button" data-filter="admin">Admin</button>
+            </div>
+            -->
+            <div class="filter-container">
+                <input type="text" placeholder="Filter by Username" id="filter-username">
+                <select id="filter-permission">
+                    <option value="">Select a permissions</option>
+                </select>
+                <select id="filter-status">
+                <option value="">Select a status</option>
+                <option value="-1">Deleted</option>
+                <option value="0">Unavailable</option>
+                <option value="1">Available</option>
+                </select>
+                <button type="button" id="search" class="filter-button active">Filter</button>
+            </div>
+                        
+            <div class="color-table">
+            <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Permissions</th>
+                    <th>status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+
+            </table>
+            </div>
+            <input type="submit" id="new" value="New user" class="button-table">
+            </div>
+        </div>
+    </div>
+
+    <script src="js/users.js"></script>
+</body>
+</html>
