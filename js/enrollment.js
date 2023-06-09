@@ -1,16 +1,73 @@
-window.addEventListener('load', async () => await loadData());
-document.getElementById("classroom").addEventListener("click", async () => await loadClassroom());
+//window.addEventListener('load', async () => await loadData());
+document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
-async function loadClassroom(){
+async function createModalList(data){
 
-    await fetch("http://localhost:3000/api/enrollment/")
+    // Crear divs contenedores
+    var modal = document.createElement("div");
+    modal.className = "modal-box";
+    modal.id = "modal-box";
+
+    var modalContent = document.createElement("div");
+    modalContent.className = "horizontal-card";
+    modalContent.id = "modal-content";
+
+    var cardContent = document.createElement("div");
+    cardContent.className = "card-content";
+    cardContent.id = "card-content";
+
+    //
+    const title = document.createElement("h3");
+    title.innerHTML = "Select a classroom";
+    cardContent.appendChild(title);
+
+    const fieldset = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    legend.innerHTML = "Classrooms";
+
+    fieldset.appendChild(legend);
+    cardContent.appendChild(fieldset);
+
+    modalContent.appendChild(cardContent);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (event) => {
+        if(event.target.id === "modal-box"){
+            event.target.remove();
+        }
+    });
+
+    await fetch("http://localhost:3000/api/classroom/")
     .then(response => response.json())
-    .then(data => dataTable(data))
+    .then(data => data.forEach(element => {
+            
+        const div = document.createElement("div");
+
+        const text = document.createElement("a");
+        text.innerHTML = element.name;
+        text.id = element.id;
+        div.appendChild(text);
+
+        const hr = document.createElement("hr");
+
+        fieldset.appendChild(div);
+        fieldset.appendChild(hr);
+
+    }))
     .catch(error => error);
 
 }
 
-async function loadData() {
+/*
+//! IN DEV
+function loadClassroomEvents(){
+    const checkboxs = document.querySelectorAll(".modalBox checkbox");
+    checkboxs.forEach(checkbox => checkbox.addEventListener("checked", (event) => checkbox.checked));
+}
+//! IN DEV
+
+async function loadData(data) {
     const classroom = 1;
 
     await fetch("http://localhost:3000/api/enrollment/")
@@ -193,4 +250,4 @@ function createModalBox(data){
             event.target.remove();
         }
     });
-}
+}*/
