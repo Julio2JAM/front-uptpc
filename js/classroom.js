@@ -233,3 +233,9 @@ async function save(){
     .catch(error => console.log(error));
 
 }
+
+document.querySelectorAll(".card-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
