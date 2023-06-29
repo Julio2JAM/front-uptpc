@@ -169,15 +169,21 @@ async function createModalBoxTable(){
     inputCedule.id = "filter-cedule";
     inputCedule.type = "text";
     inputCedule.placeholder = "Filter by Cedule";
+
+    var buttonSearch = document.createElement("button");
+    buttonSearch.id = "search";
+    buttonSearch.className = "filter-button active";
+    buttonSearch.innerHTML = "Filter";
     
     // Agregar elementos al contenedor
     filterContent.appendChild(inputName);
     filterContent.appendChild(inputLastname);
     filterContent.appendChild(inputCedule);
+    filterContent.appendChild(buttonSearch);
 
     // Crear un elemento <table>, un elemento <thead> y un elemento <tbody>
     var colorTable = document.createElement("div");
-    colorTable.className = "colorTable";
+    colorTable.className = "color-table";
     var tabla = document.createElement("table");
     tabla.className = "table"
     var thead = document.createElement("thead");
@@ -212,7 +218,7 @@ async function createModalBoxTable(){
     // Agregar todo
     colorTable.appendChild(tabla);
     cardContent.appendChild(filterContent);
-    cardContent.appendChild(tabla);
+    cardContent.appendChild(colorTable);
 
     await fetch("http://localhost:3000/api/student/")
     .then(response => response.json())
