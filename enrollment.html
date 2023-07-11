@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom/student</title>
+    <title>Matriculas</title>
     <link rel="stylesheet" href="./css/card.css">
     <link rel="stylesheet" href="./css/menu.css">
 </head>
@@ -27,14 +27,14 @@
             <div class="card-content">
 
                 <div class="filter-container">
-                    <input type="text" placeholder="Filter by Name" id="filter-name">
-                    <input type="text" placeholder="Filter by Last name" id="filter-lastname">
-                    <input type="text" placeholder="Filter by ID number" id="filter-cedule">
+                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                    <input type="text" placeholder="Filtrar por apellido" id="filter-lastname">
+                    <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
                     <select id="filter-status">
-                    <option value="">Select a status</option>
-                    <option value="-1">Deleted</option>
-                    <option value="0">Unavailable</option>
-                    <option value="1">Available</option>
+                        <option value="">Seleccione un estado</option>
+                        <option value="-1">Eliminado</option>
+                        <option value="0">No disponible</option>
+                        <option value="1">Disponible</option>
                     </select>
                     <button type="button" id="search" class="filter-button active">Filter</button>
                 </div>
