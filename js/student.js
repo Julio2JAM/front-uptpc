@@ -1,3 +1,9 @@
+document.querySelectorAll(".card-content button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
+
 window.addEventListener('load', async () => await loadData());
 
 async function loadData() {
