@@ -16,7 +16,11 @@ async function verifyToken(){
         }
         
     }
-    
+
+    if(!cookieValue){
+        return;
+    }
+
     var token;
     await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
     .then(response => response.json())

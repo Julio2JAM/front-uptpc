@@ -68,7 +68,7 @@ async function createModalList(data){
 
 function loadClassroomEvents(){
     const a = document.querySelectorAll("fieldset a");
-    a.forEach(a => a.addEventListener("click", (event) => loadData(event)));
+    a.forEach(a => a.addEventListener("click", async (event) => await loadData(event)));
 }
 
 async function loadData(data) {
@@ -134,7 +134,122 @@ async function detail(event){
 
 }
 
-document.getElementById("new").addEventListener("click", () => createModalBox(null));
+document.getElementById("new").addEventListener("click", async () => await createModalBoxTable());
+
+async function createModalBoxTable(){
+
+    // Crear divs contenedores
+    var modal = document.createElement("div");
+    modal.className = "modal-box";
+    modal.id = "modal-box";
+
+    var modalContent = document.createElement("div");
+    modalContent.className = "horizontal-card with-table";
+    modalContent.id = "modal-content";
+
+    var cardContent = document.createElement("div");
+    cardContent.className = "card-content";
+    cardContent.id = "card-content";
+    
+    // Crear elementos para filtrar
+    var filterContent = document.createElement("div");
+    filterContent.className = "filter-container";
+
+    var inputName = document.createElement("input");
+    inputName.id = "filter-name";
+    inputName.type = "text";
+    inputName.placeholder = "Filter by Name";
+
+    var inputLastname = document.createElement("input");
+    inputLastname.id = "filter-lastname";
+    inputLastname.type = "text";
+    inputLastname.placeholder = "Filter by Last name";
+
+    var inputCedule = document.createElement("input");
+    inputCedule.id = "filter-cedule";
+    inputCedule.type = "text";
+    inputCedule.placeholder = "Filter by Cedule";
+
+    var buttonSearch = document.createElement("button");
+    buttonSearch.id = "search";
+    buttonSearch.className = "filter-button active";
+    buttonSearch.innerHTML = "Filter";
+    
+    // Agregar elementos al contenedor
+    filterContent.appendChild(inputName);
+    filterContent.appendChild(inputLastname);
+    filterContent.appendChild(inputCedule);
+    filterContent.appendChild(buttonSearch);
+
+    // Crear un elemento <table>, un elemento <thead> y un elemento <tbody>
+    var colorTable = document.createElement("div");
+    colorTable.className = "color-table";
+    var tabla = document.createElement("table");
+    tabla.className = "table"
+    var thead = document.createElement("thead");
+    var tbody = document.createElement("tbody");
+
+    // Crear una fila de encabezado <tr> y tres celdas de encabezado <th>
+    var encabezado = document.createElement("tr");
+    var celda0 = document.createElement("th");
+    var celda1 = document.createElement("th");
+    var celda2 = document.createElement("th");
+    var celda3 = document.createElement("th");
+
+    // Agregar texto a las celdas de encabezado
+    celda0.innerHTML = "ID";
+    celda1.innerHTML = "Name";
+    celda2.innerHTML = "Last Name";
+    celda3.innerHTML = "Cedule";
+
+    // Agregar las celdas de encabezado a la fila de encabezado
+    encabezado.appendChild(celda0);
+    encabezado.appendChild(celda1);
+    encabezado.appendChild(celda2);
+    encabezado.appendChild(celda3);
+
+    // Agregar la fila de encabezado al elemento <thead>
+    thead.appendChild(encabezado);
+
+    // Agregar el elemento <thead> y <tbody> a la tabla
+    tabla.appendChild(thead);
+    tabla.appendChild(tbody);
+
+    // Agregar todo
+    colorTable.appendChild(tabla);
+    cardContent.appendChild(filterContent);
+    cardContent.appendChild(colorTable);
+
+    await fetch("http://localhost:3000/api/student/")
+    .then(response => response.json())
+    .then(data => data.forEach(element => {
+        console.log(element);
+        const row = tbody.insertRow(-1);
+
+        const id = row.insertCell(0);
+        id.innerText = element.id;
+
+        const name = row.insertCell(1);
+        name.innerText = element.name ?? "No name";
+
+        const lastname = row.insertCell(2);
+        lastname.innerText = element.lastName ?? "No last name";
+
+        const cedule = row.insertCell(3);
+        cedule.innerText = element.cedule;
+    }))
+    .catch(error => error);
+
+    modalContent.appendChild(cardContent);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    modal.addEventListener('click', (event) => {
+        if(event.target.id === "modal-box"){
+            event.target.remove();
+        }
+    })
+}
 
 function createModalBox(data){
 
@@ -179,6 +294,7 @@ function createModalBox(data){
     var inputName = document.createElement("input");
     inputName.type = "text";
     inputName.value = data?.name ?? "";
+    inputName.disabled = true;
 
     cardContent.appendChild(spanName);
     cardContent.appendChild(inputName);
@@ -189,6 +305,7 @@ function createModalBox(data){
     var inputLastname = document.createElement("input");
     inputLastname.type = "text";
     inputLastname.value = data?.lastname ?? "";
+    inputLastname.disabled = true;
 
     cardContent.appendChild(spanLastname);
     cardContent.appendChild(inputLastname);
@@ -199,16 +316,18 @@ function createModalBox(data){
     var inputCedule = document.createElement("input");
     inputCedule.type = "text";
     inputCedule.value = data?.cedule ?? "";
+    inputCedule.disabled = true;
 
     cardContent.appendChild(spanCedule);
     cardContent.appendChild(inputCedule);
-    
+
     // Email
     var spanEmail = document.createElement("span");
     spanEmail.innerText = "Email";
     var inputEmail = document.createElement("input");
     inputEmail.type = "email";
     inputEmail.value = data?.email ?? "";
+    inputEmail.disabled = true;
 
     cardContent.appendChild(spanEmail);
     cardContent.appendChild(inputEmail);
@@ -219,6 +338,8 @@ function createModalBox(data){
     var inputPhone = document.createElement("input");
     inputPhone.type = "text";
     inputPhone.value = data?.phone ?? "";
+    inputPhone.disabled = true;
+
 
     cardContent.appendChild(spanPhone);
     cardContent.appendChild(inputPhone);
