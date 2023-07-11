@@ -6,7 +6,7 @@ async function loadSubject(){
     await fetch(`http://localhost:3000/api/subject/`)
     .then(response => response.json())
     .then(data => dataTable(data))
-    .catch(error => console.log("Conexion failed, try in some seconds"));
+    .catch(error => console.log("Error de conexión, intente nuevamente en algunos segundos."));
 }
 
 // Al hacer click en search, obtener el elemento name y llamar a la funcion search
@@ -149,19 +149,19 @@ function createModalBox(data){
     inputId.placeholder = "id";
     inputId.value = data?.id ?? "";
     
-    spanName.textContent = "Name";
+    spanName.textContent = "Nombre";
     inputName.type = "text";
     inputName.id = "name";
-    inputName.placeholder = "name";
+    inputName.placeholder = "Nombre";
     inputName.value = data?.name ?? "";
     
-    spanDescription.textContent = "Description";
+    spanDescription.textContent = "Descripción";
     inputDescription.type = "text";
     inputDescription.id = "description";
-    inputDescription.placeholder = "Description";
-    inputDescription.value = data?.description ?? "No description";
+    inputDescription.placeholder = "Descripción";
+    inputDescription.value = data?.description ?? "";
     
-    spanStatus.textContent = "Status";
+    spanStatus.textContent = "Estado";
     selectStatus.id = "status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
@@ -247,9 +247,9 @@ async function save (){
     .then(data => {
 
       const dataStatus = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
       };
 
       updateRow.cells[1].innerText = data.name;

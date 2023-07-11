@@ -58,7 +58,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
         handleMessage("");
         document.cookie = `token=${data.token}; SameSite=None; Secure;`;
     })
-    .catch(error => handleMessage("Conexion failed, try in some seconds"))
+    .catch(error => handleMessage("Error de conexión, intente nuevamente en algunos segundos"))
 });
     
 
