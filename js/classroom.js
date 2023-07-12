@@ -13,14 +13,14 @@ function dataTable(data){
 
     const tbody = document.querySelector("tbody");
     const statusData = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
     };
 
     const button = document.createElement("button");
     button.className = "view-button";
-    button.innerText = "View";
+    button.innerText = "Ver más";
 
     for (const element of data) {
 
@@ -141,9 +141,9 @@ function createModalBox(data) {
     var selectStatus = document.createElement("select");
     var options = [
         {value: "", label: "Select a status"},
-        {value: -1, label: "Deleted"},
-        {value: 0, label: "Unavailable"},
-        {value: 1, label: "Available"}
+        {value: -1, label: "Eliminado"},
+        {value: 0, label: "No disponible"},
+        {value: 1, label: "Disponible"}
     ];
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
@@ -158,7 +158,7 @@ function createModalBox(data) {
     var inputSubmit = document.createElement("input");
     inputSubmit.id = "save";
     inputSubmit.type = "submit";
-    inputSubmit.value = "Save";
+    inputSubmit.value = "Actualizar";
     inputSubmit.addEventListener("click", async () => await save());
 
     cardContent.appendChild(inputSubmit);
@@ -219,9 +219,9 @@ async function save(){
     .then(data => {
 
         const dataStatus = {
-            "-1": "Deleted",
-            "0": "Unavailable",
-            "1": "Available"
+            "-1": "Eliminado",
+            "0": "No disponible",
+            "1": "Disponible"
         };
     
         updateRow.cells[1].innerText = data.name;

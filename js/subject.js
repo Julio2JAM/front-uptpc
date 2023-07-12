@@ -47,14 +47,14 @@ function dataTable(data) {
     tableBody.innerHTML = "";
 
     const statusData = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
     };
 
     // Crear boton de view
     const button = document.createElement('button');
-    button.innerHTML = "View";
+    button.innerHTML = "Ver más";
     button.className = "view-button";
 
     data.forEach(element => {
@@ -75,6 +75,7 @@ function dataTable(data) {
 
         const action = row.insertCell(4);
         action.appendChild(button.cloneNode(true));
+        //action.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     });
 
     addEvents();
@@ -132,9 +133,9 @@ function createModalBox(data){
     var spanStatus = document.createElement("span");
     var selectStatus = document.createElement("select");
     var options = [
-        {value: -1, label: "Deleted"},
-        {value: 0, label: "Unavailable"},
-        {value: 1, label: "Available"}
+        {value: -1, label: "Eliminado"},
+        {value: 0, label: "No disponible"},
+        {value: 1, label: "Disponible"}
     ];
 
     var inputSubmit = document.createElement("input");
@@ -170,7 +171,7 @@ function createModalBox(data){
 
     inputSubmit.type = "submit";
     inputSubmit.id = "save";
-    inputSubmit.value = "save";
+    inputSubmit.value = "Actualizar";
     
     // Agregar los elementos al DOM
     modalContent.appendChild(img);
