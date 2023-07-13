@@ -1,72 +1,79 @@
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
 window.addEventListener("load", async () => await loadData());
 
-async function loadData(){
-    await fetch("http://localhost:3000/api/classroom/")
+async function loadData() {
+    await fetch(`${API_URL}/professor`)
     .then(response => response.json())
     .then(data => dataTable(data))
-    .catch(error => error);
+    .catch(error => error)
 }
 
-function dataTable(data){
+function dataTable(data) {
 
-    const tbody = document.querySelector("tbody");
-    const statusData = {
-        "-1": "Eliminado",
-        "0": "No disponible",
-        "1": "Disponible"
+    if(!data){
+        return;
+    }
+
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    const status = {
+        "-1":"Eliminado",
+        "0":"No disponible",
+        "1":"Disponible",
     };
 
-    const button = document.createElement("button");
-    button.className = "view-button";
-    button.innerText = "Ver más";
+    const actionButton = document.createElement("button");
+    actionButton.className = "view-button";
+    actionButton.innerText = "Ver más";
 
-    for (const element of data) {
-
-        const row = tbody.insertRow(-1);
+    data.array.forEach(element => {
         
-        const id = row.insertCell(0);
-        id.innerHTML = element.id ?? "";
+        const row = tbody.insertRow(-1);
 
-        const name = row.insertCell(1);
-        name.innerHTML = element.name ?? "test";
+        const cellName = tbody.insertCell(0);
+        cellName.innerText = element.person.name;
+        
+        const cellLastName = tbody.insertCell(1);
+        cellLastName.innerText = element.person.lastName;
 
-        const datetimeStart = row.insertCell(2);
-        datetimeStart.textContent = element.datetime_start ?? "No datetime start";
+        const cellCedule = tbody.insertCell(2);
+        cellCedule.innerText = element.person.cedule;
 
-        const datetimeEnd = row.insertCell(3);
-        datetimeEnd.textContent = element.datetime_end ?? "No datetime end";
+        const cellProfession = tbody.insertCell(3);
+        cellProfession.innerText = element.person.profession;
 
-        const status = row.insertCell(4);
-        status.textContent = statusData[element.id_status] ?? "";
+        const cellStatus = tbody.insertCell(4);
+        cellStatus.innerText = element.person.id_status;
 
-        const view = row.insertCell(5);
-        view.appendChild(button.cloneNode(true));
+        const cellAction = tbody.insertCell(5);
+        cellAction.appendChild(actionButton.cloneNode(true));
 
-    }
+    });
 
     addEvents();
 }
 
-function addEvents(){
+function addEvents() {
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
 async function detail(event) {
-
+    
     const row = event.target.closest("tr");
-    const id = row.cells[0].innerHTML;
+    const id = row.cells[0].textContent;
 
-    await fetch(`http://localhost:3000/api/classroom/${id}`)
+    await fetch(`${API_URL}/professor/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
-    .catch(error => console.error(error));
-
+    .catch(error => error)
 }
 
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
-function createModalBox(data) {
+function createModalBox(data){
 
     // Crear divs contenedores
     var modal = document.createElement("div");
@@ -83,7 +90,7 @@ function createModalBox(data) {
 
     // Crear elementos del DOM
     var img = document.createElement("img");
-    img.src = "source/classroom2.jpeg";
+    img.src = "source/students.jpeg";
     modalContent.appendChild(img);
     
     // Id
@@ -91,7 +98,6 @@ function createModalBox(data) {
     spanId.innerText = "ID";
     spanId.className = "id";
     var inputId = document.createElement("input");
-    inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
     inputId.value = data?.id ?? "";
@@ -103,42 +109,57 @@ function createModalBox(data) {
     var spanName = document.createElement("span");
     spanName.innerText = "Name";
     var inputName = document.createElement("input");
-    inputName.id = "name";
     inputName.type = "text";
     inputName.value = data?.name ?? "";
-    inputName.placeholder = "Name";
 
     cardContent.appendChild(spanName);
     cardContent.appendChild(inputName);
-
-    // datetimeStart
-    var spanDatetimeStart = document.createElement("span");
-    spanDatetimeStart.innerHTML = "Datetime start";
-    var inputDatetimeStart = document.createElement("input");
-    inputDatetimeStart.id = "datetime_start";
-    inputDatetimeStart.type = "date";
-    inputDatetimeStart.value = data?.datetime_start ?? "";
-
-    cardContent.appendChild(spanDatetimeStart);
-    cardContent.appendChild(inputDatetimeStart);
     
-    // datetimeEnd
-    var spanDatetimeEnd = document.createElement("span");
-    spanDatetimeEnd.innerHTML = "Datetime end";
-    var inputDatetimeEnd = document.createElement("input");
-    inputDatetimeEnd.id = "datetime_end";
-    inputDatetimeEnd.type = "date";
-    inputDatetimeEnd.value = data?.datetime_end ?? "";
+    // Lastname
+    var spanLastname = document.createElement("span");
+    spanLastname.innerHTML = "Last name";
+    var inputLastname = document.createElement("input");
+    inputLastname.type = "text";
+    inputLastname.value = data?.lastname ?? "";
 
-    cardContent.appendChild(spanDatetimeEnd);
-    cardContent.appendChild(inputDatetimeEnd);
+    cardContent.appendChild(spanLastname);
+    cardContent.appendChild(inputLastname);
+
+    // Cedule
+    var spanCedule = document.createElement("span");
+    spanCedule.innerText = "Cedule";
+    var inputCedule = document.createElement("input");
+    inputCedule.type = "text";
+    inputCedule.value = data?.cedule ?? "";
+
+    cardContent.appendChild(spanCedule);
+    cardContent.appendChild(inputCedule);
+    
+    // Email
+    var spanEmail = document.createElement("span");
+    spanEmail.innerText = "Email";
+    var inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.value = data?.email ?? "";
+
+    cardContent.appendChild(spanEmail);
+    cardContent.appendChild(inputEmail);
+
+    // Phone
+    var spanPhone = document.createElement("span");
+    spanPhone.innerText = "Phone";
+    var inputPhone = document.createElement("input");
+    inputPhone.type = "text";
+    inputPhone.value = data?.phone ?? "";
+
+    cardContent.appendChild(spanPhone);
+    cardContent.appendChild(inputPhone);
     
     // Status
     var spanStatus = document.createElement("span");
     spanStatus.innerText = "Status";
     var selectStatus = document.createElement("select");
     var options = [
-        {value: "", label: "Select a status"},
         {value: -1, label: "Eliminado"},
         {value: 0, label: "No disponible"},
         {value: 1, label: "Disponible"}
@@ -146,7 +167,6 @@ function createModalBox(data) {
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
-    selectStatus.id = "status";
     selectStatus.value = data?.id_status ?? "";
 
     cardContent.appendChild(spanStatus);
@@ -170,7 +190,6 @@ function createModalBox(data) {
             event.target.remove();
         }
     });
-
 }
 
 async function save(){
@@ -191,7 +210,7 @@ async function save(){
 
     if(id){
 
-        let tableBody = document.querySelector("tbody");
+        let tableBody = document.getElementById("tbody");
         for (const row of tableBody.rows) {
             if(row.cells[0].innerText == id.value){
                 let updateRow = row;
@@ -202,7 +221,7 @@ async function save(){
         jsonData.id = id.value;
     }
 
-    await fetch("http://localhost:3000/api/classroom", {
+    await fetch(`${API_URL}/professor/`, {
         method: method,
         headers: {"content-type": "application/json"},
         body: jsonData
@@ -215,11 +234,6 @@ async function save(){
             "0": "No disponible",
             "1": "Disponible"
         };
-    
-        updateRow.cells[1].innerText = data.name;
-        updateRow.cells[2].innerText = data.datetime_start ?? "No datetime available";
-        updateRow.cells[3].innerText = data.datetime_end ?? "No datetime available";
-        updateRow.cells[4].innerText = dataStatus[data.datetime_end];
 
     })
     .catch(error => console.log(error));

@@ -1,9 +1,12 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+import { API_URL } from "./globals";
+
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadSubject());
 
 // Obtener todos los registros de la tabla
 async function loadSubject(){
-    await fetch(`http://localhost:3000/api/subject/`)
+    await fetch(`${API_URL}/subject/`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => console.log("Error de conexión, intente nuevamente en algunos segundos."));
@@ -29,7 +32,7 @@ async function search(){
     }
 
     // En caso de no enviar algun dato, remplazar // por /
-    var url = `http://localhost:3000/api/subject/name/${data["name"]}/description/${data["description"]}/status/${data["status"]}`;
+    var url = `${API_URL}/subject/name/${data["name"]}/description/${data["description"]}/status/${data["status"]}`;
     url = url.replace(/\/\//g, "/");
 
     console.log(url);
@@ -93,7 +96,7 @@ async function detail(event){
     const row = event.target.closest('tr');
     const id = row.cells[0].textContent;
 
-    await fetch(`http://localhost:3000/api/subject/${id}`)
+    await fetch(`${API_URL}/subject/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
     .catch(err => console.error(err));
@@ -239,7 +242,7 @@ async function save (){
     }
 
     // Gardar los elementos en la base de datos
-    await fetch("http://localhost:3000/api/subject", {
+    await fetch(`${API_URL}/subject`, {
         method: method,
         headers: { "content-type": "application/json" },
         body: JSON.stringify(jsonData)
