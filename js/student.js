@@ -19,7 +19,7 @@ function dataTable(data) {
 
     const table = document.getElementById('tbody');
     table.innerHTML = "";
-
+    
     const statusData = {
         "-1": "Eliminado",
         "0": "No disponible",
@@ -33,19 +33,22 @@ function dataTable(data) {
     data.forEach(element => {
         const row = table.insertRow(-1);
 
-        const name = row.insertCell(0);
-        name.innerText = element.name;
+        const id = row.insertCell(0);
+        id.innerText = element.id;
 
-        const lastname = row.insertCell(1);
-        lastname.innerText = element.lastname;
+        const name = row.insertCell(1);
+        name.innerText = element.person.name;
 
-        const cedule = row.insertCell(2);
-        cedule.innerText = element.cedule;
+        const lastname = row.insertCell(2);
+        lastname.innerText = element.person.lastname ?? "";
 
-        const status = row.insertCell(3);
+        const cedule = row.insertCell(3);
+        cedule.innerText = element.person.cedule;
+
+        const status = row.insertCell(4);
         status.innerText = statusData[element.id_status];
         
-        const action = row.insertCell(4);
+        const action = row.insertCell(5);
         action.appendChild(button.cloneNode(true));
     });
 
@@ -98,7 +101,7 @@ function createModalBox(data){
     var inputId = document.createElement("input");
     inputId.type = "text";
     inputId.className = "id";
-    inputId.value = data?.id ?? "";
+    inputId.value = data?.person.id ?? "";
 
     cardContent.appendChild(spanId);
     cardContent.appendChild(inputId);
@@ -108,7 +111,8 @@ function createModalBox(data){
     spanName.innerText = "Name";
     var inputName = document.createElement("input");
     inputName.type = "text";
-    inputName.value = data?.name ?? "";
+    inputName.placeholder = "name";
+    inputName.value = data?.person.name ?? "";
 
     cardContent.appendChild(spanName);
     cardContent.appendChild(inputName);
@@ -118,7 +122,8 @@ function createModalBox(data){
     spanLastname.innerHTML = "Last name";
     var inputLastname = document.createElement("input");
     inputLastname.type = "text";
-    inputLastname.value = data?.lastname ?? "";
+    inputLastname.placeholder = "Last name";
+    inputLastname.value = data?.person.lastname ?? "";
 
     cardContent.appendChild(spanLastname);
     cardContent.appendChild(inputLastname);
@@ -128,7 +133,8 @@ function createModalBox(data){
     spanCedule.innerText = "Cedule";
     var inputCedule = document.createElement("input");
     inputCedule.type = "text";
-    inputCedule.value = data?.cedule ?? "";
+    inputCedule.placeholder = "Cedule";
+    inputCedule.value = data?.person.cedule ?? "";
 
     cardContent.appendChild(spanCedule);
     cardContent.appendChild(inputCedule);
@@ -138,7 +144,8 @@ function createModalBox(data){
     spanEmail.innerText = "Email";
     var inputEmail = document.createElement("input");
     inputEmail.type = "email";
-    inputEmail.value = data?.email ?? "";
+    inputEmail.placeholder = "email";
+    inputEmail.value = data?.person.email ?? "";
 
     cardContent.appendChild(spanEmail);
     cardContent.appendChild(inputEmail);
@@ -148,7 +155,8 @@ function createModalBox(data){
     spanPhone.innerText = "Phone";
     var inputPhone = document.createElement("input");
     inputPhone.type = "text";
-    inputPhone.value = data?.phone ?? "";
+    inputPhone.placeholder = "Phone number";
+    inputPhone.value = data?.person.phone ?? "";
 
     cardContent.appendChild(spanPhone);
     cardContent.appendChild(inputPhone);
@@ -165,7 +173,7 @@ function createModalBox(data){
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
-    selectStatus.value = data?.id_status ?? "";
+    selectStatus.value = data?.person.id_status ?? "";
 
     cardContent.appendChild(spanStatus);
     cardContent.appendChild(selectStatus);
