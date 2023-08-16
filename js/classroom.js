@@ -1,12 +1,46 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
+// Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadData());
 
+// Funcion para obtener los datos de la tabla de la BD
 async function loadData(){
-    await fetch("http://localhost:3000/api/classroom/")
+    await fetch(`${API_URL}/classroom/`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
 }
 
+// Funcion para buscar un registro en la tabla search
+async function search(){
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = new Object;
+    for(const element of elements) {
+        data[element.id.replace("filter-","")] = element.value;
+    }
+
+    const validateData = Object.values(data).every(value => !value);
+    if(validateData){
+        await loadSubject();
+        return;
+    }
+
+    // En caso de no enviar algun dato, remplazar // por /
+    var url = `${API_URL}/subject/name/${data["name"]}/datetime_start/${data["datetime_start"]}/datetime_end/${data["datetime_end"]}/status/${data["status"]}`;                       
+    url = url.replace(/\/\//g, "/");
+
+    // Obtener los datos de la busqueda
+    await fetch(url)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => error);
+}
+
+// Funcion para llenar la tabla de la web
 function dataTable(data){
 
     const tbody = document.querySelector("tbody");
@@ -47,25 +81,29 @@ function dataTable(data){
     addEvents();
 }
 
+// Funcion para agregar el evento de click a todos los votones view
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
+// Funcion para mostrar los detalles de cada registro
 async function detail(event) {
 
     const row = event.target.closest("tr");
     const id = row.cells[0].innerHTML;
 
-    await fetch(`http://localhost:3000/api/classroom/${id}`)
+    await fetch(`${API_URL}/classroom/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
     .catch(error => console.error(error));
 
 }
 
+// Agregar evento para el boton new
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
+// Funcion para crear el modal box
 function createModalBox(data) {
 
     // Crear divs contenedores
@@ -173,55 +211,36 @@ function createModalBox(data) {
 
 }
 
+// Agregar o actualizar registros de la BD
 async function save(){
 
     const id  = document.getElementById("id");
-    const name  = document.getElementById("name");
-    const datetime_start  = document.getElementById("datetime_start");
-    const datetime_end  = document.getElementById("datetime_end");
-    const status  = document.getElementById("status");
-
-    const method = id ? "PUT" : "POST";
     const jsonData = {
-        name:name.value, 
-        datetime_start:datetime_start.value, 
-        datetime_end:datetime_end.value,
-        id_status:status.value
+        name: document.getElementById("name").value, 
+        datetime_start: document.getElementById("datetime_start").value, 
+        datetime_end: document.getElementById("datetime_end").value,
+        id_status: document.getElementById("status").value
     };
 
+    const method = id ? "PUT" : "POST";
+    const tableBody = document.querySelector("tbody");
     if(id){
-
-        let tableBody = document.querySelector("tbody");
         for (const row of tableBody.rows) {
             if(row.cells[0].innerText == id.value){
-                let updateRow = row;
+                var updateRow = row;
                 break;
             }
         }
-
         jsonData.id = id.value;
     }
 
-    await fetch("http://localhost:3000/api/classroom", {
+    await fetch(`${API_URL}/classroom`, {
         method: method,
         headers: {"content-type": "application/json"},
         body: jsonData
     })
     .then(response => response.json())
-    .then(data => {
-
-        const dataStatus = {
-            "-1": "Eliminado",
-            "0": "No disponible",
-            "1": "Disponible"
-        };
-    
-        updateRow.cells[1].innerText = data.name;
-        updateRow.cells[2].innerText = data.datetime_start ?? "No datetime available";
-        updateRow.cells[3].innerText = data.datetime_end ?? "No datetime available";
-        updateRow.cells[4].innerText = dataStatus[data.datetime_end];
-
-    })
+    .then(data => search())
     .catch(error => console.log(error));
 
 }

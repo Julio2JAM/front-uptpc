@@ -1,7 +1,11 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+
+// Al cargar el archivo, obtener todos los registros de la tabla professor
 window.addEventListener("load", async () => await loadData());
 
+// Funcion para obtener los datos de la tabla de la BD
 async function loadData() {
     await fetch(`${API_URL}/professor`)
     .then(response => response.json())
@@ -9,29 +13,32 @@ async function loadData() {
     .catch(error => error)
 }
 
+// Funcion para llenar la tabla de la web
 function dataTable(data) {
 
-    if(!data){
-        return;
-    }
-
+    // Limpiar la tabla
     const tbody = document.getElementById("tbody");
     tbody.innerHTML = "";
 
+    // Estados para los registros de la tabla
     const status = {
         "-1":"Eliminado",
         "0":"No disponible",
         "1":"Disponible",
     };
 
+    // Buton de ver mas
     const actionButton = document.createElement("button");
     actionButton.className = "view-button";
     actionButton.innerText = "Ver más";
 
+    // Iterar todos los datos, para colocarlos en la tabla
     data.array.forEach(element => {
         
+        // Crear fila
         const row = tbody.insertRow(-1);
 
+        // Crear columnas
         const cellName = tbody.insertCell(0);
         cellName.innerText = element.person.name;
         
@@ -52,14 +59,17 @@ function dataTable(data) {
 
     });
 
+    // Agregar eventos
     addEvents();
 }
 
+// Funcion para agregar el evento de click a todos los votones view
 function addEvents() {
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
+// Funcion para mostrar los detalles de cada registro
 async function detail(event) {
     
     const row = event.target.closest("tr");
@@ -71,8 +81,10 @@ async function detail(event) {
     .catch(error => error)
 }
 
+// Agregar evento para el boton new
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
+// Funcion para crear el modal box
 function createModalBox(data){
 
     // Crear divs contenedores
@@ -192,52 +204,44 @@ function createModalBox(data){
     });
 }
 
+// Agregar o actualizar registros de la BD
 async function save(){
 
+    // Obtener datos para crear o actualizar el registro.
     const id  = document.getElementById("id");
-    const name  = document.getElementById("name");
-    const datetime_start  = document.getElementById("datetime_start");
-    const datetime_end  = document.getElementById("datetime_end");
-    const status  = document.getElementById("status");
-
-    const method = id ? "PUT" : "POST";
     const jsonData = {
-        name:name.value, 
-        datetime_start:datetime_start.value, 
-        datetime_end:datetime_end.value,
-        id_status:status.value
+        name: document.getElementById("name").value,
+        datetime_start: document.getElementById("datetime_start").value,
+        datetime_end: document.getElementById("datetime_end").value,
+        id_status: document.getElementById("status").value,
     };
+    
+    // Datos para el fetch
+    const method = id ? "PUT" : "POST";
+    var tableBody = document.getElementById("tbody");
 
     if(id){
-
-        let tableBody = document.getElementById("tbody");
         for (const row of tableBody.rows) {
             if(row.cells[0].innerText == id.value){
-                let updateRow = row;
+                var updateRow = row;
                 break;
             }
         }
-
         jsonData.id = id.value;
     }
 
+    // Gardar o actualizar los elementos en la base de datos
     await fetch(`${API_URL}/professor/`, {
         method: method,
         headers: {"content-type": "application/json"},
         body: jsonData
     })
     .then(response => response.json())
-    .then(data => {
-
-        const dataStatus = {
-            "-1": "Eliminado",
-            "0": "No disponible",
-            "1": "Disponible"
-        };
-
-    })
+    .then(data => search() /*NO EXISTE FUNCION SEACH TODAVIA PARA ESTE MODULO*/)
     .catch(error => console.log(error));
 
+    // Comentado puede que temporalmente
+    //document.getElementById("modal-box").remove();
 }
 
 document.querySelectorAll(".card-container button[id*=change]").forEach(element => {

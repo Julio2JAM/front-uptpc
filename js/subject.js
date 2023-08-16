@@ -36,7 +36,6 @@ async function search(){
     var url = `${API_URL}/subject/name/${data["name"]}/description/${data["description"]}/status/${data["status"]}`;
     url = url.replace(/\/\//g, "/");
 
-    console.log(url);
     // Obtener los datos de la busqueda
     await fetch(url)
     .then(response => response.json())
@@ -88,7 +87,7 @@ function dataTable(data) {
 // Agregar evento de click a todos los botones de view
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
-    buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
+    buttons.forEach(button => button.addEventListener("click", async(event) => await detail(event)));
 }
 
 // Obtener todos los datos de un elemento
@@ -175,7 +174,7 @@ function createModalBox(data){
 
     inputSubmit.type = "submit";
     inputSubmit.id = "save";
-    inputSubmit.value = "Actualizar";
+    inputSubmit.value = data?.id ? "Actualizar" : "Crear";
     
     // Agregar los elementos al DOM
     modalContent.appendChild(img);
@@ -208,17 +207,18 @@ function createModalBox(data){
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
     // Obtener datos para crear o actualizar el registro.
-    let id = document.getElementById("id").value;
-    var jsonData = {
+    const id = document.getElementById("id").value;
+    const jsonData = {
         name: document.getElementById("name").value,
         description: document.getElementById("description").value,
         id_status: document.getElementById("status").value,
     };
 
-    // Actulizar tabla dinamicamente, no terminado.
-    var method = id ? "PUT" : "POST";
+    // Datos para el fetch
+    const method = id ? "PUT" : "POST";
+    const tableBody = document.querySelector("tbody");
+
     if(id){
-        let tableBody = document.querySelector("tbody");
         for (const row of tableBody.rows) {
             if(row.cells[0].innerText == id){
                 var updateRow = row;
@@ -228,26 +228,16 @@ async function save (){
         jsonData.id = id;
     }
     
-    // Gardar los elementos en la base de datos
+    // Gardar o actualizar los elementos en la base de datos
     await fetch(`${API_URL}/subject`, {
         method: method,
         headers: { "content-type": "application/json" },
         body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
-    .then(data => {
-      const dataStatus = {
-        "-1": "Eliminado",
-        "0": "No disponible",
-        "1": "Disponible"
-      };
-
-      if(id){
-        updateRow.cells[1].innerText = data.name;
-        updateRow.cells[2].innerText = data.description ?? "No description";
-        updateRow.cells[3].innerText = dataStatus[data.id_status];
-      }
-    })
+    .then(data => search())
     .catch(error => console.error('Ha ocurrido un error: ', error));
-    
+
+    // Comentado puede que temporalmente
+    //document.getElementById("modal-box").remove();
 };
