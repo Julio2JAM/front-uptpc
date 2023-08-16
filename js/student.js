@@ -91,7 +91,7 @@ function createModalBox(data){
 
     // Crear elementos del DOM
     var img = document.createElement("img");
-    img.src = "source/students.jpeg";
+    img.src = "../source/students.jpeg";
     modalContent.appendChild(img);
     
     // Id

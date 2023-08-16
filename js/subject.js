@@ -1,5 +1,6 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
-import { API_URL } from "./globals";
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
 
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadSubject());
@@ -122,7 +123,7 @@ function createModalBox(data){
 
     // Crear elementos del DOM
     var img = document.createElement("img");
-    img.src = "source/subject2.jpeg";
+    img.src = "../source/subject2.jpeg";
     
     var spanId = document.createElement("span");
     var inputId = document.createElement("input");
@@ -206,41 +207,27 @@ function createModalBox(data){
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
-    // Obtener los elementos "name" y "description"
+    // Obtener datos para crear o actualizar el registro.
     let id = document.getElementById("id").value;
-    let name = document.getElementById("name").value;
-    let description = document.getElementById("description").value;
-    let id_status = document.getElementById("status").value;
+    var jsonData = {
+        name: document.getElementById("name").value,
+        description: document.getElementById("description").value,
+        id_status: document.getElementById("status").value,
+    };
 
     // Actulizar tabla dinamicamente, no terminado.
-    let updateRow = "";
+    var method = id ? "PUT" : "POST";
     if(id){
-
         let tableBody = document.querySelector("tbody");
         for (const row of tableBody.rows) {
             if(row.cells[0].innerText == id){
-                updateRow = row;
+                var updateRow = row;
                 break;
             }
         }
-
-        var method = "PUT";
-        var jsonData = {
-            id:id,
-            name:name, 
-            description:description, 
-            id_status:id_status
-        };
-
-    }else{
-        var method = "POST";
-        var jsonData = {
-            name:name, 
-            description:description, 
-            id_status:id_status
-        };
+        jsonData.id = id;
     }
-
+    
     // Gardar los elementos en la base de datos
     await fetch(`${API_URL}/subject`, {
         method: method,
@@ -249,17 +236,17 @@ async function save (){
     })
     .then(response => response.json())
     .then(data => {
-
       const dataStatus = {
         "-1": "Eliminado",
         "0": "No disponible",
         "1": "Disponible"
       };
 
-      updateRow.cells[1].innerText = data.name;
-      updateRow.cells[2].innerText = data.description ?? "No description";
-      updateRow.cells[3].innerText = dataStatus[data.id_status];
-
+      if(id){
+        updateRow.cells[1].innerText = data.name;
+        updateRow.cells[2].innerText = data.description ?? "No description";
+        updateRow.cells[3].innerText = dataStatus[data.id_status];
+      }
     })
     .catch(error => console.error('Ha ocurrido un error: ', error));
     
