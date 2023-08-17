@@ -13,6 +13,9 @@ async function loadData(){
     .catch(error => error);
 }
 
+// Al hacer click en search, obtener el elemento name y llamar a la funcion search
+document.getElementById("search").addEventListener("click", async () => await search());
+
 // Funcion para buscar un registro en la tabla search
 async function search(){
 
@@ -25,7 +28,7 @@ async function search(){
 
     const validateData = Object.values(data).every(value => !value);
     if(validateData){
-        await loadSubject();
+        await loadData();
         return;
     }
 
