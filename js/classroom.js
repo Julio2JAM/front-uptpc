@@ -33,20 +33,22 @@ async function search(){
     }
 
     // En caso de no enviar algun dato, remplazar // por /
-    var url = `${API_URL}/subject/name/${data["name"]}/datetime_start/${data["datetime_start"]}/datetime_end/${data["datetime_end"]}/status/${data["status"]}`;                       
+    var url = `${API_URL}/classroom/name/${data["name"]}/datetime_start/${data["datetime_start"]}/datetime_end/${data["datetime_end"]}/id_status/${data["status"]}`;                       
     url = url.replace(/\/\//g, "/");
 
     // Obtener los datos de la busqueda
     await fetch(url)
     .then(response => response.json())
     .then(data => dataTable(data))
-    .catch(error => error);
+    .catch(error => console.log(error));
 }
 
 // Funcion para llenar la tabla de la web
 function dataTable(data){
 
     const tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+
     const statusData = {
         "-1": "Eliminado",
         "0": "No disponible",
@@ -68,10 +70,10 @@ function dataTable(data){
         name.innerHTML = element.name ?? "test";
 
         const datetimeStart = row.insertCell(2);
-        datetimeStart.textContent = element.datetime_start ?? "No datetime start";
+        datetimeStart.textContent = element.datetime_start ?? "Sin fecha de inicio.";
 
         const datetimeEnd = row.insertCell(3);
-        datetimeEnd.textContent = element.datetime_end ?? "No datetime end";
+        datetimeEnd.textContent = element.datetime_end ?? "Sin fecha de fin.";
 
         const status = row.insertCell(4);
         status.textContent = statusData[element.id_status] ?? "";
@@ -197,7 +199,7 @@ function createModalBox(data) {
     var inputSubmit = document.createElement("input");
     inputSubmit.id = "save";
     inputSubmit.type = "submit";
-    inputSubmit.value = "Actualizar";
+    inputSubmit.value = !data?.id ? "Crear" : "Actualizar";
     inputSubmit.addEventListener("click", async () => await save());
 
     cardContent.appendChild(inputSubmit);
@@ -217,7 +219,7 @@ function createModalBox(data) {
 // Agregar o actualizar registros de la BD
 async function save(){
 
-    const id  = document.getElementById("id");
+    const id  = document.getElementById("id").value;
     const jsonData = {
         name: document.getElementById("name").value, 
         datetime_start: document.getElementById("datetime_start").value, 
@@ -227,20 +229,12 @@ async function save(){
 
     const method = id ? "PUT" : "POST";
     const tableBody = document.querySelector("tbody");
-    if(id){
-        for (const row of tableBody.rows) {
-            if(row.cells[0].innerText == id.value){
-                var updateRow = row;
-                break;
-            }
-        }
-        jsonData.id = id.value;
-    }
-
+    id ? jsonData.id = id : null;
+    
     await fetch(`${API_URL}/classroom`, {
         method: method,
         headers: {"content-type": "application/json"},
-        body: jsonData
+        body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
     .then(data => search())

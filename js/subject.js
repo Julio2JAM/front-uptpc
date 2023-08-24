@@ -217,16 +217,7 @@ async function save (){
     // Datos para el fetch
     const method = id ? "PUT" : "POST";
     const tableBody = document.querySelector("tbody");
-
-    if(id){
-        for (const row of tableBody.rows) {
-            if(row.cells[0].innerText == id){
-                var updateRow = row;
-                break;
-            }
-        }
-        jsonData.id = id;
-    }
+    if(id) jsonData.id = id;
     
     // Gardar o actualizar los elementos en la base de datos
     await fetch(`${API_URL}/subject`, {

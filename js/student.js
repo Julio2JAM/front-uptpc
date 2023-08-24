@@ -1,3 +1,7 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = 'http://localhost:3000/api';
+
 document.querySelectorAll(".card-content button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
         location.href = `${element.id.replace("-change", "")}.html`;
@@ -7,12 +11,16 @@ document.querySelectorAll(".card-content button[id*=change]").forEach(element =>
 window.addEventListener('load', async () => await loadData());
 
 async function loadData() {
+    await fetch(`${API_URL}/student/`)
+        .then(response => response.json())
+        .then(data => dataTable(data))
+        .catch(error => error);
+}
 
-    await fetch("http://localhost:3000/api/student/")
-    .then(response => response.json())
-    .then(data => dataTable(data))
-    .catch(error => error);
+document.getElementById('search').addEventListener('click', async () => await search())
 
+async function search() {
+    
 }
 
 function dataTable(data) {
@@ -40,7 +48,7 @@ function dataTable(data) {
         name.innerText = element.person.name;
 
         const lastname = row.insertCell(2);
-        lastname.innerText = element.person.lastname ?? "";
+        lastname.innerText = element.person.lastName ?? "";
 
         const cedule = row.insertCell(3);
         cedule.innerText = element.person.cedule;
@@ -61,15 +69,13 @@ function addEvents(){
 }
 
 async function detail(event){
-
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`http://localhost:3000/api/student/${id}`)
+    await fetch(`${API_URL}/student/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
     .catch(error => console.log(error));
-
 }
 
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
@@ -99,6 +105,7 @@ function createModalBox(data){
     spanId.innerText = "ID";
     spanId.className = "id";
     var inputId = document.createElement("input");
+    inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
     inputId.value = data?.person.id ?? "";
@@ -108,10 +115,11 @@ function createModalBox(data){
 
     // Name
     var spanName = document.createElement("span");
-    spanName.innerText = "Name";
+    spanName.innerText = "Nombre";
     var inputName = document.createElement("input");
+    inputName.id = "name";
     inputName.type = "text";
-    inputName.placeholder = "name";
+    inputName.placeholder = "Nombre";
     inputName.value = data?.person.name ?? "";
 
     cardContent.appendChild(spanName);
@@ -119,21 +127,23 @@ function createModalBox(data){
     
     // Lastname
     var spanLastname = document.createElement("span");
-    spanLastname.innerHTML = "Last name";
+    spanLastname.innerHTML = "Apellido";
     var inputLastname = document.createElement("input");
+    inputLastname.id = "lastname";
     inputLastname.type = "text";
-    inputLastname.placeholder = "Last name";
-    inputLastname.value = data?.person.lastname ?? "";
+    inputLastname.placeholder = "Apellido";
+    inputLastname.value = data?.person.lastName ?? "";
 
     cardContent.appendChild(spanLastname);
     cardContent.appendChild(inputLastname);
 
     // Cedule
     var spanCedule = document.createElement("span");
-    spanCedule.innerText = "Cedule";
+    spanCedule.innerText = "Cedula";
     var inputCedule = document.createElement("input");
+    inputCedule.id = "cedule";
     inputCedule.type = "text";
-    inputCedule.placeholder = "Cedule";
+    inputCedule.placeholder = "Cedula";
     inputCedule.value = data?.person.cedule ?? "";
 
     cardContent.appendChild(spanCedule);
@@ -143,8 +153,9 @@ function createModalBox(data){
     var spanEmail = document.createElement("span");
     spanEmail.innerText = "Email";
     var inputEmail = document.createElement("input");
+    inputEmail.id = "email";
     inputEmail.type = "email";
-    inputEmail.placeholder = "email";
+    inputEmail.placeholder = "Email";
     inputEmail.value = data?.person.email ?? "";
 
     cardContent.appendChild(spanEmail);
@@ -152,10 +163,11 @@ function createModalBox(data){
 
     // Phone
     var spanPhone = document.createElement("span");
-    spanPhone.innerText = "Phone";
+    spanPhone.innerText = "Telefono";
     var inputPhone = document.createElement("input");
+    inputPhone.id = "phone";
     inputPhone.type = "text";
-    inputPhone.placeholder = "Phone number";
+    inputPhone.placeholder = "Telefono";
     inputPhone.value = data?.person.phone ?? "";
 
     cardContent.appendChild(spanPhone);
@@ -165,15 +177,14 @@ function createModalBox(data){
     var spanStatus = document.createElement("span");
     spanStatus.innerText = "Status";
     var selectStatus = document.createElement("select");
+    selectStatus.id = "status";
     var options = [
         {value: -1, label: "Eliminado"},
         {value: 0, label: "No disponible"},
         {value: 1, label: "Disponible"}
     ];
-    for (var option of options) {
-        selectStatus.add(new Option(option.label, option.value));
-    }
-    selectStatus.value = data?.person.id_status ?? "";
+    options.forEach(element => selectStatus.add(new Option(element.label, element.value)));
+    selectStatus.value = data?.person.id_status ?? 1;
 
     cardContent.appendChild(spanStatus);
     cardContent.appendChild(selectStatus);
@@ -182,7 +193,7 @@ function createModalBox(data){
     var inputSubmit = document.createElement("input");
     inputSubmit.id = "save";
     inputSubmit.type = "submit";
-    inputSubmit.value = "Actualizar";
+    inputSubmit.value = !data?.person.id ? "Crear" : "Actualizar";
     inputSubmit.addEventListener("click", async () => await save());
 
     cardContent.appendChild(inputSubmit);
@@ -196,4 +207,32 @@ function createModalBox(data){
             event.target.remove();
         }
     });
+}
+
+async function save() {
+
+    const id = document.getElementById("id").value;
+    const jsonData = {
+        person: {
+            name: document.getElementById("name").value,
+            lastName: document.getElementById("lastname").value,
+            cedule: document.getElementById("cedule").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            status: document.getElementById("status").value
+        },
+        representative1: {},
+        representative2: {},
+    }
+    if(id) jsonData.id = id;
+    const method = id ? "PUT" : "POST";
+
+    await fetch(`${API_URL}/student`, {
+        method: method,
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => data)
+    .catch(err => err);
 }
