@@ -1,26 +1,63 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
+// Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadData());
 
+// Funcion para obtener los datos de la tabla de la BD
 async function loadData(){
-
-    await fetch("http://localhost:3000/api/classroom/")
+    await fetch(`${API_URL}/classroom/`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
-
 }
 
+// Al hacer click en search, obtener el elemento name y llamar a la funcion search
+document.getElementById("search").addEventListener("click", async () => await search());
+
+// Funcion para buscar un registro en la tabla search
+async function search(){
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = new Object;
+    for(const element of elements) {
+        data[element.id.replace("filter-","")] = element.value;
+    }
+
+    const validateData = Object.values(data).every(value => !value);
+    if(validateData){
+        await loadData();
+        return;
+    }
+
+    // En caso de no enviar algun dato, remplazar // por /
+    var url = `${API_URL}/classroom/name/${data["name"]}/datetime_start/${data["datetime_start"]}/datetime_end/${data["datetime_end"]}/id_status/${data["status"]}`;                       
+    url = url.replace(/\/\//g, "/");
+
+    // Obtener los datos de la busqueda
+    await fetch(url)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => console.log(error));
+}
+
+// Funcion para llenar la tabla de la web
 function dataTable(data){
 
     const tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+
     const statusData = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
     };
 
     const button = document.createElement("button");
     button.className = "view-button";
-    button.innerText = "View";
+    button.innerText = "Ver más";
 
     for (const element of data) {
 
@@ -33,10 +70,10 @@ function dataTable(data){
         name.innerHTML = element.name ?? "test";
 
         const datetimeStart = row.insertCell(2);
-        datetimeStart.textContent = element.datetime_start ?? "No datetime start";
+        datetimeStart.textContent = element.datetime_start ?? "Sin fecha de inicio.";
 
         const datetimeEnd = row.insertCell(3);
-        datetimeEnd.textContent = element.datetime_end ?? "No datetime end";
+        datetimeEnd.textContent = element.datetime_end ?? "Sin fecha de fin.";
 
         const status = row.insertCell(4);
         status.textContent = statusData[element.id_status] ?? "";
@@ -49,25 +86,29 @@ function dataTable(data){
     addEvents();
 }
 
+// Funcion para agregar el evento de click a todos los votones view
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
+// Funcion para mostrar los detalles de cada registro
 async function detail(event) {
 
     const row = event.target.closest("tr");
     const id = row.cells[0].innerHTML;
 
-    await fetch(`http://localhost:3000/api/classroom/${id}`)
+    await fetch(`${API_URL}/classroom/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
     .catch(error => console.error(error));
 
 }
 
+// Agregar evento para el boton new
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
+// Funcion para crear el modal box
 function createModalBox(data) {
 
     // Crear divs contenedores
@@ -85,7 +126,7 @@ function createModalBox(data) {
 
     // Crear elementos del DOM
     var img = document.createElement("img");
-    img.src = "source/classroom2.jpeg";
+    img.src = "../source/classroom2.jpeg";
     modalContent.appendChild(img);
     
     // Id
@@ -141,9 +182,9 @@ function createModalBox(data) {
     var selectStatus = document.createElement("select");
     var options = [
         {value: "", label: "Select a status"},
-        {value: -1, label: "Deleted"},
-        {value: 0, label: "Unavailable"},
-        {value: 1, label: "Available"}
+        {value: -1, label: "Eliminado"},
+        {value: 0, label: "No disponible"},
+        {value: 1, label: "Disponible"}
     ];
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
@@ -158,7 +199,7 @@ function createModalBox(data) {
     var inputSubmit = document.createElement("input");
     inputSubmit.id = "save";
     inputSubmit.type = "submit";
-    inputSubmit.value = "Save";
+    inputSubmit.value = !data?.id ? "Crear" : "Actualizar";
     inputSubmit.addEventListener("click", async () => await save());
 
     cardContent.appendChild(inputSubmit);
@@ -175,61 +216,34 @@ function createModalBox(data) {
 
 }
 
+// Agregar o actualizar registros de la BD
 async function save(){
 
-    const id  = document.getElementById("id");
-    const name  = document.getElementById("name");
-    const datetime_start  = document.getElementById("datetime_start");
-    const datetime_end  = document.getElementById("datetime_end");
-    const status  = document.getElementById("status");
-
-    const method = id ? "PUT" : "POST";
+    const id  = document.getElementById("id").value;
     const jsonData = {
-        name:name.value, 
-        datetime_start:datetime_start.value, 
-        datetime_end:datetime_end.value,
-        id_status:status.value
+        name: document.getElementById("name").value, 
+        datetime_start: document.getElementById("datetime_start").value, 
+        datetime_end: document.getElementById("datetime_end").value,
+        id_status: document.getElementById("status").value
     };
 
-    if(id){
-
-        let tableBody = document.querySelector("tbody");
-        for (const row of tableBody.rows) {
-            if(row.cells[0].innerText == id.value){
-                let updateRow = row;
-                break;
-            }
-        }
-
-        jsonData.id = id.value;
-    }
-
-    await fetch("http://localhost:3000/api/classroom", {
+    const method = id ? "PUT" : "POST";
+    const tableBody = document.querySelector("tbody");
+    id ? jsonData.id = id : null;
+    
+    await fetch(`${API_URL}/classroom`, {
         method: method,
         headers: {"content-type": "application/json"},
-        body: JSON.stringify({
-            id:id.value,
-            name:name.value, 
-            datetime_start:datetime_start.value, 
-            datetime_end:datetime_end.value,
-            id_status:status.value
-        })
+        body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
-    .then(data => {
-
-        const dataStatus = {
-            "-1": "Deleted",
-            "0": "Unavailable",
-            "1": "Available"
-        };
-    
-        updateRow.cells[1].innerText = data.name;
-        updateRow.cells[2].innerText = data.datetime_start ?? "No datetime available";
-        updateRow.cells[3].innerText = data.datetime_end ?? "No datetime available";
-        updateRow.cells[4].innerText = dataStatus[data.datetime_end];
-
-    })
+    .then(data => search())
     .catch(error => console.log(error));
 
 }
+
+document.querySelectorAll(".card-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});

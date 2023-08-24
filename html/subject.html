@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignaturas</title>
+    <link rel="stylesheet" href="../css/card.css">
+    <link rel="stylesheet" href="../css/menu.css">
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="student.html">Estudiantes</a></li>
+            <li><a href="professor.html">Docentes</a></li>
+            <li><a href="classroom.html">Secciones</a></li>
+            <li class="selected"><a href="#">Asignaturas</a></li>
+            <li><a href="user.html">Usuarios</a></li>
+            <li><a href="exi.html">Salir</a></li>
+        </ul>
+    </nav>
+
+    <div class="card-container">
+        <div class="horizontal-card with-table">
+            <div class="card-content">
+
+                <div class="filter-container">
+                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                    <input type="text" placeholder="Filtrar por descripción" id="filter-description">
+                    <select id="filter-status">
+                    <option value="">Seleccione un estado</option>
+                    <option value="-1">Eliminado</option>
+                    <option value="0">No disponible</option>
+                    <option value="1">Disponible</option>
+                    </select>
+                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </div>
+
+                <div class="color-table">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripcion</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button id="new" class="modal-box-buttom button-table">Nueva asignatura</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="../js/subject.js"></script>
+</body>
+</html>

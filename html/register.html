@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/index.css">
+    <title>Registro</title>
+</head>
+<body>
+
+    <div class="main">
+
+        <div class="container">
+
+            <h1>REGISTRO</h1>
+            <hr class="solid">
+
+            <div class="inputs">
+                <span>Usuario:</span>
+                <input type="text" id="username" placeholder="Usuario" autofocus required/>
+            </div>
+
+            <div class="inputs">
+                <span>Clave:</span>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Clave" required/>
+                    <img src="../source/ojo-no.png" alt="icono" class="view-btn">
+                </div>
+            </div>
+
+
+            <div class="inputs">
+                <span>Repetir clave:</span>
+                <div class="password-container">
+                    <input type="password" id="repet" placeholder="Repetir clave" required/>
+                    <img src="../source/ojo-no.png" alt="icono" class="view-btn">
+                </div>
+            </div>
+
+            <div class="buttons">
+                <input type="button" value="Register" id="register-btn"/>
+                <span>Ya tienes una cuenta? <a href="index.html">Inicia sesión</a></span>
+            </div>
+            
+        </div>
+
+        <div class="container" id="general-information">
+
+            <h1>GENERAL INFORMATION</h1>
+            <hr class="solid">
+
+            <div class="inputs double">
+                <div class="left">
+                    <span>Name:</span>
+                    <input type="text" id="name" placeholder="Name" required/>
+                </div>
+                <div class="right">
+                    <span>Lastname:</span>
+                    <input type="text" id="lastname" placeholder="lastname" required/>
+                </div>
+            </div>
+
+            <div class="inputs">
+                <span>Cedule:</span>
+                <input type="text" id="cedule" placeholder="Cedule" required/>
+            </div>
+            
+            <div class="inputs">
+                <span>Phone number:</span>
+                <input type="text" id="phone" placeholder="Phone number" required/>
+            </div>
+
+            <div class="inputs">
+                <span>Email:</span>
+                <input type="email" id="email" placeholder="Email" required/>
+            </div>
+
+            <div class="birthday">
+                <span>Birthday:</span>
+                <input type="date" id="birthday" placeholder="Birthday" required/>
+            </div>
+
+        </div>
+
+    </div>
+    <script src="../js/register.js"></script>
+</body>
+</html>

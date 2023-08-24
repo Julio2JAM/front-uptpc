@@ -75,13 +75,13 @@ async function dataTable(data) {
 
   // Crear boton de view
   const button = document.createElement('button');
-  button.innerHTML = "View";
+  button.innerHTML = "Ver más";
   button.className = "view-button";
 
   const dataStatus = {
-    "-1": "Deleted",
-    "0": "Unavailable",
-    "1": "Available"
+    "-1": "Eliminado",
+    "0": "No disponible",
+    "1": "Disponible"
   };
   
   data.forEach( element => {
@@ -149,7 +149,7 @@ function createModalBox(data){
 
   // Crear elementos del DOM
   var img = document.createElement("img");
-  img.src = "source/users.jpeg";
+  img.src = "../source/users.jpeg";
   
   var spanId = document.createElement("span");
   var inputId = document.createElement("input");
@@ -165,9 +165,9 @@ function createModalBox(data){
   var spanStatus = document.createElement("span");
   var selectStatus = document.createElement("select");
   var options = [
-      {value: -1, label: "Deleted"},
-      {value: 0, label: "Unavailable"},
-      {value: 1, label: "Available"}
+      {value: -1, label: "Eliminado"},
+      {value: 0, label: "No disponible"},
+      {value: 1, label: "Disponible"}
   ];
 
   var inputSubmit = document.createElement("input");
@@ -201,7 +201,7 @@ function createModalBox(data){
 
   inputSubmit.type = "submit";
   inputSubmit.id = "save";
-  inputSubmit.value = "save";
+  inputSubmit.value = "Actualizar";
   
   // Agregar los elementos al DOM
   modalContent.appendChild(img);
@@ -286,9 +286,9 @@ async function save (){
       }
 
       const dataStatus = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
       };
 
       updateRow.cells[1].innerText = data.username;

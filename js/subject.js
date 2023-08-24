@@ -1,12 +1,16 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadSubject());
 
 // Obtener todos los registros de la tabla
 async function loadSubject(){
-    await fetch(`http://localhost:3000/api/subject/`)
+    await fetch(`${API_URL}/subject/`)
     .then(response => response.json())
     .then(data => dataTable(data))
-    .catch(error => console.log("Conexion failed, try in some seconds"));
+    .catch(error => console.log("Error de conexión, intente nuevamente en algunos segundos."));
 }
 
 // Al hacer click en search, obtener el elemento name y llamar a la funcion search
@@ -29,10 +33,9 @@ async function search(){
     }
 
     // En caso de no enviar algun dato, remplazar // por /
-    var url = `http://localhost:3000/api/subject/name/${data["name"]}/description/${data["description"]}/status/${data["status"]}`;
+    var url = `${API_URL}/subject/name/${data["name"]}/description/${data["description"]}/status/${data["status"]}`;
     url = url.replace(/\/\//g, "/");
 
-    console.log(url);
     // Obtener los datos de la busqueda
     await fetch(url)
     .then(response => response.json())
@@ -47,14 +50,14 @@ function dataTable(data) {
     tableBody.innerHTML = "";
 
     const statusData = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
     };
 
     // Crear boton de view
     const button = document.createElement('button');
-    button.innerHTML = "View";
+    button.innerHTML = "Ver más";
     button.className = "view-button";
 
     data.forEach(element => {
@@ -75,6 +78,7 @@ function dataTable(data) {
 
         const action = row.insertCell(4);
         action.appendChild(button.cloneNode(true));
+        //action.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     });
 
     addEvents();
@@ -83,7 +87,7 @@ function dataTable(data) {
 // Agregar evento de click a todos los botones de view
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
-    buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
+    buttons.forEach(button => button.addEventListener("click", async(event) => await detail(event)));
 }
 
 // Obtener todos los datos de un elemento
@@ -92,7 +96,7 @@ async function detail(event){
     const row = event.target.closest('tr');
     const id = row.cells[0].textContent;
 
-    await fetch(`http://localhost:3000/api/subject/${id}`)
+    await fetch(`${API_URL}/subject/${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data))
     .catch(err => console.error(err));
@@ -118,7 +122,7 @@ function createModalBox(data){
 
     // Crear elementos del DOM
     var img = document.createElement("img");
-    img.src = "source/subject2.jpeg";
+    img.src = "../source/subject2.jpeg";
     
     var spanId = document.createElement("span");
     var inputId = document.createElement("input");
@@ -132,9 +136,9 @@ function createModalBox(data){
     var spanStatus = document.createElement("span");
     var selectStatus = document.createElement("select");
     var options = [
-        {value: -1, label: "Deleted"},
-        {value: 0, label: "Unavailable"},
-        {value: 1, label: "Available"}
+        {value: -1, label: "Eliminado"},
+        {value: 0, label: "No disponible"},
+        {value: 1, label: "Disponible"}
     ];
 
     var inputSubmit = document.createElement("input");
@@ -149,19 +153,19 @@ function createModalBox(data){
     inputId.placeholder = "id";
     inputId.value = data?.id ?? "";
     
-    spanName.textContent = "Name";
+    spanName.textContent = "Nombre";
     inputName.type = "text";
     inputName.id = "name";
-    inputName.placeholder = "name";
+    inputName.placeholder = "Nombre";
     inputName.value = data?.name ?? "";
     
-    spanDescription.textContent = "Description";
+    spanDescription.textContent = "Descripción";
     inputDescription.type = "text";
     inputDescription.id = "description";
-    inputDescription.placeholder = "Description";
-    inputDescription.value = data?.description ?? "No description";
+    inputDescription.placeholder = "Descripción";
+    inputDescription.value = data?.description ?? "";
     
-    spanStatus.textContent = "Status";
+    spanStatus.textContent = "Estado";
     selectStatus.id = "status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
@@ -170,7 +174,7 @@ function createModalBox(data){
 
     inputSubmit.type = "submit";
     inputSubmit.id = "save";
-    inputSubmit.value = "save";
+    inputSubmit.value = data?.id ? "Actualizar" : "Crear";
     
     // Agregar los elementos al DOM
     modalContent.appendChild(img);
@@ -202,61 +206,29 @@ function createModalBox(data){
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
-    // Obtener los elementos "name" y "description"
-    let id = document.getElementById("id").value;
-    let name = document.getElementById("name").value;
-    let description = document.getElementById("description").value;
-    let id_status = document.getElementById("status").value;
+    // Obtener datos para crear o actualizar el registro.
+    const id = document.getElementById("id").value;
+    const jsonData = {
+        name: document.getElementById("name").value,
+        description: document.getElementById("description").value,
+        id_status: document.getElementById("status").value,
+    };
 
-    // Actulizar tabla dinamicamente, no terminado.
-    let updateRow = "";
-    if(id){
-
-        let tableBody = document.querySelector("tbody");
-        for (const row of tableBody.rows) {
-            if(row.cells[0].innerText == id){
-                updateRow = row;
-                break;
-            }
-        }
-
-        var method = "PUT";
-        var jsonData = {
-            id:id,
-            name:name, 
-            description:description, 
-            id_status:id_status
-        };
-
-    }else{
-        var method = "POST";
-        var jsonData = {
-            name:name, 
-            description:description, 
-            id_status:id_status
-        };
-    }
-
-    // Gardar los elementos en la base de datos
-    await fetch("http://localhost:3000/api/subject", {
+    // Datos para el fetch
+    const method = id ? "PUT" : "POST";
+    const tableBody = document.querySelector("tbody");
+    if(id) jsonData.id = id;
+    
+    // Gardar o actualizar los elementos en la base de datos
+    await fetch(`${API_URL}/subject`, {
         method: method,
         headers: { "content-type": "application/json" },
         body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
-    .then(data => {
-
-      const dataStatus = {
-        "-1": "Deleted",
-        "0": "Unavailable",
-        "1": "Available"
-      };
-
-      updateRow.cells[1].innerText = data.name;
-      updateRow.cells[2].innerText = data.description ?? "No description";
-      updateRow.cells[3].innerText = dataStatus[data.id_status];
-
-    })
+    .then(data => search())
     .catch(error => console.error('Ha ocurrido un error: ', error));
-    
+
+    // Comentado puede que temporalmente
+    //document.getElementById("modal-box").remove();
 };

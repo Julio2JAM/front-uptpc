@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/index.css">
+    <title>Inicio de sección</title>
+</head>
+<body>
+
+
+    <div class="container">
+
+        <h1>LOGIN</h1>
+        <hr class="solid">
+
+        <div class="inputs">
+            <span>Usuario:</span>
+            <input type="text" id="username" placeholder="Usuario" autofocus required/>
+        </div>
+
+        <div class="inputs">
+            <span>Clave:</span>
+            <div class="password-container">
+                <input type="password" id="password" placeholder="Clave" class="pass" required/>
+                <img src="../source/ojo-no.png" alt="icono" class="view-btn">
+            </div>
+        </div>
+
+        <div class="buttons">
+            <input type="button" value="Iniciar sessión" id="login-btn"/>
+            <span>Aún no tienes cuenta? <a href="register.html">Registrate ahora</a></span>
+            <!--<input type="button" value="Register" id="register-btn"/>-->
+        </div>
+        
+    </div>
+
+    <script src="../js/index.js"></script>
+</body>
+</html>

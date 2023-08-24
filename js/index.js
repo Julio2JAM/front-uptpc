@@ -16,7 +16,11 @@ async function verifyToken(){
         }
         
     }
-    
+
+    if(!cookieValue){
+        return;
+    }
+
     var token;
     await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
     .then(response => response.json())
@@ -54,7 +58,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
         handleMessage("");
         document.cookie = `token=${data.token}; SameSite=None; Secure;`;
     })
-    .catch(error => handleMessage("Conexion failed, try in some seconds"))
+    .catch(error => handleMessage("Error de conexión, intente nuevamente en algunos segundos."))
 });
     
 

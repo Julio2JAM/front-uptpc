@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudiantes</title>
+    <link rel="stylesheet" href="../css/card.css">
+    <link rel="stylesheet" href="../css/menu.css">
+</head>
+<body>
+
+    <nav>
+        <ul>
+        <li><a href="menu.html">Menu</a></li>
+        <li class="selected"><a href="#">Estudiantes</a></li>
+        <li><a href="professor.html">Docentes</a></li>
+        <li><a href="classroom.html">Secciones</a></li>
+        <li><a href="subject.html">Asignaturas</a></li>
+        <li><a href="user.html">Usuarios</a></li>
+        <li><a href="exi.html">Salir</a></li>
+        </ul>
+    </nav>
+
+    <div class="card-container">
+        <div class="horizontal-card with-table">
+            <div class="card-content">
+
+
+                <div class="filter-container">
+                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                    <input type="text" placeholder="Filtrar por apellido" id="filter-lastname">
+                    <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
+                    <select id="filter-status">
+                        <option value="">Seleccione un estado</option>
+                        <option value="-1">Eliminado</option>
+                        <option value="0">No disponible</option>
+                        <option value="1">Disponible</option>
+                    </select>
+                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </div>
+
+                <div class="color-table">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Cedula</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+                </div>
+                <button id="new" class="modal-box-buttom button-table">Nuevo estudiante</button>
+                <button class="filter-button active" id="student-change">Estudiantes</button>
+                <button class="filter-button" id="professor-change">Docentes</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="../js/student.js"></script>
+</body>
+</html>
