@@ -13,6 +13,24 @@ async function loadData() {
     .catch(error => error)
 }
 
+//
+document.getElementById('search').addEventListener('click', async () => await search());
+
+async function search() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = new Object;
+    for(const element of elements) {
+        data[element.id.replace("filter-","")] = element.value;
+    }
+
+    await fetch(`${API_URL}/professor/?name=${data.name}&lastName=${data.lastName}&cedule=${data.cedule}`)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => error)
+}
+
 // Funcion para llenar la tabla de la web
 function dataTable(data) {
 
@@ -33,28 +51,31 @@ function dataTable(data) {
     actionButton.innerText = "Ver más";
 
     // Iterar todos los datos, para colocarlos en la tabla
-    data.array.forEach(element => {
+    data.forEach(element => {
         
         // Crear fila
         const row = tbody.insertRow(-1);
 
         // Crear columnas
-        const cellName = tbody.insertCell(0);
-        cellName.innerText = element.person.name;
+        const cellId = row.insertCell(0);
+        cellId.innerText = element.id;
         
-        const cellLastName = tbody.insertCell(1);
-        cellLastName.innerText = element.person.lastName;
+        const cellName = row.insertCell(1);
+        cellName.innerText = element.person.name ?? "";
+        
+        const cellLastName = row.insertCell(2);
+        cellLastName.innerText = element.person.lastName ?? "";
 
-        const cellCedule = tbody.insertCell(2);
-        cellCedule.innerText = element.person.cedule;
+        const cellCedule = row.insertCell(3);
+        cellCedule.innerText = element.person.cedule ?? "";
 
-        const cellProfession = tbody.insertCell(3);
-        cellProfession.innerText = element.person.profession;
+        const cellProfession = row.insertCell(4);
+        cellProfession.innerText = element.person.profession ?? "";
 
-        const cellStatus = tbody.insertCell(4);
-        cellStatus.innerText = element.person.id_status;
+        const cellStatus = row.insertCell(5);
+        cellStatus.innerText = status[element.person.id_status];
 
-        const cellAction = tbody.insertCell(5);
+        const cellAction = row.insertCell(6);
         cellAction.appendChild(actionButton.cloneNode(true));
 
     });
@@ -75,9 +96,9 @@ async function detail(event) {
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/professor/${id}`)
+    await fetch(`${API_URL}/professor/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data))
+    .then(data => createModalBox(data[0]))
     .catch(error => error)
 }
 
@@ -220,26 +241,20 @@ async function save(){
     // Obtener datos para crear o actualizar el registro.
     const id  = document.getElementById("id");
     const jsonData = {
-        name: document.getElementById("name").value,
-        datetime_start: document.getElementById("datetime_start").value,
-        datetime_end: document.getElementById("datetime_end").value,
+        person: {
+            name: document.getElementById("name").value,
+            lastName: document.getElementById("lastname").value,
+            cedule: document.getElementById("cedule").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+        },
         id_status: document.getElementById("status").value,
     };
     
     // Datos para el fetch
     const method = id ? "PUT" : "POST";
-    var tableBody = document.getElementById("tbody");
-
-    if(id){
-        for (const row of tableBody.rows) {
-            if(row.cells[0].innerText == id.value){
-                var updateRow = row;
-                break;
-            }
-        }
-        jsonData.id = id.value;
-    }
-
+    if(id) jsonData.id = id;
+    
     // Gardar o actualizar los elementos en la base de datos
     await fetch(`${API_URL}/professor/`, {
         method: method,
@@ -247,7 +262,7 @@ async function save(){
         body: jsonData
     })
     .then(response => response.json())
-    .then(data => search() /*NO EXISTE FUNCION SEACH TODAVIA PARA ESTE MODULO*/)
+    .then(data => search())
     .catch(error => console.log(error));
 
     // Comentado puede que temporalmente

@@ -1,6 +1,11 @@
-//window.addEventListener('load', async () => await loadData());
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
+// Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
+// Crear modal box con el nombre de las secciones activas.
 async function createModalList(data){
 
     // Crear divs contenedores
@@ -18,7 +23,7 @@ async function createModalList(data){
 
     //
     const title = document.createElement("h3");
-    title.innerHTML = "Select a classroom";
+    title.innerHTML = "Seleccione una seccion.";
     cardContent.appendChild(title);
 
     const fieldset = document.createElement("fieldset");
@@ -39,7 +44,7 @@ async function createModalList(data){
     });
 
     //const ul = document.createElement("ul");
-    await fetch("http://localhost:3000/api/classroom/")
+    await fetch(`${API_URL}/classroom/`)
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
@@ -66,16 +71,17 @@ async function createModalList(data){
 
 }
 
+// Agregar eventos de click para a la lista de secciones, para obtener datos de la seccion seleccionada.
 function loadClassroomEvents(){
     const a = document.querySelectorAll("fieldset a");
     a.forEach(a => a.addEventListener("click", async (event) => await loadData(event)));
 }
 
+// Cargar estudiantes de la seccion seleccionada
 async function loadData(data) {
     document.getElementById("modal-box").remove();
-    const classroom = 1;
 
-    await fetch(`http://localhost:3000/api/enrollment/classroom/${data.target.id}/student`)
+    await fetch(`${API_URL}/enrollment/classroom/${data.target.id}/student`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -195,18 +201,21 @@ async function createModalBoxTable(){
     var celda1 = document.createElement("th");
     var celda2 = document.createElement("th");
     var celda3 = document.createElement("th");
+    var celda4 = document.createElement("th");
 
     // Agregar texto a las celdas de encabezado
     celda0.innerHTML = "ID";
-    celda1.innerHTML = "Name";
-    celda2.innerHTML = "Last Name";
-    celda3.innerHTML = "Cedule";
+    celda1.innerHTML = "Nombres";
+    celda2.innerHTML = "Apellidos";
+    celda3.innerHTML = "Cedula";
+    celda4.innerHTML = "Agregar";
 
     // Agregar las celdas de encabezado a la fila de encabezado
     encabezado.appendChild(celda0);
     encabezado.appendChild(celda1);
     encabezado.appendChild(celda2);
     encabezado.appendChild(celda3);
+    encabezado.appendChild(celda4);
 
     // Agregar la fila de encabezado al elemento <thead>
     thead.appendChild(encabezado);
@@ -220,23 +229,30 @@ async function createModalBoxTable(){
     cardContent.appendChild(filterContent);
     cardContent.appendChild(colorTable);
 
+    //checkbox
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+
     await fetch("http://localhost:3000/api/student/")
     .then(response => response.json())
     .then(data => data.forEach(element => {
-        console.log(element);
         const row = tbody.insertRow(-1);
 
         const id = row.insertCell(0);
         id.innerText = element.id;
 
         const name = row.insertCell(1);
-        name.innerText = element.name ?? "No name";
+        name.innerText = element.person?.name ?? "No name";
 
         const lastname = row.insertCell(2);
-        lastname.innerText = element.lastName ?? "No last name";
+        lastname.innerText = element.person?.lastName ?? "No last name";
 
         const cedule = row.insertCell(3);
-        cedule.innerText = element.cedule;
+        cedule.innerText = element.person?.cedule;
+
+        const check = row.insertCell(4);
+        check.appendChild(checkbox.cloneNode(true));
+
     }))
     .catch(error => error);
 
@@ -271,22 +287,19 @@ function createModalBox(data){
     img.src = "../source/students.jpeg";
     modalContent.appendChild(img);
     
-    if(!data){
-        // id_classroom
-        // id_student
-    }else{
-        // Id
-        var spanId = document.createElement("span");
-        spanId.innerText = "ID";
-        spanId.className = "id";
-        var inputId = document.createElement("input");
-        inputId.type = "text";
-        inputId.className = "id";
-        inputId.value = data?.id ?? "";
+
+    var spanId = document.createElement("span");
+    spanId.innerText = "ID";
+    spanId.className = "id";
+    var inputId = document.createElement("input");
     
-        cardContent.appendChild(spanId);
-        cardContent.appendChild(inputId);
-    }
+    inputId.id = "id";
+    inputId.type = "text";
+    inputId.className = "id";
+    inputId.value = data?.id ?? "";
+
+    cardContent.appendChild(spanId);
+    cardContent.appendChild(inputId);
 
     // Name
     var spanName = document.createElement("span");
