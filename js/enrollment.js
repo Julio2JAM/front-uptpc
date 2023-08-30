@@ -194,6 +194,7 @@ async function createModalBoxTable(){
     tabla.className = "table"
     var thead = document.createElement("thead");
     var tbody = document.createElement("tbody");
+    tbody.className = "tbody-modal-box";
 
     // Crear una fila de encabezado <tr> y tres celdas de encabezado <th>
     var encabezado = document.createElement("tr");
@@ -233,7 +234,7 @@ async function createModalBoxTable(){
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
 
-    await fetch("http://localhost:3000/api/student/")
+    await fetch(`${API_URL}/enrollment/studentNoClassroom`)
     .then(response => response.json())
     .then(data => data.forEach(element => {
         const row = tbody.insertRow(-1);
@@ -253,6 +254,17 @@ async function createModalBoxTable(){
         const check = row.insertCell(4);
         check.appendChild(checkbox.cloneNode(true));
 
+        check.firstChild.addEventListener('click', (event) => {
+            event.stopPropagation();
+            row.style.background = check.firstChild.checked ? "#e8e8e8" : ""
+        });
+
+        row.addEventListener("click", (event) => {
+            event.stopPropagation();
+            check.firstChild.checked = check.firstChild.checked ? false : true
+            row.style.background = check.firstChild.checked ? "#e8e8e8" : "";
+        });
+        
     }))
     .catch(error => error);
 
