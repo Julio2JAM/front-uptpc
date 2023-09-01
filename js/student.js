@@ -8,15 +8,7 @@ document.querySelectorAll(".card-content button[id*=change]").forEach(element =>
     });
 });
 
-window.addEventListener('load', async () => await loadData());
-
-async function loadData() {
-    await fetch(`${API_URL}/student/`)
-    .then(response => response.json())
-    .then(data => dataTable(data))
-    .catch(error => error);
-}
-
+window.addEventListener('load', async () => await search());
 document.getElementById('search').addEventListener('click', async () => await search())
 
 async function search() {
@@ -26,7 +18,7 @@ async function search() {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/student/?name=${data.name}&lastName=${data.lastName}&cedule=${data.cedule}&id_status=${data.id_status}`)
+    await fetch(`${API_URL}/student/?personName=${data.name}&personLastName=${data.lastName}&personCedule=${data.cedule}&id_status=${data.status}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -117,7 +109,7 @@ function createModalBox(data){
     inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
-    inputId.value = data?.person.id ?? "";
+    inputId.value = data?.id ?? "";
 
     cardContent.appendChild(spanId);
     cardContent.appendChild(inputId);
@@ -241,7 +233,7 @@ async function save() {
         headers: {"content-type": "application/json"},
         body: JSON.stringify(jsonData)
     })
-    .then(response => response.json())
+    .then(response => search())
     .then(data => data)
     .catch(err => err);
 }

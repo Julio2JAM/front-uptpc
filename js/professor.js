@@ -25,7 +25,7 @@ async function search() {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/professor/?name=${data.name}&lastName=${data.lastName}&cedule=${data.cedule}`)
+    await fetch(`${API_URL}/professor/?name=${data.name}&lastName=${data.lastName}&cedule=${data.cedule}&id_status=${data.status}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error)
@@ -134,7 +134,7 @@ function createModalBox(data){
     inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
-    inputId.value = data?.person.id ?? "";
+    inputId.value = data?.id ?? "";
 
     cardContent.appendChild(spanId);
     cardContent.appendChild(inputId);
@@ -239,7 +239,7 @@ function createModalBox(data){
 async function save(){
 
     // Obtener datos para crear o actualizar el registro.
-    const id  = document.getElementById("id");
+    const id  = document.getElementById("id").value;
     const jsonData = {
         person: {
             name: document.getElementById("name").value,
@@ -259,14 +259,11 @@ async function save(){
     await fetch(`${API_URL}/professor/`, {
         method: method,
         headers: {"content-type": "application/json"},
-        body: jsonData
+        body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
     .then(data => search())
     .catch(error => console.log(error));
-
-    // Comentado puede que temporalmente
-    //document.getElementById("modal-box").remove();
 }
 
 document.querySelectorAll(".card-container button[id*=change]").forEach(element => {
