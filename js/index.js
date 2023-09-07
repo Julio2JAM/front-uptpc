@@ -1,4 +1,8 @@
-window.addEventListener("load", async () => await verifyToken())
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
+//window.addEventListener("load", async () => await verifyToken())
 
 async function verifyToken(){
 
@@ -39,26 +43,41 @@ async function verifyToken(){
 }
 
 document.getElementById("login-btn").addEventListener("click", async () => {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    const jsonData = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    }
 
-    await fetch("http://localhost:3000/api/access",{
+    const login = await fetch(`${API_URL}/access`,{
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({username: username, password: password})
+        body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
-    .then(data => {
-        
-        if(data.status == 400){
-            handleMessage(data.message);
-            return;
-        }
+    .then(data => console.log(data))
+    .catch(error => console.log(error ?? "Error de conexión, intente nuevamente en algunos segundos."));
+    /*
+    const http = async (url, {headers, method, body}) => {
+        return new Promise(async (resolve, reject) => {
+           await fetch(url, {headers, method, body})
+           .then(async (response) => {
+            const STATUS_OK = [200, 201, 204]
+            const data = await response.json()
+            if(STATUS_OK.includes(response.status)){
+                resolve(data)
+            }
+            reject(data)
+           })
+        })
+    }
 
-        handleMessage("");
-        document.cookie = `token=${data.token}; SameSite=None; Secure;`;
+    const data = await http(`${API_URL}/access`,{
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jsonData)
     })
-    .catch(error => handleMessage("Error de conexión, intente nuevamente en algunos segundos."))
+    .catch(error => console.log(error))*/
+
 });
     
 
@@ -103,9 +122,3 @@ function handleMessage(message){
     // Agregar el nuevo elemento después del hr
     div.insertBefore(newElement, hr.nextSibling);
 }
-
-/*
-document.getElementById("register-btn").addEventListener("click", () => {
-    location.href = "register.html";
-});
-*/
