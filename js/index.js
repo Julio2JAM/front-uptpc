@@ -2,43 +2,45 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 
-//window.addEventListener("load", async () => await verifyToken())
+window.addEventListener("load", async () => await verifyToken())
 
 async function verifyToken(){
 
-    const cookieString = document.cookie;
-    const cookieArray = cookieString.split("; ");
+    const cookies = document.cookie.split(';');
     const cookieName = "token";
 
     let cookieValue;
-    for (const value of cookieArray) {
-
-        if (value.indexOf(cookieName) === 0) {
+    for (const value of cookies) {
+        if (value.startsWith(cookieName)) {
             cookieValue = value.substring(cookieName.length + 1);
             cookieValue = decodeURIComponent(cookieValue);
             break;
         }
-        
     }
-
+    
     if(!cookieValue){
         return;
     }
 
-    var token;
-    await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
-    .then(response => response.json())
-    .then(data => {
-        console.log("🚀 ~ file: index.js:24 ~ verifyToken ~ data:", data.token)
-        token = data.token;
-        console.log("🚀 ~ file: index.js:26 ~ verifyToken ~ token:", token)
+    const token = await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
+    .then(async (response) => {
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
+        }
+        return data;
     })
-    .catch(err => console.error(err));
+    .catch(error => {
+        handleMessage(error);
+        return response.status;
+    });
     
-    if(token){
+    if(!token.token){
+        document.cookie = cookieName + '=""; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+
+    if(token.role){
         location.href = "menu.html";
-    }else{
-        document.cookie = cookieName + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 }
 
@@ -53,9 +55,24 @@ document.getElementById("login-btn").addEventListener("click", async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(jsonData)
     })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.log(error ?? "Error de conexión, intente nuevamente en algunos segundos."));
+    .then(async (response) => {
+        data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
+        }
+        return data
+    })
+    .catch(error => handleMessage(error));
+    
+    if(login){
+        /*const date = new Date();
+        date.setDate(date.getDate() + 1)
+        date.setHours(0,0,0,0);
+
+        document.cookie = `token=${login.token}; SameSite=None; Secure; expires=${date};`*/
+        document.cookie = `token=${login.token}; SameSite=None; Secure;`;
+    } 
+
     /*
     const http = async (url, {headers, method, body}) => {
         return new Promise(async (resolve, reject) => {
