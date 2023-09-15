@@ -66,8 +66,6 @@ async function createModalList(data){
 function searchByClassroom(){
     const span = document.querySelectorAll("fieldset span");
     span.forEach(element => element.addEventListener("click", async (event) => await loadData(event)));
-    const modalBox = document.getElementById("modal-box");
-    modalBox.remove();
 }
 
 //
@@ -97,15 +95,7 @@ function dataTable(data){
         "1" : "Disponible"
     };
 
-    const detailData = document.createElement("button");
-    detailData.className = "view-button";
-    detailData.innerText = "Ver más";
-
-    const activities = document.createElement("button");
-    activities.className = "view-button";
-    activities.innerText = "Actividades";
-
-    data.forEach(element => {
+    data.forEach( (element) => {
         const row = tbody.insertRow(-1);
 
         const cellID = row.insertCell(0);
@@ -121,122 +111,79 @@ function dataTable(data){
         cellStatus.innerHTML = status[element.id_status];
 
         const cellAction = row.insertCell(4);
-        cellAction.appendChild(detailData.cloneNode(true));
-        cellAction.appendChild(activities.cloneNode(true));
+        const btnDetail = createButtons("Ver mas", "view-button", `btn-detail-${element.id}`, detail)
+        const btnActivity = createButtons("Actividades", "view-button", `btn-activity-${element.id}`, detail)
+
+        cellAction.appendChild(btnDetail);
+        cellAction.appendChild(btnActivity);
     });
 }
 
-function addEvents(){
-    const buttons = document.querySelectorAll('tbody button');
-    console.log(buttons);
-    // buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
+function createButtons(innerText, className, id, clickCb){
+    const btn = document.createElement("button");
+    btn.innerText = innerText;
+    btn.className = className;
+    btn.id = id;
+    const idReplace = id.split('-').pop();
+    btn.addEventListener("click", () => clickCb(idReplace))
+    return btn;
 }
 
-async function detail(event) {
-
-    await fetch(`${API_URL}/enrollment/?id=${event.target.id}`)
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(err => console.error(err))
-
+async function detail(id) {
+    await fetch(`${API_URL}/program/?id=${id}`)
+    .then(response => response.json())
+    .then(data => createModalBox(data))
+    .catch(err => console.error(err))
 }
 
 // Funcion para crear el modal box
 function createModalBox(data) {
 
     // Crear divs contenedores
-    var modal = document.createElement("div");
+    const modal = document.createElement("div");
     modal.className = "modal-box";
     modal.id = "modal-box";
 
-    var modalContent = document.createElement("div");
+    const modalContent = document.createElement("div");
     modalContent.className = "horizontal-card";
     modalContent.id = "modal-content";
 
-    var cardContent = document.createElement("div");
+    const cardContent = document.createElement("div");
     cardContent.className = "card-content";
     cardContent.id = "card-content";
 
-    // Crear elementos del DOM
-    var img = document.createElement("img");
-    img.src = "../source/classroom2.jpeg";
-    modalContent.appendChild(img);
-    
-    // Id
-    var spanId = document.createElement("span");
-    spanId.innerText = "ID";
-    spanId.className = "id";
-    var inputId = document.createElement("input");
-    inputId.id = "id";
-    inputId.type = "text";
-    inputId.className = "id";
-    inputId.value = data?.id ?? "";
+    const table = document.createElement("table");
+    const tbody = document.createElement("tbody");
 
-    cardContent.appendChild(spanId);
-    cardContent.appendChild(inputId);
+    data.forEach(element => {
 
-    // Name
-    var spanName = document.createElement("span");
-    spanName.innerText = "Name";
-    var inputName = document.createElement("input");
-    inputName.id = "name";
-    inputName.type = "text";
-    inputName.value = data?.name ?? "";
-    inputName.placeholder = "Name";
+        const rowPName = tbody.insertRow(0);
+        const pNameTitle = rowPName.insertCell(0);
+        pNameTitle.innerHTML = "Nombre:";
+        const pName = rowPName.insertCell(1);
+        pName.innerHTML = element.professor.person.name;
 
-    cardContent.appendChild(spanName);
-    cardContent.appendChild(inputName);
+        const rowPPhone = tbody.insertRow(1);
+        const pPhoneTitle = rowPPhone.insertCell(0);
+        pPhoneTitle.innerHTML = "Telefono:";
+        const pPhone = rowPPhone.insertCell(1);
+        pPhone.innerHTML = element.professor.person.phone;
 
-    // datetimeStart
-    var spanDatetimeStart = document.createElement("span");
-    spanDatetimeStart.innerHTML = "Datetime start";
-    var inputDatetimeStart = document.createElement("input");
-    inputDatetimeStart.id = "datetime_start";
-    inputDatetimeStart.type = "date";
-    inputDatetimeStart.value = data?.datetime_start ?? "";
+        const rowPEmail = tbody.insertRow(2);
+        const pEmailTitle = rowPEmail.insertCell(0);
+        pEmailTitle.innerHTML = "Email:";
+        const pEmail = rowPEmail.insertCell(1);
+        pEmail.innerHTML = element.professor.person.email;
+        
+        const rowSName = tbody.insertRow(3);
+        const sNameTitle = rowSName.insertCell(0);
+        sNameTitle.innerHTML = "Materia:";
+        const sName = rowSName.insertCell(1);
+        sName.innerHTML = element.subject.name;
+    });
 
-    cardContent.appendChild(spanDatetimeStart);
-    cardContent.appendChild(inputDatetimeStart);
-    
-    // datetimeEnd
-    var spanDatetimeEnd = document.createElement("span");
-    spanDatetimeEnd.innerHTML = "Datetime end";
-    var inputDatetimeEnd = document.createElement("input");
-    inputDatetimeEnd.id = "datetime_end";
-    inputDatetimeEnd.type = "date";
-    inputDatetimeEnd.value = data?.datetime_end ?? "";
-
-    cardContent.appendChild(spanDatetimeEnd);
-    cardContent.appendChild(inputDatetimeEnd);
-    
-    // Status
-    var spanStatus = document.createElement("span");
-    spanStatus.innerText = "Status";
-    var selectStatus = document.createElement("select");
-    var options = [
-        {value: "", label: "Select a status"},
-        {value: -1, label: "Eliminado"},
-        {value: 0, label: "No disponible"},
-        {value: 1, label: "Disponible"}
-    ];
-    for (var option of options) {
-        selectStatus.add(new Option(option.label, option.value));
-    }
-    selectStatus.id = "status";
-    selectStatus.value = data?.id_status ?? "";
-
-    cardContent.appendChild(spanStatus);
-    cardContent.appendChild(selectStatus);
-
-    // Save
-    var inputSubmit = document.createElement("input");
-    inputSubmit.id = "save";
-    inputSubmit.type = "submit";
-    inputSubmit.value = !data?.id ? "Crear" : "Actualizar";
-    inputSubmit.addEventListener("click", async () => await save());
-
-    cardContent.appendChild(inputSubmit);
-
+    table.appendChild(tbody);
+    cardContent.appendChild(table);
     modalContent.appendChild(cardContent);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);

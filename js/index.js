@@ -39,9 +39,16 @@ async function verifyToken(){
         document.cookie = cookieName + '=""; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 
-    if(token.role){
-        location.href = "menu.html";
+    const roles = {
+        admin: "menu.html",
+        student: "assignmentStudent.html",
     }
+
+    if(!roles[token.role]){
+        handleMessage("No posee permisos para acceder.");
+    }
+    
+    location.href = roles[token.role];
 }
 
 document.getElementById("login-btn").addEventListener("click", async () => {
@@ -65,11 +72,6 @@ document.getElementById("login-btn").addEventListener("click", async () => {
     .catch(error => handleMessage(error));
     
     if(login){
-        /*const date = new Date();
-        date.setDate(date.getDate() + 1)
-        date.setHours(0,0,0,0);
-
-        document.cookie = `token=${login.token}; SameSite=None; Secure; expires=${date};`*/
         document.cookie = `token=${login.token}; SameSite=None; Secure;`;
     } 
 
@@ -107,6 +109,11 @@ viewBtn.addEventListener("click", function(){
 });
 
 function handleMessage(message){
+
+    if(typeof message !== "string"){
+        message="Error de conexión, intente nuevamente en algunos segundos.";
+    }
+
     // Obtener el elemento cuya clase sea "message"
     const span = document.querySelector(".message");
 

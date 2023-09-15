@@ -77,7 +77,6 @@ function loadClassroomEvents(){
     a.forEach(a => a.addEventListener("click", async (event) => await loadData(event)));
 }
 
-
 document.querySelectorAll(".card-content button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
         location.hred = `${element.id.replace("-change", "")}.html`;
