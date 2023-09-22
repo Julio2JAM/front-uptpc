@@ -72,12 +72,12 @@
 .modal-content footer{
     border-bottom: none;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
 }
 .modal-content footer button{
     border: 1px solid #d5d9d9;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 25px;
     border-radius: 1rem;
     cursor: pointer;
     font-size: 15px;
@@ -119,7 +119,7 @@
 }
 
 #reset{
-    background-color: #FFEFD5;
+    /* background-color: #FFEFD5; */
 }
 .show-modal{
     opacity: 1;
