@@ -1,0 +1,132 @@
+*{
+    font-family: sans-serif;
+}
+
+.modal{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s;
+}
+
+.modal-content h3{
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    gap: 8px;
+}
+.modal-content img{
+    width: 40px;
+    height: 40px;
+}
+
+.modal-content header,
+.modal-content section,
+.modal-content footer{
+    border-bottom: 1px solid #ddd;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-content header{
+    background-color: #3ec1a7;
+    color: white;
+}
+
+.modal-content section {
+    overflow-y: auto;
+    align-items: flex-start;
+}
+.modal-content section form,
+.modal-content section input,
+.modal-content section select{
+    width: 100%;
+    font-size: 14px;
+}
+.modal-content section input:focus,
+.modal-content section select:focus{
+    outline: none;
+}
+.modal-content section input,
+.modal-content section select{
+    padding: 10px;
+    box-sizing: border-box;
+    margin: 4px 0px 12px 0px;
+    border: none;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 3px;
+}
+
+.modal-content footer{
+    border-bottom: none;
+    justify-content: center;
+    gap: 12px;
+}
+.modal-content footer button{
+    border: 1px solid #d5d9d9;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 15px;
+}
+.modal-content footer button[type="submit"] {
+    background: #1abc9c;
+    color: white;
+}
+
+.modal-content{
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    width: 24rem;
+    background-color: #fefefe;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px 0 rgb(0 0 0 / 15%);
+
+    transform: scale(0.9);
+    transition: transform 0.25s;
+    overflow: hidden;
+}
+
+.close-btn{
+    border: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 100%;
+    font-weight: bold;
+    background-color: white;
+}
+
+.close-btn:hover{
+    background-color: #FFA07A;
+    color: white;
+    /* background-color: darkgray; */
+}
+
+#reset{
+    /* background-color: #FFEFD5; */
+}
+.show-modal{
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s linear 0s, opacity 0.25s 0s;
+}
+.show-modal .modal-content{
+    transform: scale(1.0);
+    transition: transform 0.25s;
+}

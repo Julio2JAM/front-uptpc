@@ -26,18 +26,8 @@ async function search(){
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    const validateData = Object.values(data).every(value => !value);
-    if(validateData){
-        await loadData();
-        return;
-    }
-
-    // En caso de no enviar algun dato, remplazar // por /
-    var url = `${API_URL}/classroom/name/${data["name"]}/datetime_start/${data["datetime_start"]}/datetime_end/${data["datetime_end"]}/id_status/${data["status"]}`;                       
-    url = url.replace(/\/\//g, "/");
-
     // Obtener los datos de la busqueda
-    await fetch(url)
+    await fetch(`${API_URL}/classroom/?name=${data["name"]}&datetime_start=${data["datetime_start"]}&datetime_end=${data["datetime_end"]}&id_status=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => console.log(error));
@@ -98,9 +88,9 @@ async function detail(event) {
     const row = event.target.closest("tr");
     const id = row.cells[0].innerHTML;
 
-    await fetch(`${API_URL}/classroom/${id}`)
+    await fetch(`${API_URL}/classroom/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data))
+    .then(data => createModalBox(data[0]))
     .catch(error => console.error(error));
 
 }

@@ -1,64 +1,102 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
 window.addEventListener("load", async () => await verifyToken())
 
 async function verifyToken(){
 
-    const cookieString = document.cookie;
-    const cookieArray = cookieString.split("; ");
+    const cookies = document.cookie.split(';');
     const cookieName = "token";
 
     let cookieValue;
-    for (const value of cookieArray) {
-
-        if (value.indexOf(cookieName) === 0) {
+    for (const value of cookies) {
+        if (value.startsWith(cookieName)) {
             cookieValue = value.substring(cookieName.length + 1);
             cookieValue = decodeURIComponent(cookieValue);
             break;
         }
-        
     }
-
+    
     if(!cookieValue){
         return;
     }
 
-    var token;
-    await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
-    .then(response => response.json())
-    .then(data => {
-        console.log("🚀 ~ file: index.js:24 ~ verifyToken ~ data:", data.token)
-        token = data.token;
-        console.log("🚀 ~ file: index.js:26 ~ verifyToken ~ token:", token)
+    const token = await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
+    .then(async (response) => {
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
+        }
+        return data;
     })
-    .catch(err => console.error(err));
+    .catch(error => {
+        handleMessage(error);
+        return response.status;
+    });
     
-    if(token){
-        location.href = "menu.html";
-    }else{
-        document.cookie = cookieName + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    if(!token.token){
+        document.cookie = cookieName + '=""; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
+
+    const roles = {
+        admin: "menu.html",
+        student: "assignmentStudent.html",
+    }
+
+    if(!roles[token.role]){
+        handleMessage("No posee permisos para acceder.");
+    }
+    
+    location.href = roles[token.role];
 }
 
 document.getElementById("login-btn").addEventListener("click", async () => {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    const jsonData = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    }
 
-    await fetch("http://localhost:3000/api/access",{
+    const login = await fetch(`${API_URL}/access`,{
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({username: username, password: password})
+        body: JSON.stringify(jsonData)
     })
-    .then(response => response.json())
-    .then(data => {
-        
-        if(data.status == 400){
-            handleMessage(data.message);
-            return;
+    .then(async (response) => {
+        data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
         }
-
-        handleMessage("");
-        document.cookie = `token=${data.token}; SameSite=None; Secure;`;
+        return data
     })
-    .catch(error => handleMessage("Error de conexión, intente nuevamente en algunos segundos."))
+    .catch(error => handleMessage(error));
+    
+    if(login){
+        document.cookie = `token=${login.token}; SameSite=None; Secure;`;
+    } 
+
+    /*
+    const http = async (url, {headers, method, body}) => {
+        return new Promise(async (resolve, reject) => {
+           await fetch(url, {headers, method, body})
+           .then(async (response) => {
+            const STATUS_OK = [200, 201, 204]
+            const data = await response.json()
+            if(STATUS_OK.includes(response.status)){
+                resolve(data)
+            }
+            reject(data)
+           })
+        })
+    }
+
+    const data = await http(`${API_URL}/access`,{
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jsonData)
+    })
+    .catch(error => console.log(error))*/
+
 });
     
 
@@ -71,6 +109,11 @@ viewBtn.addEventListener("click", function(){
 });
 
 function handleMessage(message){
+
+    if(typeof message !== "string"){
+        message="Error de conexión, intente nuevamente en algunos segundos.";
+    }
+
     // Obtener el elemento cuya clase sea "message"
     const span = document.querySelector(".message");
 
@@ -103,9 +146,3 @@ function handleMessage(message){
     // Agregar el nuevo elemento después del hr
     div.insertBefore(newElement, hr.nextSibling);
 }
-
-/*
-document.getElementById("register-btn").addEventListener("click", () => {
-    location.href = "register.html";
-});
-*/
