@@ -51,7 +51,9 @@ async function verifyToken() {
     location.href = roles[token.role];
 }
 
-document.getElementById("login-btn").addEventListener("click", async () => {
+document.getElementById("login-btn").addEventListener("click", async event => {
+    event.preventDefault();
+
     const jsonData = {
         username: document.getElementById("username").value,
         password: document.getElementById("password").value
