@@ -8,13 +8,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.25);
     opacity: 0;
-    visibility: hidden;
-    transition: visibility 0s linear 0.25s, opacity 0.25s 0s;
+
+    display: none;
+    transition: opacity .25s linear forwards;
+    animation: ModalFadeIn .25s linear forwards;
 }
 
 .modal-content h3{
@@ -96,7 +97,7 @@
     border-radius: 1rem;
     box-shadow: 0 10px 20px 0 rgb(0 0 0 / 15%);
 
-    transform: scale(0.9);
+    animation: ModalContentScale .25s linear forwards;
     transition: transform 0.25s;
     overflow: hidden;
 }
@@ -118,15 +119,38 @@
     /* background-color: darkgray; */
 }
 
-#reset{
-    /* background-color: #FFEFD5; */
+.close-modal{
+    animation: ModalFadeOut .25s ease forwards;
 }
-.show-modal{
-    opacity: 1;
-    visibility: visible;
-    transition: visibility 0s linear 0s, opacity 0.25s 0s;
-}
-.show-modal .modal-content{
-    transform: scale(1.0);
+
+.close-modal .modal-content{
+    transform: scale(0.9);
     transition: transform 0.25s;
+}
+
+
+@keyframes ModalFadeOut {
+    from{
+        opacity: 1;
+        offset: 0;
+    }to{
+        opacity: 0;
+        offset: 1;
+    }
+}
+@keyframes ModalContentScale{
+    from{
+        transform: scale(0.9);
+    }to{
+        transform: scale(1.0);
+    }
+}
+@keyframes ModalFadeIn{
+    from{
+        opacity: 0;
+        offset: 0;
+    }to{
+        opacity: 1;
+        offset: 1;
+    }
 }

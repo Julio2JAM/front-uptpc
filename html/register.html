@@ -1,47 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/index.css">
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../css/login.css'>
     <title>Registro</title>
 </head>
 <body>
+    <div class="form">
+        <form method="post">
+            <h1>REGISTRO</h1><br><br>
+            <!-- <hr class="solid"><br><br> -->
 
-    <div class="container">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" placeholder="Usuario" autofocus>
 
-        <h1>REGISTRO</h1>
-        <hr class="solid">
-
-        <div class="inputs">
-            <span>Usuario:</span>
-            <input type="text" id="username" placeholder="Usuario" autofocus required/>
-        </div>
-
-        <div class="inputs">
-            <span>Clave:</span>
             <div class="password-container">
-                <input type="password" id="password" placeholder="Clave" required/>
-                <img src="../source/ojo-no.png" alt="icono" class="view-btn">
+                <label for="password">Clave:</label>
+                <input type="password" id="password" placeholder="Clave">
+                <button type="button" class="view-btn"></button>
             </div>
-        </div>
 
-        <div class="inputs">
-            <span>Repetir clave:</span>
             <div class="password-container">
-                <input type="password" id="repet" placeholder="Repetir clave" required/>
-                <img src="../source/ojo-no.png" alt="icono" class="view-btn">
+                <label for="password">Repetir clave:</label>
+                <input type="password" id="repet" placeholder="Repetir clave">
+                <button type="button" class="view-btn"></button><br>
             </div>
-        </div>
 
-        <div class="buttons">
-            <input type="button" value="Register" id="register-btn"/>
+            <button type="submit">Registrarme</button>
             <span>Ya tienes una cuenta? <a href="index.html">Inicia sesión</a></span>
-        </div>
-        
+        </form>
     </div>
-
-    <script src="../js/register.js"></script>
+    <!-- <script src='main.js'></script> -->
 </body>
 </html>

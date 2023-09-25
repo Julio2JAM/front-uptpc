@@ -9,7 +9,7 @@ body {
   font-family: "Rubik", sans-serif;
 }
 
-.login-form {
+.form {
   position: absolute;
   top: 0;
   left: 0;
@@ -55,13 +55,31 @@ form input{
     background-color: white;
     border-radius: 3px;
     margin: 4px 0px 12px 0px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form .password-container{
+    position: relative;
+}
+
+.view-btn{
+    position: absolute;    
+    bottom: 1rem;
+    right: 0.5rem;
+    width: 30px;
+    cursor: pointer;
+    border: none;
+    background: transparent; 
+    outline: none;
 }
 
 form input:focus{
     outline: none;
+    border-color: #1E90FF;
 }
 
-button{
+button[type="submit"]{
     border: 1px solid #ccc;
     padding: 10px;
     width: 100%;
