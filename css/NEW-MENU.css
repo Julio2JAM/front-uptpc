@@ -17,9 +17,11 @@ body {
 
 header{
     position: sticky;
-    background-color: #262626;
-    color: white;
-    padding: .3rem;
+    background-color: white;
+    /* background-color: #262626; */
+    /* text-transform: uppercase; */
+    padding: .5rem 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 nav{
@@ -42,18 +44,23 @@ a{
     display:flex;
     align-items: center;
     gap: 10px;
+    padding: .5rem 1rem;
+    text-decoration: none;
+    color: #333;
 }
 
 a,
 li{
-    border-radius: 3px;
-    padding: .5rem;
+    /* border-radius: 5px; */
+    border-radius: 1rem;
 }
 
 a:hover,
 li:hover{
-    background-color:#696969;
+    background-color:#ddd;
     cursor:pointer;
+    /* box-shadow: 0 2px 0px rgba(0, 0, 0, 0.15); */
+    color: black;
 }
 
 .icon-user{
