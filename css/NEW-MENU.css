@@ -7,7 +7,6 @@
 body {
     margin: 0;
     padding: 0;
-    position: relative;
     background: linear-gradient(to top right, #bfdbfe, #c7d2fe, #fbcfe8);
     /* height: 100%; */
     width: 100%;
@@ -22,6 +21,7 @@ header{
     /* text-transform: uppercase; */
     padding: .5rem 1rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 99;
 }
 
 nav{
@@ -33,29 +33,31 @@ nav{
     font-size: 15px;
 }
 
-ul{
+nav ul{
     display: flex;
     list-style: none;
     gap: 1rem;
     align-items: center;
+    margin: 0 .5rem;
 }
 
-a{
+nav a{
     display:flex;
     align-items: center;
     gap: 10px;
     padding: .5rem 1rem;
     text-decoration: none;
     color: #333;
+    text-align: center;
 }
 
-a,
-li{
+nav a,
+nav li{
     /* border-radius: 5px; */
     border-radius: 1rem;
 }
 
-a:not(.selected):hover{
+nav a:not(.selected):hover{
     background-color:#ddd;
     cursor:pointer;
     /* box-shadow: 0 2px 0px rgba(0, 0, 0, 0.15); */
@@ -76,4 +78,76 @@ a:not(.selected):hover{
 }
 .selected svg{
     color: #4169E1 !important;
+}
+
+.hamburger-menu{
+    display: none;
+}
+
+@media only screen and (max-width: 925px) {
+    nav a{
+        flex-direction: column;
+        max-width: 100px;
+    }
+    #exit{
+        flex-direction: column-reverse;
+    }
+}
+
+@media only screen and (max-width: 680px) {
+    .hamburger-menu{
+        display: flex;
+    }
+    nav ul{
+        display: none;
+
+    }
+    #exit,
+    nav a{
+        flex-direction: row;
+    }
+}
+
+.modal-menu{
+    position: absolute;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+    align-items: center;
+    justify-content: space-around;
+}
+
+.modal-menu ul{
+    width: 80%;
+    flex-direction: column;
+    list-style: none;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.modal-menu li{
+    border-radius: 10px;
+    padding: .5rem;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.modal-menu a{
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    padding: .5rem 1rem;
+    gap: 7px;
+    max-width: 100px;
+    flex-direction: column;
+    border-radius: 1rem;
+}
+
+.modal-menu li:hover{
+    background-color:#ddd;
 }

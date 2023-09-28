@@ -92,3 +92,9 @@ form span a{
     color: #B22222;
     text-decoration: none;
 }
+
+@media only screen and (max-height: 350px) {    
+    .form {
+        align-items: flex-start;
+    }
+}

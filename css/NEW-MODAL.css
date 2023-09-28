@@ -18,6 +18,20 @@
     animation: ModalFadeIn .25s linear forwards;
 }
 
+.modal-content{
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    width: 24rem;
+    background-color: #fefefe;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px 0 rgb(0 0 0 / 15%);
+
+    animation: ModalContentScale .25s linear forwards;
+    transition: transform 0.25s;
+    overflow: hidden;
+}
+
 .modal-content h3{
     display: flex;
     align-items: center;
@@ -86,20 +100,6 @@
 .modal-content footer button[type="submit"] {
     background: #1abc9c;
     color: white;
-}
-
-.modal-content{
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    width: 24rem;
-    background-color: #fefefe;
-    border-radius: 1rem;
-    box-shadow: 0 10px 20px 0 rgb(0 0 0 / 15%);
-
-    animation: ModalContentScale .25s linear forwards;
-    transition: transform 0.25s;
-    overflow: hidden;
 }
 
 .close-btn{
