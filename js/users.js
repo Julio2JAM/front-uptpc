@@ -1,4 +1,16 @@
+//Importar la constante con la URL utilizado para hacer peticiones a la API
+//import { API_URL } from './globals.js';
+const API_URL = "http://localhost:3000/api"
+
+// Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadData());
+
+async function loadData(){
+  await fetch(`${API_URL}/user`)
+  .then(response => response.json())
+  .then(data => dataTable(data))
+  .catch(err => err);
+}
 
 async function levels(){
 
@@ -8,7 +20,7 @@ async function levels(){
   const startOption = new Option("Select a permission", "");
   select.add(startOption);
 
-  await fetch(`http://localhost:3000/api/level`)
+  await fetch(`${API_URL}/level`)
   .then(response => response.json())
   .then(data => {
     data.forEach(element => {
@@ -21,43 +33,16 @@ async function levels(){
   return select;
 }
 
-async function loadData(){
-
-  const selectLevel = await levels();
-  const table = document.querySelector("tbody");
-
-  var dataLevel = {};
-  for (const option of selectLevel) {
-    dataLevel[option.value] = option.textContent;
-  }
-
-  await fetch(`http://localhost:3000/api/user`)
-  .then(response => response.json())
-  .then(data => dataTable(data))
-  .catch(err => err);
-
-}
-
 document.getElementById('search').addEventListener('click', async () => await search());
 
 async function search() {
-
   const elements = document.querySelectorAll(".filter-container input, select");
   const data = {};
   for (const element of elements) {
     data[element.id.replace("filter-", "")] = element.value;
   }
 
-  const validateData = Object.values(data).every(value => !value);
-  if(validateData){
-      await loadData();
-      return;
-  }
-
-  let url = `http://localhost:3000/api/user/username/${data["username"]}/level/${data["permission"]}/status/${data["status"]}`;
-  url = url.replace(/\/\//g, "/");
-
-  await fetch(url)
+  await fetch(`${API_URL}/user/?username=${data["username"]}&role=${data["role"]}&id_status=${data["status"]}`)
   .then(response => response.json())
   .then(data => dataTable(data))
   .catch(error => console.log(error));
@@ -123,9 +108,9 @@ async function detail(event){
   const row = event.target.closest('tr');
   const id = row.cells[0].textContent;
 
-  await fetch(`http://localhost:3000/api/user/${id}`)
+  await fetch(`${API_URL}/user/?id=${id}`)
   .then(response => response.json())
-  .then(data => createModalBox(data))
+  .then(data => createModalBox(data[0]))
   .catch(err => console.error(err));
 
 }
@@ -152,53 +137,63 @@ function createModalBox(data){
   img.src = "../source/users.jpeg";
   
   var spanId = document.createElement("span");
+  spanId.textContent = "id";
+  spanId.className = "id";
+
   var inputId = document.createElement("input");
+  inputId.type = "text";
+  inputId.id = "id";
+  inputId.className = "id";
+  inputId.placeholder = "id";
+  inputId.value = data?.id ?? "";
 
   var spanUsername = document.createElement("span");
+  spanUsername.textContent = "Username";
+
   var inputUsername = document.createElement("input");
+  inputUsername.type = "text";
+  inputUsername.id = "username";
+  inputUsername.placeholder = "username";
+  inputUsername.value = data?.username ?? "";
   
-  var spanLevel = document.createElement("span");
-  var selectLevel = document.getElementById("filter-permission");
-  selectLevel = selectLevel.cloneNode(true);
-  selectLevel.remove(0);
+  var spanRole = document.createElement("span");
+  spanRole.textContent = "Role";
+
+  var selectRole = document.getElementById("filter-permission");
+  selectRole = selectRole.cloneNode(true);
+  selectRole.remove(0);
+  selectRole.id = "level";
+  selectRole.value = data?.level?.id ?? "";
   
+  if(!data?.password){
+    var spanPassword = document.createElement("span");
+    spanPassword.textContent = "password";
+
+    var inputPassword = document.createElement("input");
+    inputPassword.type = "text";
+    inputPassword.id = "password";
+    inputPassword.placeholder = "password";
+  }
+
   var spanStatus = document.createElement("span");
+  spanStatus.textContent = "Status";
+
   var selectStatus = document.createElement("select");
+  selectStatus.id = "status";
   var options = [
       {value: -1, label: "Eliminado"},
       {value: 0, label: "No disponible"},
       {value: 1, label: "Disponible"}
   ];
 
-  var inputSubmit = document.createElement("input");
-  inputSubmit.addEventListener("click", async () => await save());
-
   // Configurar los elementos
-  spanId.textContent = "id";
-  spanId.className = "id";
-  inputId.type = "text";
-  inputId.id = "id";
-  inputId.className = "id";
-  inputId.placeholder = "id";
-  inputId.value = data?.id ?? "";
-  
-  spanUsername.textContent = "Username";
-  inputUsername.type = "text";
-  inputUsername.id = "username";
-  inputUsername.placeholder = "username";
-  inputUsername.value = data?.username ?? "";
-  
-  spanLevel.textContent = "Level";
-  selectLevel.id = "level";
-  selectLevel.value = data?.level?.id ?? "";
-
-  spanStatus.textContent = "Status";
-  selectStatus.id = "status";
   for (var option of options) {
       selectStatus.add(new Option(option.label, option.value));
   }
   selectStatus.value = data?.id_status ?? 1;
 
+  var inputSubmit = document.createElement("input");
+  inputSubmit.addEventListener("click", async () => await save());
   inputSubmit.type = "submit";
   inputSubmit.id = "save";
   inputSubmit.value = "Actualizar";
@@ -212,8 +207,13 @@ function createModalBox(data){
   cardContent.appendChild(spanUsername);
   cardContent.appendChild(inputUsername);
 
-  cardContent.appendChild(spanLevel);
-  cardContent.appendChild(selectLevel);
+  cardContent.appendChild(spanRole);
+  cardContent.appendChild(selectRole);
+
+  if(!data?.password){
+    cardContent.appendChild(spanPassword);
+    cardContent.appendChild(inputPassword);
+  }
 
   cardContent.appendChild(spanStatus);
   cardContent.appendChild(selectStatus);
@@ -235,71 +235,23 @@ function createModalBox(data){
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
   // Obtener los elementos "name" y "description"
-  let id = document.getElementById("id");
-  let username = document.getElementById("username");
-  let id_level = document.getElementById("level");
-  let id_status = document.getElementById("status");
-
-  // Actulizar tabla dinamicamente, no terminado.
-  let updateRow = "";
-  if(id.value){
-      let tableBody = document.querySelector("tbody");
-
-      for (const row of tableBody.rows) {
-        if(row.cells[0].textContent == id.value){
-            updateRow = row;
-            break;
-          }
-      }
-
-      var method = "put";
-      var dataUser = {
-        id:id.value,
-        username:username.value,
-        level:id_level.value,
-        id_status:id_status.value,
-      }
-  }else{
-    var method = "post";
-    var dataUser = {
-      username:username.value,
-      level:id_level.value,
-      id_status:id_status.value,
-    }
+  const id = document.getElementById("id").value;
+  const dataUser = {
+    username: document.getElementById("username").value,
+    level: document.getElementById("level").value,
+    id_status: document.getElementById("status").value,
   }
 
+  const method = id ? "PUT" : "POST";
+  if(id) jsonData.id = id;
+
   // Gardar los elementos en la base de datos
-  await fetch("http://localhost:3000/api/user", {
+  await fetch(`${API_URL}/user`, {
       method: method,
       headers: { "content-type": "application/json" },
       body: JSON.stringify(dataUser)
   })
   .then(response => response.json())
-  .then(data => {
-
-    if(updateRow){
-
-      const selectLevel = document.getElementById("filter-permission");
-      const dataLevel = new Object();
-      for (const option of selectLevel.options) {
-        dataLevel[option.value] = option.innerText;
-      }
-
-      const dataStatus = {
-        "-1": "Eliminado",
-        "0": "No disponible",
-        "1": "Disponible"
-      };
-
-      updateRow.cells[1].innerText = data.username;
-      updateRow.cells[2].innerText = dataLevel[data.level?.id] ?? "No select";
-      updateRow.cells[3].innerText = dataStatus[data.id_status];
-
-    }else{
-      loadData();
-    }
-
-  })
+  .then(data => search())
   .catch(error => console.error('Ha ocurrido un error: ', error));
-  
 };

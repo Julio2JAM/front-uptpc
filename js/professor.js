@@ -13,6 +13,24 @@ async function loadData() {
     .catch(error => error)
 }
 
+//
+document.getElementById('search').addEventListener('click', async () => await search());
+
+async function search() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = new Object;
+    for(const element of elements) {
+        data[element.id.replace("filter-","")] = element.value;
+    }
+
+    await fetch(`${API_URL}/professor/?name=${data.name}&lastName=${data.lastName}&cedule=${data.cedule}&id_status=${data.status}`)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => error)
+}
+
 // Funcion para llenar la tabla de la web
 function dataTable(data) {
 
@@ -33,28 +51,31 @@ function dataTable(data) {
     actionButton.innerText = "Ver más";
 
     // Iterar todos los datos, para colocarlos en la tabla
-    data.array.forEach(element => {
+    data.forEach(element => {
         
         // Crear fila
         const row = tbody.insertRow(-1);
 
         // Crear columnas
-        const cellName = tbody.insertCell(0);
-        cellName.innerText = element.person.name;
+        const cellId = row.insertCell(0);
+        cellId.innerText = element.id;
         
-        const cellLastName = tbody.insertCell(1);
-        cellLastName.innerText = element.person.lastName;
+        const cellName = row.insertCell(1);
+        cellName.innerText = element.person.name ?? "";
+        
+        const cellLastName = row.insertCell(2);
+        cellLastName.innerText = element.person.lastName ?? "";
 
-        const cellCedule = tbody.insertCell(2);
-        cellCedule.innerText = element.person.cedule;
+        const cellCedule = row.insertCell(3);
+        cellCedule.innerText = element.person.cedule ?? "";
 
-        const cellProfession = tbody.insertCell(3);
-        cellProfession.innerText = element.person.profession;
+        const cellProfession = row.insertCell(4);
+        cellProfession.innerText = element.person.profession ?? "";
 
-        const cellStatus = tbody.insertCell(4);
-        cellStatus.innerText = element.person.id_status;
+        const cellStatus = row.insertCell(5);
+        cellStatus.innerText = status[element.person.id_status];
 
-        const cellAction = tbody.insertCell(5);
+        const cellAction = row.insertCell(6);
         cellAction.appendChild(actionButton.cloneNode(true));
 
     });
@@ -75,9 +96,9 @@ async function detail(event) {
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/professor/${id}`)
+    await fetch(`${API_URL}/professor/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data))
+    .then(data => createModalBox(data[0]))
     .catch(error => error)
 }
 
@@ -102,7 +123,7 @@ function createModalBox(data){
 
     // Crear elementos del DOM
     var img = document.createElement("img");
-    img.src = "../source/students.jpeg";
+    img.src = "../source/professor3.jpeg";
     modalContent.appendChild(img);
     
     // Id
@@ -110,6 +131,7 @@ function createModalBox(data){
     spanId.innerText = "ID";
     spanId.className = "id";
     var inputId = document.createElement("input");
+    inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
     inputId.value = data?.id ?? "";
@@ -119,30 +141,36 @@ function createModalBox(data){
 
     // Name
     var spanName = document.createElement("span");
-    spanName.innerText = "Name";
+    spanName.innerText = "Nombre";
     var inputName = document.createElement("input");
+    inputName.id = "name";
     inputName.type = "text";
-    inputName.value = data?.name ?? "";
+    inputName.placeholder = "Nombre";
+    inputName.value = data?.person.name ?? "";
 
     cardContent.appendChild(spanName);
     cardContent.appendChild(inputName);
     
     // Lastname
     var spanLastname = document.createElement("span");
-    spanLastname.innerHTML = "Last name";
+    spanLastname.innerHTML = "Apellido";
     var inputLastname = document.createElement("input");
+    inputLastname.id = "lastname";
     inputLastname.type = "text";
-    inputLastname.value = data?.lastname ?? "";
+    inputLastname.placeholder = "Apellido";
+    inputLastname.value = data?.person.lastName ?? "";
 
     cardContent.appendChild(spanLastname);
     cardContent.appendChild(inputLastname);
 
     // Cedule
     var spanCedule = document.createElement("span");
-    spanCedule.innerText = "Cedule";
+    spanCedule.innerText = "Cedula";
     var inputCedule = document.createElement("input");
+    inputCedule.id = "cedule";
     inputCedule.type = "text";
-    inputCedule.value = data?.cedule ?? "";
+    inputCedule.placeholder = "Cedula";
+    inputCedule.value = data?.person.cedule ?? "";
 
     cardContent.appendChild(spanCedule);
     cardContent.appendChild(inputCedule);
@@ -151,18 +179,22 @@ function createModalBox(data){
     var spanEmail = document.createElement("span");
     spanEmail.innerText = "Email";
     var inputEmail = document.createElement("input");
+    inputEmail.id = "email";
     inputEmail.type = "email";
-    inputEmail.value = data?.email ?? "";
+    inputEmail.placeholder = "Email";
+    inputEmail.value = data?.person.email ?? "";
 
     cardContent.appendChild(spanEmail);
     cardContent.appendChild(inputEmail);
 
     // Phone
     var spanPhone = document.createElement("span");
-    spanPhone.innerText = "Phone";
+    spanPhone.innerText = "Telefono";
     var inputPhone = document.createElement("input");
+    inputPhone.id = "phone";
     inputPhone.type = "text";
-    inputPhone.value = data?.phone ?? "";
+    inputPhone.placeholder = "Telefono";
+    inputPhone.value = data?.person.phone ?? "";
 
     cardContent.appendChild(spanPhone);
     cardContent.appendChild(inputPhone);
@@ -171,15 +203,14 @@ function createModalBox(data){
     var spanStatus = document.createElement("span");
     spanStatus.innerText = "Status";
     var selectStatus = document.createElement("select");
+    selectStatus.id = "status";
     var options = [
         {value: -1, label: "Eliminado"},
         {value: 0, label: "No disponible"},
         {value: 1, label: "Disponible"}
     ];
-    for (var option of options) {
-        selectStatus.add(new Option(option.label, option.value));
-    }
-    selectStatus.value = data?.id_status ?? "";
+    options.forEach(element => selectStatus.add(new Option(element.label, element.value)));
+    selectStatus.value = data?.person.id_status ?? 1;
 
     cardContent.appendChild(spanStatus);
     cardContent.appendChild(selectStatus);
@@ -188,7 +219,7 @@ function createModalBox(data){
     var inputSubmit = document.createElement("input");
     inputSubmit.id = "save";
     inputSubmit.type = "submit";
-    inputSubmit.value = "Actualizar";
+    inputSubmit.value = data?.person.id ? "Actualizar" : "Crear";
     inputSubmit.addEventListener("click", async () => await save());
 
     cardContent.appendChild(inputSubmit);
@@ -208,40 +239,31 @@ function createModalBox(data){
 async function save(){
 
     // Obtener datos para crear o actualizar el registro.
-    const id  = document.getElementById("id");
+    const id  = document.getElementById("id").value;
     const jsonData = {
-        name: document.getElementById("name").value,
-        datetime_start: document.getElementById("datetime_start").value,
-        datetime_end: document.getElementById("datetime_end").value,
+        person: {
+            name: document.getElementById("name").value,
+            lastName: document.getElementById("lastname").value,
+            cedule: document.getElementById("cedule").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+        },
         id_status: document.getElementById("status").value,
     };
     
     // Datos para el fetch
     const method = id ? "PUT" : "POST";
-    var tableBody = document.getElementById("tbody");
-
-    if(id){
-        for (const row of tableBody.rows) {
-            if(row.cells[0].innerText == id.value){
-                var updateRow = row;
-                break;
-            }
-        }
-        jsonData.id = id.value;
-    }
-
+    if(id) jsonData.id = id;
+    
     // Gardar o actualizar los elementos en la base de datos
     await fetch(`${API_URL}/professor/`, {
         method: method,
         headers: {"content-type": "application/json"},
-        body: jsonData
+        body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
-    .then(data => search() /*NO EXISTE FUNCION SEACH TODAVIA PARA ESTE MODULO*/)
+    .then(data => search())
     .catch(error => console.log(error));
-
-    // Comentado puede que temporalmente
-    //document.getElementById("modal-box").remove();
 }
 
 document.querySelectorAll(".card-container button[id*=change]").forEach(element => {

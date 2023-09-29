@@ -8,19 +8,20 @@ document.querySelectorAll(".card-content button[id*=change]").forEach(element =>
     });
 });
 
-window.addEventListener('load', async () => await loadData());
-
-async function loadData() {
-    await fetch(`${API_URL}/student/`)
-        .then(response => response.json())
-        .then(data => dataTable(data))
-        .catch(error => error);
-}
-
+window.addEventListener('load', async () => await search());
 document.getElementById('search').addEventListener('click', async () => await search())
 
 async function search() {
-    
+    const elements = document.querySelectorAll(".filter-container input, select");
+    const data = new Object;
+    for(const element of elements) {
+        data[element.id.replace("filter-","")] = element.value;
+    }
+
+    await fetch(`${API_URL}/student/?personName=${data.name}&personLastName=${data.lastName}&personCedule=${data.cedule}&id_status=${data.status}`)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => error);
 }
 
 function dataTable(data) {
@@ -72,9 +73,9 @@ async function detail(event){
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/student/${id}`)
+    await fetch(`${API_URL}/student/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data))
+    .then(data => createModalBox(data[0]))
     .catch(error => console.log(error));
 }
 
@@ -108,7 +109,7 @@ function createModalBox(data){
     inputId.id = "id";
     inputId.type = "text";
     inputId.className = "id";
-    inputId.value = data?.person.id ?? "";
+    inputId.value = data?.id ?? "";
 
     cardContent.appendChild(spanId);
     cardContent.appendChild(inputId);
@@ -232,7 +233,7 @@ async function save() {
         headers: {"content-type": "application/json"},
         body: JSON.stringify(jsonData)
     })
-    .then(response => response.json())
+    .then(response => search())
     .then(data => data)
     .catch(err => err);
 }
