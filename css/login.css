@@ -93,6 +93,12 @@ form span a{
     text-decoration: none;
 }
 
+.message{
+    background-color: #ffbbbb;
+    border-radius: 6px;
+    padding: .5rem;
+}
+
 @media only screen and (max-height: 350px) {    
     .form {
         align-items: flex-start;

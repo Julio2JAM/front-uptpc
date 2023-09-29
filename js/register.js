@@ -38,7 +38,9 @@ document.getElementById("lastname").addEventListener("blur", event => doubleVali
 */
 
 // Obtener el boton de registro y asignarle una funcion ecnargada de llamar a las validaciones necesarias y hacer el registro
-document.getElementById("register-btn").addEventListener("click", async () => {
+document.getElementById("register-btn").addEventListener("click", async event => {
+    
+    event.preventDefault();
 
     if(!verifyPassword()){
         return;
@@ -140,8 +142,8 @@ function handleMessage(obj,message){
 
     // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
     //const div = document.getElementsByClassName("container")[0];
-    const div = document.querySelector('.container');
-    const hr = document.querySelector('hr')
+    const div = document.querySelector("form");
+    const br = document.querySelector("form br");
 
     // Crear el elemento a agregar
     const newElement = document.createElement('span');
@@ -149,5 +151,5 @@ function handleMessage(obj,message){
     newElement.classList.add('message');
 
     // Agregar el nuevo elemento después del hr
-    div.insertBefore(newElement, hr.nextSibling);
+    div.insertBefore(newElement, br.nextSibling);
 }

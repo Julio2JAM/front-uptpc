@@ -2,6 +2,99 @@
 const menuElement = document.querySelectorAll('nav a');
 
 for (const iterator of menuElement) {
+    changeIcon(iterator);
+    changeIcon2(iterator);
+}
+
+const toggleMenu = document.getElementById("toggle-menu");
+
+toggleMenu.addEventListener("click", () => {
+
+    const toggleMenu        = document.getElementById("toggle-menu");
+    const closeIcon         = '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>'
+    const toggleIcon        = '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg>';
+    
+    const validateModalMenu = document.getElementById("modal-menu");
+    if(validateModalMenu){
+        validateModalMenu.remove();
+        toggleMenu.innerHTML = '';
+        toggleMenu.innerHTML = toggleIcon;
+        return;
+    }
+
+    toggleMenu.innerHTML = '';
+    toggleMenu.innerHTML = closeIcon;
+
+    const div = document.createElement("div");
+    div.id = "modal-menu";
+    div.className = "modal-menu";
+
+    const ul = document.createElement("ul");
+    
+    const studentProfessor  = '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3a3 3 0 1 1-1.614 5.53M15 12a4 4 0 0 1 4 4v1h-3.348M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z"/></svg>';
+    const section           = '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="20" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 2h4a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h4m6 0v3H6V2m6 0a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1M5 5h8m-5 5h5m-8 0h.01M5 14h.01M8 14h5"/></svg>';
+    const subject           = '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 16.5c0-1-8-2.7-9-2V1.8c1-1 9 .707 9 1.706M10 16.5V3.506M10 16.5c0-1 8-2.7 9-2V1.8c-1-1-9 .707-9 1.706"/></svg>';
+    const user              = '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.109 17H1v-2a4 4 0 0 1 4-4h.87M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm7.95 2.55a2 2 0 0 1 0 2.829l-6.364 6.364-3.536.707.707-3.536 6.364-6.364a2 2 0 0 1 2.829 0Z"/></svg>';
+
+    const liStudent = document.createElement("li");
+    const aStudent = document.createElement("a");
+    aStudent.id = "modal-student-professor";
+    aStudent.href = aStudent.id.split("-").pop() + ".html";
+    aStudent.innerHTML = "Estudiantes / docentes";
+    aStudent.innerHTML = studentProfessor + aStudent.innerHTML;
+    liStudent.appendChild(aStudent);
+
+    const liSection = document.createElement("li");
+    const aSection = document.createElement("a");
+    aSection.id = "modal-section";
+    aSection.href = aSection.id.split("-").pop() + ".html";
+    aSection.innerHTML = "Secciones";
+    aSection.innerHTML = section + aSection.innerHTML;
+    liSection.appendChild(aSection);
+
+    const liSubject = document.createElement("li");
+    const aSubject = document.createElement("a");
+    aSubject.id = "modal-subject";
+    aSubject.href = aSubject.id.split("-").pop() + ".html";
+    aSubject.innerHTML = "Asignaturas";
+    aSubject.innerHTML = subject + aSubject.innerHTML;
+    liSubject.appendChild(aSubject);
+
+    const liUser = document.createElement("li");
+    const aUser = document.createElement("a");
+    aUser.id = "modal-user";
+    aUser.href = aUser.id.split("-").pop() + ".html";
+    aUser.innerHTML = "Usuario";
+    aUser.innerHTML = user + aUser.innerHTML;
+    liUser.appendChild(aUser);
+
+    ul.appendChild(liStudent);
+    ul.appendChild(liSection);
+    ul.appendChild(liSubject);
+    ul.appendChild(liUser);
+    div.appendChild(ul);
+
+    document.body.appendChild(div);
+
+    const toggleMenuElements = document.querySelectorAll(".modal-menu ul a");
+    for (const iterator of toggleMenuElements) {
+        const array = iterator.id.split("-");
+        array.shift();
+        iterator.id = array.join('-'); 
+
+        changeIcon(iterator);
+        changeIcon2(iterator);
+    }
+
+    const modalMenu = document.getElementById("modal-menu");
+    modalMenu.addEventListener("click", event => {
+        if (event.target.id === "modal-menu") {
+            event.target.remove();
+        }
+    });
+});
+
+function changeIcon(iterator){
     iterator.addEventListener("mouseover", () => {
 
         const iconList = {
@@ -19,7 +112,9 @@ for (const iterator of menuElement) {
         iterator.removeChild(iterator.firstChild);
         iterator.innerHTML = iconList[iterator.id] + iterator.innerHTML;
     });
+}
 
+function changeIcon2(iterator){
     iterator.addEventListener("mouseout", () => {
         const iconList = {
             "home"              : '<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true"  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8v10a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1V8M1 10l9-9 9 9"/></svg>',
@@ -38,10 +133,3 @@ for (const iterator of menuElement) {
     });
 }
 
-/*
-// Define la función que se ejecutará cuando el mouse deje de estar sobre el elemento
-elemento.addEventListener('mouseout', function() {
-  console.log('El mouse dejó de estar sobre el elemento');
-  // Aquí puedes agregar el código que quieras ejecutar
-});
-*/

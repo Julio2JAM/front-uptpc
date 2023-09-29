@@ -150,7 +150,7 @@ function handleMessage(message) {
     // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
     //const div = document.getElementsByClassName("container")[0];
     const div = document.querySelector("form");
-    const h1 = div.querySelector("h1");
+    const br = document.querySelector("form br");
 
     // Crear el elemento a agregar
     const newElement = document.createElement("span");
@@ -158,5 +158,5 @@ function handleMessage(message) {
     newElement.classList.add("message");
 
     // Agregar el nuevo elemento después del hr
-    div.insertBefore(newElement, h1.nextSibling);
+    div.insertBefore(newElement, br.nextSibling);
 }
