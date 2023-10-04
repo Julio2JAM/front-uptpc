@@ -188,7 +188,7 @@ nav a:not(.selected):hover{
 
 .table-container table{
     border-collapse: collapse;
-    box-shadow:  0 5px 10px #e1e5ee;
+    /* box-shadow:  0 5px 10px #e1e5ee; */
 }
 .table-container table thead{
     box-shadow:  0 5px 10px #e1e5ee;
@@ -210,6 +210,14 @@ nav a:not(.selected):hover{
 }
 .table-container table tbody td{
     padding: 1rem 2rem;
+}
+.table-container table tbody button{
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 6px 16px;
+    text-align: center;
+    border-radius: 5px;
 }
 .status{
     border-radius: 3px;
