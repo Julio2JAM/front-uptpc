@@ -163,14 +163,26 @@ nav a:not(.selected):hover{
 
 
 .table-container{
-    font-family: Mukta, sans-serif;
+    /* font-family: Mukta, sans-serif;
     height: 100vh;
     display: grid;
     justify-content: center;
     align-items: center;
-    color: #4f546c;
-    font-size: 0.9rem;
+    font-size: 0.9rem; */
     /* background-color: #f9fbff; */
+    
+    font-family: Mukta, sans-serif;
+    display: flex;
+    font-size: 0.9rem;
+    justify-content: space-around;
+    /* margin-top: 2rem; */
+    /* flex-direction: column; */
+    margin: 2rem 1rem;
+}
+.table-overflow{
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 5px;
 }
 
 /* .table-container table tr th:first-child{ 
@@ -189,6 +201,8 @@ nav a:not(.selected):hover{
 .table-container table{
     border-collapse: collapse;
     /* box-shadow:  0 5px 10px #e1e5ee; */
+    /* max-width: 80%; */
+    width: 100%;
 }
 .table-container table thead{
     box-shadow:  0 5px 10px #e1e5ee;
@@ -198,18 +212,22 @@ nav a:not(.selected):hover{
     padding: 1rem 2rem;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
-    font-size: .7rem;
+    font-size: .8rem;
     font-weight: 900;
+    color: #323544;
 }
 .table-container table tbody {
     /* background-color: #f4f4f4; */
-    background-color: #f9fbff
+    background-color: #f9fbff;
+    text-align: center;
+    color: #3f4356;
 }
 .table-container table tbody tr:nth-child(even){
     background-color: #f4f6fb;
 }
 .table-container table tbody td{
     padding: 1rem 2rem;
+    white-space: nowrap;
 }
 .table-container table tbody button{
     background-color: #007bff;
@@ -217,12 +235,13 @@ nav a:not(.selected):hover{
     color: white;
     padding: 6px 16px;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 3px;
+    font-size: 14px;
 }
 .status{
     border-radius: 3px;
     background-color: red;
-    padding: .2rem 1rem;
+    padding: 6px 16px;
     text-align: center;
 }
 .available{
