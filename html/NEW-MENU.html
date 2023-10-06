@@ -11,7 +11,7 @@
 <body>
 <!-- Start your code here -->
 
-<header>
+<header class="menu">
     <nav>
         <a class="selected" id="home" href="menu.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true"  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8v10a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1V8M1 10l9-9 9 9"/></svg>Home</a>
         <a class="hamburger-menu" id="toggle-menu"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg></a>
@@ -24,6 +24,69 @@
         <a id="exit">Salir<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"/></svg></a>
     </nav>
 </header>
+
+<div class="container">
+    <div class="table-container">
+
+        <header class="filter-container">
+            <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+            <input type="text" placeholder="Filtrar por descripción" id="filter-description">
+            <select id="filter-status">
+                <option value="">Seleccione un estado</option>
+                <option value="-1">Eliminado</option>
+                <option value="0">No disponible</option>
+                <option value="1">Disponible</option>
+            </select>
+            <div class="filter-btn-container">
+                <button type="button" id="search-filter-btn">Filtrar</button>
+                <button type="reset" id="reset-filter-btn">Borrar</button>
+            </div>
+        </header>
+        
+        <section class="table-overflow">  <!-- style="display: flex;" TEMPORAL -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mathematic</td>
+                        <td>Mathematic</td>
+                        <td><span class="status available">Available</span></td>
+                        <td><button>Ver mas</button></td>
+                    </tr>
+                    <tr>
+                        <td>Mathematic</td>
+                        <td>Mathematic</td>
+                        <td><span class="status available">Available</span></td>
+                        <td><button>Ver mas</button></td>
+                    </tr>
+                    <tr>
+                        <td>Mathematic</td>
+                        <td>Mathematic</td>
+                        <td><span class="status available">Available</span></td>
+                        <td><button>Ver mas</button></td>
+                    </tr>
+                    <tr>
+                        <td>Mathematic</td>
+                        <td>Mathematic</td>
+                        <td><span class="status available">Available</span></td>
+                        <td><button>Ver mas</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer>
+            <button type="button">Nueva asignatura</button>
+        </footer>
+    </div>
+</div>
 
 <script src="../js/NEW-MENU.js"></script>
 <!-- End your code here -->

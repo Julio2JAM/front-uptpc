@@ -5,12 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asignaturas</title>
-    <link rel="stylesheet" href="../css/card.css">
     <link rel="stylesheet" href="../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../css/NEW-MODAL.css">
 </head>
 <body>
 
-    <header>
+    <header class="menu">
         <nav>
             <a id="home" href="menu.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true"  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8v10a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1V8M1 10l9-9 9 9"/></svg>Home</a>
             <a class="hamburger-menu" id="toggle-menu"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg></a>
@@ -24,43 +24,48 @@
         </nav>
     </header>
     
+    <div class="container">
+        <div class="table-container">
 
-    <div class="card-container">
-        <div class="horizontal-card with-table">
-            <div class="card-content">
-
-                <div class="filter-container">
-                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
-                    <input type="text" placeholder="Filtrar por descripción" id="filter-description">
-                    <select id="filter-status">
+            <header class="filter-container">
+                <input type="text" placeholder="Filtrar por id" id="filter-id">
+                <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                <input type="text" placeholder="Filtrar por descripción" id="filter-description">
+                <select id="filter-status">
                     <option value="">Seleccione un estado</option>
                     <option value="-1">Eliminado</option>
                     <option value="0">No disponible</option>
                     <option value="1">Disponible</option>
-                    </select>
-                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </select>
+                <div class="filter-btn-container">
+                    <button type="button" id="search-filter-btn">Filtrar</button>
+                    <button type="reset" id="reset-filter-btn">Borrar</button>
                 </div>
+            </header>
+            
+            <section class="table-overflow">  <!-- style="display: flex;" TEMPORAL -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </section>
 
-                <div class="color-table">
-                    <table class="table" id="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <button id="new" class="modal-box-buttom button-table">Nueva asignatura</button>
-            </div>
+            <footer>
+                <button type="button" id="new">Nueva asignatura</button>
+            </footer>
         </div>
-        
     </div>
 
+    <script src="../js/NEW-MENU.js"></script>
     <script src="../js/subject.js"></script>
 </body>
 </html>

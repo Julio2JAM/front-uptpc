@@ -14,7 +14,7 @@ async function loadSubject(){
 }
 
 // Al hacer click en search, obtener el elemento name y llamar a la funcion search
-document.getElementById("search").addEventListener("click", async () => await search());
+document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
 
 // Funcion para buscar un registro en la tabla search
 async function search(){
@@ -47,6 +47,15 @@ function dataTable(data) {
 
     const tableBody = document.querySelector("tbody");
     tableBody.innerHTML = "";
+
+    if(!data){
+        const section = document.querySelector("container section");
+        const h1 = document.createElement("h1");
+        h1.innerHTML = "Sin datos.";
+
+        section.appendChild(h1);
+        return;
+    }
 
     const statusData = {
         "-1": "Eliminado",
@@ -108,100 +117,125 @@ function createModalBox(data){
 
     // Crear divs contenedores
     var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
+    modal.className = "modal";
+    modal.id = "modal";
 
     var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card";
-    modalContent.id = "modal-content";
+    modalContent.className = "modal-content";
 
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
-
+    var header = document.createElement("header");
+    
     // Crear elementos del DOM
+    var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/subject2.jpeg";
-    
-    var spanId = document.createElement("span");
-    var inputId = document.createElement("input");
+    img.src = "../source/students-icon.png";
+    var buttonClose = document.createElement("button");
+    buttonClose.className = "close-btn";
+    buttonClose.innerHTML = "&times;"
 
-    var spanName = document.createElement("span");
+    //
+    // var spanId = document.createElement("span");
+    // var inputId = document.createElement("input");
+    // spanId.textContent = "id";
+    // spanId.className = "id";
+    // inputId.type = "text";
+    // inputId.id = "id";
+    // inputId.className = "id";
+    // inputId.placeholder = "id";
+    // inputId.value = data?.id ?? "";
+
+    var section = document.createElement("section");
+    var form = document.createElement("form");
+
+    var labelName = document.createElement("label");
+    labelName.for = "name";
+    labelName.innerHTML = "Nombre:";
     var inputName = document.createElement("input");
+    inputName.type = "text";
+    inputName.id = "name";
+    inputName.placeholder = "Nombre";
+    inputName.value = data?.name ?? "";
     
-    var spanDescription = document.createElement("span");
+    var labelDescription = document.createElement("label");
+    labelDescription.for = "description";
+    labelDescription.innerHTML = "Descripcion:";
     var inputDescription = document.createElement("input");
+    inputDescription.type = "text";
+    inputDescription.id = "description";
+    inputDescription.placeholder = "Descripción";
+    inputDescription.value = data?.description ?? "";
     
-    var spanStatus = document.createElement("span");
+    var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
     var options = [
         {value: -1, label: "Eliminado"},
         {value: 0, label: "No disponible"},
         {value: 1, label: "Disponible"}
     ];
-
-    var inputSubmit = document.createElement("input");
-    inputSubmit.addEventListener("click", async () => await save());
-
-    // Configurar los elementos
-    spanId.textContent = "id";
-    spanId.className = "id";
-    inputId.type = "text";
-    inputId.id = "id";
-    inputId.className = "id";
-    inputId.placeholder = "id";
-    inputId.value = data?.id ?? "";
-    
-    spanName.textContent = "Nombre";
-    inputName.type = "text";
-    inputName.id = "name";
-    inputName.placeholder = "Nombre";
-    inputName.value = data?.name ?? "";
-    
-    spanDescription.textContent = "Descripción";
-    inputDescription.type = "text";
-    inputDescription.id = "description";
-    inputDescription.placeholder = "Descripción";
-    inputDescription.value = data?.description ?? "";
-    
-    spanStatus.textContent = "Estado";
+    labelStatus.textContent = "Estado";
     selectStatus.id = "status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
 
-    inputSubmit.type = "submit";
-    inputSubmit.id = "save";
-    inputSubmit.value = data?.id ? "Actualizar" : "Crear";
+    var footer = document.createElement("footer");
+
+    var buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.type = "submit";
+    buttonSubmit.id = "save";
+    buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+
+    var buttonReset = document.createElement("button");
+    buttonReset.type = "reset";
+    buttonReset.id = "reset";
+    buttonReset.innerHTML = "Borrar";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Asignatura";
+
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
     
-    // Agregar los elementos al DOM
-    modalContent.appendChild(img);
+    form.appendChild(labelName);
+    form.appendChild(inputName);
 
-    cardContent.appendChild(spanId);
-    cardContent.appendChild(inputId);
+    form.appendChild(labelDescription);
+    form.appendChild(inputDescription);
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
+    section.appendChild(form);
     
-    cardContent.appendChild(spanName);
-    cardContent.appendChild(inputName);
+    footer.appendChild(buttonSubmit);
+    footer.appendChild(buttonReset);
+    
+    modalContent.appendChild(header);
+    modalContent.appendChild(section);
+    modalContent.appendChild(footer);
 
-    cardContent.appendChild(spanDescription);
-    cardContent.appendChild(inputDescription);
-
-    cardContent.appendChild(spanStatus);
-    cardContent.appendChild(selectStatus);
-
-    cardContent.appendChild(inputSubmit);
-
-    modalContent.appendChild(cardContent);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 
+    buttonClose.addEventListener("click", closeModal);
     modal.addEventListener("click", (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
+        if(event.target.id == "modal"){
+            closeModal();
         }
     });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+        }, 260);
+    }
 }
+
+
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
