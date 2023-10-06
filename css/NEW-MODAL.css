@@ -11,10 +11,8 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.25);
-    opacity: 0;
 
-    display: none;
-    transition: opacity .25s linear forwards;
+    display: flex;
     animation: ModalFadeIn .25s linear forwards;
 }
 
@@ -28,7 +26,6 @@
     box-shadow: 0 10px 20px 0 rgb(0 0 0 / 15%);
 
     animation: ModalContentScale .25s linear forwards;
-    transition: transform 0.25s;
     overflow: hidden;
 }
 
@@ -124,8 +121,7 @@
 }
 
 .close-modal .modal-content{
-    transform: scale(0.9);
-    transition: transform 0.25s;
+    animation: ModalContentScaleOut .25s;
 }
 
 
@@ -143,6 +139,13 @@
         transform: scale(0.9);
     }to{
         transform: scale(1.0);
+    }
+}
+@keyframes ModalContentScaleOut{
+    from{
+        transform: scale(1.0);
+    }to{
+        transform: scale(0.9);
     }
 }
 @keyframes ModalFadeIn{

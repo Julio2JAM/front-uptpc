@@ -14,7 +14,7 @@ function closeModal(event) {
         // if(document.body.contains(modal)){
         //     document.body.removeChild(modal);
         // }
-        modal.classList.remove("close-modal");
+        // modal.classList.remove("close-modal");
     }, 260);
 }
 

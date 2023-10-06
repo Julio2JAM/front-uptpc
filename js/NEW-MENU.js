@@ -1,3 +1,47 @@
+window.addEventListener('DOMContentLoaded', (event) => {
+    const container = document.querySelector(".container")
+    const th = document.querySelectorAll("thead th");
+    const length = th.length;
+
+    if(length == 5){
+        container.style = "max-width: 1300px";
+    }else if(length > 5 && length < 6){
+        container.style = "max-width: 1500px";
+    }else{
+        container.style = "";
+    }
+
+});
+
+// window.addEventListener('DOMContentLoaded', (event) => {
+
+//     function adjustGrid() {
+//         const grid = document.querySelector('.filter-container');
+        
+//         if(window.matchMedia('(min-width: 777px)').matches) {
+//             const items = grid.children.length;
+//             let template = '';
+//             for(let i = 0; i < items - 1; i++) {
+//                 template += 'auto ';
+//             }
+//             template += '120px';
+//             grid.style.gridTemplateColumns = template;
+//             return;
+//         }
+
+//         if(window.matchMedia('(min-width: 520px)').matches) {
+//             grid.style.gridTemplateColumns = "1fr 1fr";
+//             return;
+//         }
+
+//         grid.style.gridTemplateColumns = "1fr";
+//     }
+
+//     adjustGrid();
+//     window.onresize = adjustGrid;
+
+// });
+
 // Obtén el elemento con el que quieres interactuar
 const menuElement = document.querySelectorAll('nav a');
 
