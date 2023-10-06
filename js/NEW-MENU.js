@@ -3,9 +3,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const th = document.querySelectorAll("thead th");
     const length = th.length;
 
-    if(length == 5){
+
+    if(length <= 4){
+        container.style = "max-width: 1100px";
+    }else if(length == 5){
         container.style = "max-width: 1300px";
-    }else if(length > 5 && length < 6){
+    }else if(length > 5 && length <= 7){
         container.style = "max-width: 1500px";
     }else{
         container.style = "";
