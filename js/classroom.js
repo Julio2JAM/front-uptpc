@@ -14,7 +14,7 @@ async function loadData(){
 }
 
 // Al hacer click en search, obtener el elemento name y llamar a la funcion search
-document.getElementById("search").addEventListener("click", async () => await search());
+document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
 
 // Funcion para buscar un registro en la tabla search
 async function search(){
@@ -45,6 +45,12 @@ function dataTable(data){
         "1": "Disponible"
     };
 
+    const statusClass = {
+      "-1": "deleted",
+      "0": "unavailable",
+      "1": "available"
+    };
+
     const button = document.createElement("button");
     button.className = "view-button";
     button.innerText = "Ver más";
@@ -65,8 +71,11 @@ function dataTable(data){
         const datetimeEnd = row.insertCell(3);
         datetimeEnd.textContent = element.datetime_end ?? "Sin fecha de fin.";
 
-        const status = row.insertCell(4);
-        status.textContent = statusData[element.id_status] ?? "";
+        const status = row.insertCell(3);
+        const statusSpan = document.createElement('span');
+        statusSpan.innerHTML = statusData[element.id_status];
+        statusSpan.classList.add("status", statusClass[element.id_status]);
+        status.appendChild(statusSpan);
 
         const view = row.insertCell(5);
         view.appendChild(button.cloneNode(true));
@@ -103,106 +112,132 @@ function createModalBox(data) {
 
     // Crear divs contenedores
     var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
+    modal.className = "modal";
+    modal.id = "modal";
 
     var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card";
-    modalContent.id = "modal-content";
+    modalContent.className = "modal-content";
 
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
-
-    // Crear elementos del DOM
-    var img = document.createElement("img");
-    img.src = "../source/classroom2.jpeg";
-    modalContent.appendChild(img);
+    var header = document.createElement("header");
     
-    // Id
-    var spanId = document.createElement("span");
-    spanId.innerText = "ID";
-    spanId.className = "id";
-    var inputId = document.createElement("input");
-    inputId.id = "id";
-    inputId.type = "text";
-    inputId.className = "id";
-    inputId.value = data?.id ?? "";
+    // Crear elementos del DOM
+    var h3 = document.createElement("h3");
+    var img = document.createElement("img");
+    img.src = "../source/classroom-icon.png";
+    var buttonClose = document.createElement("button");
+    buttonClose.className = "close-btn";
+    buttonClose.innerHTML = "&times;"
 
-    cardContent.appendChild(spanId);
-    cardContent.appendChild(inputId);
+    //
+    // var spanId = document.createElement("span");
+    // var inputId = document.createElement("input");
+    // spanId.textContent = "id";
+    // spanId.className = "id";
+    // inputId.type = "text";
+    // inputId.id = "id";
+    // inputId.className = "id";
+    // inputId.placeholder = "id";
+    // inputId.value = data?.id ?? "";
+
+    var section = document.createElement("section");
+    var form = document.createElement("form");
 
     // Name
-    var spanName = document.createElement("span");
-    spanName.innerText = "Name";
+    var labelName = document.createElement("label");
+    labelName.for = "name";
+    labelName.innerHTML = "Nombre:";
     var inputName = document.createElement("input");
-    inputName.id = "name";
     inputName.type = "text";
+    inputName.id = "name";
+    inputName.placeholder = "Nombre";
     inputName.value = data?.name ?? "";
-    inputName.placeholder = "Name";
-
-    cardContent.appendChild(spanName);
-    cardContent.appendChild(inputName);
 
     // datetimeStart
-    var spanDatetimeStart = document.createElement("span");
-    spanDatetimeStart.innerHTML = "Datetime start";
+    var labelDatetimeStart = document.createElement("label");
+    labelDatetimeStart.for = "datetimestart";
+    labelDatetimeStart.innerHTML = "Fecha de inicio:";
     var inputDatetimeStart = document.createElement("input");
-    inputDatetimeStart.id = "datetime_start";
     inputDatetimeStart.type = "date";
+    inputDatetimeStart.id = "datetime_start";
     inputDatetimeStart.value = data?.datetime_start ?? "";
 
-    cardContent.appendChild(spanDatetimeStart);
-    cardContent.appendChild(inputDatetimeStart);
-    
     // datetimeEnd
-    var spanDatetimeEnd = document.createElement("span");
-    spanDatetimeEnd.innerHTML = "Datetime end";
+    var labelDatetimeEnd = document.createElement("label");
+    labelDatetimeEnd.for = "datetimesend";
+    labelDatetimeEnd.innerHTML = "Fecha de cierre:";
     var inputDatetimeEnd = document.createElement("input");
-    inputDatetimeEnd.id = "datetime_end";
     inputDatetimeEnd.type = "date";
+    inputDatetimeEnd.id = "datetime_end";
     inputDatetimeEnd.value = data?.datetime_end ?? "";
-
-    cardContent.appendChild(spanDatetimeEnd);
-    cardContent.appendChild(inputDatetimeEnd);
     
-    // Status
-    var spanStatus = document.createElement("span");
-    spanStatus.innerText = "Status";
+    var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
     var options = [
-        {value: "", label: "Select a status"},
         {value: -1, label: "Eliminado"},
         {value: 0, label: "No disponible"},
         {value: 1, label: "Disponible"}
     ];
+    labelStatus.textContent = "Estado";
+    selectStatus.id = "status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
-    selectStatus.id = "status";
-    selectStatus.value = data?.id_status ?? "";
+    selectStatus.value = data?.id_status ?? 1;
 
-    cardContent.appendChild(spanStatus);
-    cardContent.appendChild(selectStatus);
+    var footer = document.createElement("footer");
 
-    // Save
-    var inputSubmit = document.createElement("input");
-    inputSubmit.id = "save";
-    inputSubmit.type = "submit";
-    inputSubmit.value = !data?.id ? "Crear" : "Actualizar";
-    inputSubmit.addEventListener("click", async () => await save());
+    var buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.type = "submit";
+    buttonSubmit.id = "save";
+    buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
 
-    cardContent.appendChild(inputSubmit);
+    var buttonReset = document.createElement("button");
+    buttonReset.type = "reset";
+    buttonReset.id = "reset";
+    buttonReset.innerHTML = "Borrar";
 
-    modalContent.appendChild(cardContent);
+    h3.appendChild(img);
+    h3.innerHTML += "Seccion";
+
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+    
+    form.appendChild(labelName);
+    form.appendChild(inputName);
+
+    form.appendChild(labelDatetimeStart);
+    form.appendChild(inputDatetimeStart);
+
+    form.appendChild(labelDatetimeEnd);
+    form.appendChild(inputDatetimeEnd);
+
+    section.appendChild(form);
+    
+    footer.appendChild(buttonSubmit);
+    footer.appendChild(buttonReset);
+    
+    modalContent.appendChild(header);
+    modalContent.appendChild(section);
+    modalContent.appendChild(footer);
+
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 
+    buttonClose.addEventListener("click", closeModal);
     modal.addEventListener("click", (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
+        if(event.target.id == "modal"){
+            closeModal();
         }
     });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+        }, 260);
+    }
 
 }
 
@@ -232,7 +267,7 @@ async function save(){
 
 }
 
-document.querySelectorAll(".card-container button[id*=change]").forEach(element => {
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
         location.href = `${element.id.replace("-change", "")}.html`;
     });

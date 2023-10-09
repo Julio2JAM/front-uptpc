@@ -63,6 +63,12 @@ function dataTable(data) {
         "1": "Disponible"
     };
 
+    const statusClass = {
+        "-1": "deleted",
+        "0": "unavailable",
+        "1": "available"
+    };
+
     // Crear boton de view
     const button = document.createElement('button');
     button.innerHTML = "Ver más";
@@ -82,7 +88,10 @@ function dataTable(data) {
         description.innerHTML = element.description;
 
         const status = row.insertCell(3);
-        status.innerHTML = statusData[element.id_status];
+        const statusSpan = document.createElement('span');
+        statusSpan.innerHTML = statusData[element.id_status];
+        statusSpan.classList.add("status", statusClass[element.id_status]);
+        status.appendChild(statusSpan);
 
         const action = row.insertCell(4);
         action.appendChild(button.cloneNode(true));
@@ -128,7 +137,7 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/students-icon.png";
+    img.src = "../source/subject-icon.png";
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"

@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Docentes</title>
-    <link rel="stylesheet" href="../css/card.css">
     <link rel="stylesheet" href="../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../css/NEW-MODAL.css">
 </head>
 <body>
 
@@ -24,48 +24,54 @@
         </nav>
     </header>
 
-    <div class="card-container">
-        <div class="horizontal-card with-table">
-            <div class="card-content">
+    <div class="container">
+        <div class="table-container">
 
-                <div class="filter-container">
-                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
-                    <input type="text" placeholder="Filtrar por apellido" id="filter-lastName">
-                    <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
-                    <select id="filter-status">
-                        <option value="">Seleccione un estado</option>
-                        <option value="-1">Eliminado</option>
-                        <option value="0">No disponible</option>
-                        <option value="1">Disponible</option>
-                    </select>
-                    <button type="button" id="search" class="filter-button active">Filter</button>
-                </div>
+            <header class="filter-container">
+                <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                <input type="text" placeholder="Filtrar por apellido" id="filter-lastName">
+                <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
+                <select id="filter-status">
+                    <option value="">Seleccione un estado</option>
+                    <option value="-1">Eliminado</option>
+                    <option value="0">No disponible</option>
+                    <option value="1">Disponible</option>
+                </select>
 
-                <div class="color-table">
-                    <table class="table" id="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Cedula</th>
-                                <th>Profesión</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody"></tbody>
-                    </table>
+                <div class="filter-btn-container">
+                    <button type="button" id="search-filter-btn">Filtrar</button>
+                    <button type="reset" id="reset-filter-btn">Borrar</button>
                 </div>
-                <button id="new" class="modal-box-buttom button-table">Nuevo docente</button>
-                <button class="filter-button" id="student-change">Estudiantes</button>
-                <button class="filter-button active" id="professor-change">Docentes</button>
-            </div>
+            </header>
+            
+            <section class="table-overflow">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Cedula</th>
+                            <th>Profesión</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </section>
+
+            <footer>
+                <button type="button" id="new">Nuevo docente</button>
+                <button type="button" class="change-button" id="student-change">Estudiantes</button>
+                <button type="button" class="change-button active" id="professor-change">Docentes</button>
+            </footer>
         </div>
-        
     </div>
 
     <script src="../js/professor.js"></script>
+    <script src="../js/NEW-MENU.js"></script>
     <!--<script type="module" src="../js/professor.js"></script>-->
 </body>
 </html>

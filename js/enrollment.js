@@ -420,7 +420,7 @@ async function enrollmentData (action){
 
 }
 
-document.querySelectorAll(".card-container button[id*=change]").forEach(element => {
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
         location.href = `${element.id.replace("-change", "")}.html`;
     });
