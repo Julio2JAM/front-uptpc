@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asignaturas</title>
-    <link rel="stylesheet" href="../css/card.css">
     <link rel="stylesheet" href="../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../css/NEW-MODAL.css">
 </head>
 <body>
 
@@ -20,40 +20,46 @@
         </ul>
     </nav>
 
-    <div class="card-container">
-        <div class="horizontal-card with-table">
-            <div class="card-content">
+    <div class="container">
+        <div class="table-container">
 
-                <div class="filter-container">
-                    <input type="text" placeholder="Filtrar por docente" id="filter-professor">
-                    <input type="text" placeholder="Filtrar por asignatura" id="filter-subject">
-                    <select id="filter-status">
+            <header class="filter-container">
+                <input type="text" placeholder="Filtrar por nombre del docente" id="filter-professor-name">
+                <input type="text" placeholder="Filtrar por apellido del docente" id="filter-professor-lastname">
+                <input type="text" placeholder="Filtrar por asignatura" id="filter-subject">
+                <select id="filter-status">
                     <option value="">Seleccione un estado</option>
                     <option value="-1">Eliminado</option>
                     <option value="0">No disponible</option>
                     <option value="1">Disponible</option>
-                    </select>
-                    <button type="button" id="search" class="filter-button active">Filter</button>
+                </select>
+                <div class="filter-btn-container">
+                    <button type="button" id="search-filter-btn">Filtrar</button>
+                    <button type="reset" id="reset-filter-btn">Borrar</button>
                 </div>
+            </header>
+            
+            <section class="table-overflow">  <!-- style="display: flex;" TEMPORAL -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Docente</th>
+                            <th>Asignatura</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </section>
 
-                <div class="color-table">
-                    <table class="table" id="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Docente</th>
-                                <th>Asignatura</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody"></tbody>
-                    </table>
-                </div>
+            <footer>
                 <input type="text" placeholder="Classroom" class="button-table" id="classroom">
-            </div>
+                <button type="button" id="new">Nueva asignatura</button>
+            </footer>
         </div>
-        
     </div>
 
     <script src="../js/assignmentStudent.js"></script>
