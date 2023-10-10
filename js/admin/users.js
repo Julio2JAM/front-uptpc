@@ -63,7 +63,7 @@ async function dataTable(data) {
   button.innerHTML = "Ver más";
   button.className = "view-button";
 
-  const dataStatus = {
+  const statusData = {
     "-1": "Eliminado",
     "0": "No disponible",
     "1": "Disponible"

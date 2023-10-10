@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudiantes</title>
+    <title>Docentes</title>
     <link rel="stylesheet" href="../css/NEW-MENU.css">
     <link rel="stylesheet" href="../css/NEW-MODAL.css">
 </head>
@@ -28,6 +28,7 @@
         <div class="table-container">
 
             <header class="filter-container">
+                <input type="text" placeholder="Filtrar por id" id="filter-id">
                 <input type="text" placeholder="Filtrar por nombre" id="filter-name">
                 <input type="text" placeholder="Filtrar por apellido" id="filter-lastName">
                 <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
@@ -52,6 +53,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Cedula</th>
+                            <th>Profesión</th>
                             <th>Estado</th>
                             <th>Acción</th>
                         </tr>
@@ -62,14 +64,15 @@
             </section>
 
             <footer>
-                <button type="button" id="new">Nuevo estudiante</button>
-                <button type="button" class="change-button active" id="student-change">Estudiantes</button>
-                <button type="button" class="change-button" id="professor-change">Docentes</button>
+                <button type="button" id="new">Nuevo docente</button>
+                <button type="button" class="change-button" id="student-change">Estudiantes</button>
+                <button type="button" class="change-button active" id="professor-change">Docentes</button>
             </footer>
         </div>
     </div>
 
-    <script src="../js/student.js"></script>
+    <script src="../js/professor.js"></script>
     <script src="../js/NEW-MENU.js"></script>
+    <!--<script type="module" src="../js/professor.js"></script>-->
 </body>
 </html>

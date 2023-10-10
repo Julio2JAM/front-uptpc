@@ -33,7 +33,7 @@ async function search(){
     }
 
     // En caso de no enviar algun dato, remplazar // por /
-    var url = `${API_URL}/subject/?name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`;
+    var url = `${API_URL}/subject/?id=${data["id"]}&?name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`;
 
     // Obtener los datos de la busqueda
     await fetch(url)
@@ -142,16 +142,16 @@ function createModalBox(data){
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
-    //
-    // var spanId = document.createElement("span");
-    // var inputId = document.createElement("input");
-    // spanId.textContent = "id";
-    // spanId.className = "id";
-    // inputId.type = "text";
-    // inputId.id = "id";
-    // inputId.className = "id";
-    // inputId.placeholder = "id";
-    // inputId.value = data?.id ?? "";
+    var labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    var inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
 
     var section = document.createElement("section");
     var form = document.createElement("form");
@@ -207,6 +207,9 @@ function createModalBox(data){
     header.appendChild(h3);
     header.appendChild(buttonClose);
     
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
     form.appendChild(labelName);
     form.appendChild(inputName);
 

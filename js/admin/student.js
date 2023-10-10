@@ -18,15 +18,16 @@ async function search() {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/student/?personName=${data.name}&personLastName=${data.lastName}&personCedule=${data.cedule}&id_status=${data.status}`)
+    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data.name}&personLastName=${data.lastName}&personCedule=${data.cedule}&id_status=${data.status}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
 }
 
 function dataTable(data) {
-
-    const table = document.getElementById('tbody');
+    
+    console.log(data);
+    const table = document.querySelector('tbody');
     table.innerHTML = "";
     
     const statusData = {
@@ -59,14 +60,17 @@ function dataTable(data) {
 
         const cedule = row.insertCell(3);
         cedule.innerText = element.person.cedule;
+        
+        const email = row.insertCell(4);
+        email.innerText = element.person.email ?? "No posee";
 
-        const status = row.insertCell(3);
+        const status = row.insertCell(5);
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
         status.appendChild(statusSpan);
         
-        const action = row.insertCell(5);
+        const action = row.insertCell(6);
         action.appendChild(button.cloneNode(true));
     });
 
@@ -105,23 +109,34 @@ function createModalBox(data){
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
     img.src = "../source/student-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Estudiante";
+    
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
-    //
-    // var spanId = document.createElement("span");
-    // var inputId = document.createElement("input");
-    // spanId.textContent = "id";
-    // spanId.className = "id";
-    // inputId.type = "text";
-    // inputId.id = "id";
-    // inputId.className = "id";
-    // inputId.placeholder = "id";
-    // inputId.value = data?.id ?? "";
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
 
     var section = document.createElement("section");
     var form = document.createElement("form");
+
+    // ID
+    var labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    var inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
+
+    form.appendChild(labelId);
+    form.appendChild(inputId);
 
     // Name
     var labelName = document.createElement("label");
@@ -132,6 +147,9 @@ function createModalBox(data){
     inputName.id = "name";
     inputName.placeholder = "Nombre";
     inputName.value = data?.person.name ?? "";
+
+    form.appendChild(labelName);
+    form.appendChild(inputName);
     
     // Last name
     var labelLastname = document.createElement("label");
@@ -143,6 +161,9 @@ function createModalBox(data){
     inputLastname.placeholder = "Apellido";
     inputLastname.value = data?.person.lastName ?? "";
 
+    form.appendChild(labelLastname);
+    form.appendChild(inputLastname);
+
     // Cedule
     var labelCedule = document.createElement("label");
     labelCedule.for = "cedule";
@@ -153,15 +174,8 @@ function createModalBox(data){
     inputCedule.placeholder = "Cedula";
     inputCedule.value = data?.person.cedule ?? "";
     
-    // Email
-    var labelEmail = document.createElement("label");
-    labelEmail.for = "email";
-    labelEmail.innerHTML = "Email:";
-    var inputEmail = document.createElement("input");
-    inputEmail.type = "email";
-    inputEmail.id = "email";
-    inputEmail.placeholder = "Email";
-    inputEmail.value = data?.person.email ?? "";
+    form.appendChild(labelCedule);
+    form.appendChild(inputCedule);
 
     // Phone
     var labelPhone = document.createElement("label");
@@ -172,6 +186,22 @@ function createModalBox(data){
     inputPhone.id = "phone";
     inputPhone.placeholder = "Telefono";
     inputPhone.value = data?.person.phone ?? "";
+
+    form.appendChild(labelPhone);
+    form.appendChild(inputPhone);
+
+    // Email
+    var labelEmail = document.createElement("label");
+    labelEmail.for = "email";
+    labelEmail.innerHTML = "Email:";
+    var inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.id = "email";
+    inputEmail.placeholder = "Email";
+    inputEmail.value = data?.person.email ?? "";
+
+    form.appendChild(labelEmail);
+    form.appendChild(inputEmail);
 
     // Status
     var labelStatus = document.createElement("label");
@@ -188,6 +218,9 @@ function createModalBox(data){
     }
     selectStatus.value = data?.id_status ?? 1;
 
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
@@ -201,27 +234,7 @@ function createModalBox(data){
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
 
-    h3.appendChild(img);
-    h3.innerHTML += "Estudiante";
-
-    header.appendChild(h3);
-    header.appendChild(buttonClose);
     
-    form.appendChild(labelName);
-    form.appendChild(inputName);
-
-    form.appendChild(labelLastname);
-    form.appendChild(inputLastname);
-
-    form.appendChild(labelCedule);
-    form.appendChild(inputCedule);
-
-    form.appendChild(labelPhone);
-    form.appendChild(inputPhone);
-
-    form.appendChild(labelEmail);
-    form.appendChild(inputEmail);
-
     section.appendChild(form);
     
     footer.appendChild(buttonSubmit);

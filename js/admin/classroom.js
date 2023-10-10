@@ -128,19 +128,23 @@ function createModalBox(data) {
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
-    //
-    // var spanId = document.createElement("span");
-    // var inputId = document.createElement("input");
-    // spanId.textContent = "id";
-    // spanId.className = "id";
-    // inputId.type = "text";
-    // inputId.id = "id";
-    // inputId.className = "id";
-    // inputId.placeholder = "id";
-    // inputId.value = data?.id ?? "";
-
     var section = document.createElement("section");
     var form = document.createElement("form");
+
+    // ID
+    var labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    var inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
+
+    form.appendChild(labelId);
+    form.appendChild(inputId);
 
     // Name
     var labelName = document.createElement("label");
@@ -152,6 +156,9 @@ function createModalBox(data) {
     inputName.placeholder = "Nombre";
     inputName.value = data?.name ?? "";
 
+    form.appendChild(labelName);
+    form.appendChild(inputName);
+
     // datetimeStart
     var labelDatetimeStart = document.createElement("label");
     labelDatetimeStart.for = "datetimestart";
@@ -161,6 +168,9 @@ function createModalBox(data) {
     inputDatetimeStart.id = "datetime_start";
     inputDatetimeStart.value = data?.datetime_start ?? "";
 
+    form.appendChild(labelDatetimeStart);
+    form.appendChild(inputDatetimeStart);
+
     // datetimeEnd
     var labelDatetimeEnd = document.createElement("label");
     labelDatetimeEnd.for = "datetimesend";
@@ -169,6 +179,9 @@ function createModalBox(data) {
     inputDatetimeEnd.type = "date";
     inputDatetimeEnd.id = "datetime_end";
     inputDatetimeEnd.value = data?.datetime_end ?? "";
+
+    form.appendChild(labelDatetimeEnd);
+    form.appendChild(inputDatetimeEnd);
     
     var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
@@ -183,6 +196,9 @@ function createModalBox(data) {
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
 
     var footer = document.createElement("footer");
 
@@ -202,15 +218,6 @@ function createModalBox(data) {
 
     header.appendChild(h3);
     header.appendChild(buttonClose);
-    
-    form.appendChild(labelName);
-    form.appendChild(inputName);
-
-    form.appendChild(labelDatetimeStart);
-    form.appendChild(inputDatetimeStart);
-
-    form.appendChild(labelDatetimeEnd);
-    form.appendChild(inputDatetimeEnd);
 
     section.appendChild(form);
     

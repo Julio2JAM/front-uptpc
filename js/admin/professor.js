@@ -3,15 +3,7 @@
 const API_URL = "http://localhost:3000/api"
 
 // Al cargar el archivo, obtener todos los registros de la tabla professor
-window.addEventListener("load", async () => await loadData());
-
-// Funcion para obtener los datos de la tabla de la BD
-async function loadData() {
-    await fetch(`${API_URL}/professor`)
-    .then(response => response.json())
-    .then(data => dataTable(data))
-    .catch(error => error)
-}
+window.addEventListener("load", async () => await search());
 
 //
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
@@ -25,7 +17,7 @@ async function search() {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/professor/?name=${data.name}&lastName=${data.lastName}&cedule=${data.cedule}&id_status=${data.status}`)
+    await fetch(`${API_URL}/professor/?id=${data["id"]}&name=${data["name"]}&lastName=${data["lastName"]}&cedule=${data["cedule"]}&id_status=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error)
@@ -35,11 +27,11 @@ async function search() {
 function dataTable(data) {
 
     // Limpiar la tabla
-    const tbody = document.getElementById("tbody");
+    const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
     // Estados para los registros de la tabla
-    const status = {
+    const statusData = {
         "-1":"Eliminado",
         "0":"No disponible",
         "1":"Disponible",
@@ -78,7 +70,7 @@ function dataTable(data) {
         const cellProfession = row.insertCell(4);
         cellProfession.innerText = element.person.profession ?? "";
 
-        const cellStatus = row.insertCell(3);
+        const cellStatus = row.insertCell(5);
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
@@ -131,23 +123,34 @@ function createModalBox(data){
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
     img.src = "../source/professor2-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Docente";
+
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
-    //
-    // var spanId = document.createElement("span");
-    // var inputId = document.createElement("input");
-    // spanId.textContent = "id";
-    // spanId.className = "id";
-    // inputId.type = "text";
-    // inputId.id = "id";
-    // inputId.className = "id";
-    // inputId.placeholder = "id";
-    // inputId.value = data?.id ?? "";
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
 
     var section = document.createElement("section");
     var form = document.createElement("form");
+
+    // ID
+    var labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    var inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
+
+    form.appendChild(labelId);
+    form.appendChild(inputId);
 
     // Name
     var labelName = document.createElement("label");
@@ -158,7 +161,10 @@ function createModalBox(data){
     inputName.id = "name";
     inputName.placeholder = "Nombre";
     inputName.value = data?.person.name ?? "";
-    
+
+    form.appendChild(labelName);
+    form.appendChild(inputName);
+
     // Last name
     var labelLastname = document.createElement("label");
     labelLastname.for = "lastname";
@@ -169,6 +175,9 @@ function createModalBox(data){
     inputLastname.placeholder = "Apellido";
     inputLastname.value = data?.person.lastName ?? "";
 
+    form.appendChild(labelLastname);
+    form.appendChild(inputLastname);
+
     // Cedule
     var labelCedule = document.createElement("label");
     labelCedule.for = "cedule";
@@ -178,16 +187,9 @@ function createModalBox(data){
     inputCedule.id = "cedule";
     inputCedule.placeholder = "Cedula";
     inputCedule.value = data?.person.cedule ?? "";
-    
-    // Email
-    var labelEmail = document.createElement("label");
-    labelEmail.for = "email";
-    labelEmail.innerHTML = "Email:";
-    var inputEmail = document.createElement("input");
-    inputEmail.type = "email";
-    inputEmail.id = "email";
-    inputEmail.placeholder = "Email";
-    inputEmail.value = data?.person.email ?? "";
+
+    form.appendChild(labelCedule);
+    form.appendChild(inputCedule);
 
     // Phone
     var labelPhone = document.createElement("label");
@@ -198,6 +200,22 @@ function createModalBox(data){
     inputPhone.id = "phone";
     inputPhone.placeholder = "Telefono";
     inputPhone.value = data?.person.phone ?? "";
+    
+    form.appendChild(labelPhone);
+    form.appendChild(inputPhone);
+
+    // Email
+    var labelEmail = document.createElement("label");
+    labelEmail.for = "email";
+    labelEmail.innerHTML = "Email:";
+    var inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.id = "email";
+    inputEmail.placeholder = "Email";
+    inputEmail.value = data?.person.email ?? "";
+
+    form.appendChild(labelEmail);
+    form.appendChild(inputEmail);
 
     // Status
     var labelStatus = document.createElement("label");
@@ -214,6 +232,9 @@ function createModalBox(data){
     }
     selectStatus.value = data?.id_status ?? 1;
 
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
@@ -226,28 +247,7 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
-
-    h3.appendChild(img);
-    h3.innerHTML += "Docente";
-
-    header.appendChild(h3);
-    header.appendChild(buttonClose);
     
-    form.appendChild(labelName);
-    form.appendChild(inputName);
-
-    form.appendChild(labelLastname);
-    form.appendChild(inputLastname);
-
-    form.appendChild(labelCedule);
-    form.appendChild(inputCedule);
-
-    form.appendChild(labelPhone);
-    form.appendChild(inputPhone);
-
-    form.appendChild(labelEmail);
-    form.appendChild(inputEmail);
-
     section.appendChild(form);
     
     footer.appendChild(buttonSubmit);
