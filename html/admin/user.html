@@ -5,14 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios</title>
-    <link rel="stylesheet" href="../css/card.css">
     <link rel="stylesheet" href="../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../css/NEW-MODAL.css">
 </head>
 <body>
 
     <header class="menu">
         <nav>
             <a id="home" href="menu.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true"  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8v10a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1V8M1 10l9-9 9 9"/></svg>Home</a>
+            <a class="hamburger-menu" id="toggle-menu"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg></a>
             <ul>
                 <li><a id="student-professor" href="professor.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3a3 3 0 1 1-1.614 5.53M15 12a4 4 0 0 1 4 4v1h-3.348M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z"/></svg>Estudiantes / docentes</a></li>
                 <li><a id="section" href="classroom.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="20" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 2h4a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h4m6 0v3H6V2m6 0a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1M5 5h8m-5 5h5m-8 0h.01M5 14h.01M8 14h5"/></svg>Secciones</a></li>
@@ -23,18 +24,10 @@
         </nav>
     </header>
 
-    <div class="card-container">
-        <div class="horizontal-card with-table">
-            <div class="card-content">
-            <!--
-            <div class="filter-buttons">
-                <button class="filter-button active" data-filter="all">All</button>
-                <button class="filter-button" data-filter="view-only">View Only</button>
-                <button class="filter-button" data-filter="edit">Edit</button>
-                <button class="filter-button" data-filter="admin">Admin</button>
-            </div>
-            -->
-            <div class="filter-container">
+    <div class="container">
+        <div class="table-container">
+
+            <header class="filter-container">
                 <input type="text" placeholder="Filter by Username" id="filter-username">
                 <select id="filter-permission">
                     <option value="">Select a permissions</option>
@@ -45,30 +38,35 @@
                     <option value="0">No disponible</option>
                     <option value="1">Disponible</option>
                 </select>
-                <button type="button" id="search" class="filter-button active">Filter</button>
-            </div>
-                        
-            <div class="color-table">
-            <table class="table" id="table">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Usuario</th>
-                    <th>Permisos</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
+                <div class="filter-btn-container">
+                    <button type="button" id="search-filter-btn">Filtrar</button>
+                    <button type="reset" id="reset-filter-btn">Borrar</button>
+                </div>
+            </header>
+            
+            <section class="table-overflow">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Usuario</th>
+                            <th>Permisos</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </section>
 
-            </table>
-            </div>
-            <input type="submit" id="new" value="Nuevo usuario" class="button-table">
-            </div>
+            <footer>
+                <button type="button" id="new">Nueva usuario</button>
+            </footer>
         </div>
     </div>
 
     <script src="../js/users.js"></script>
+    <script src="../js/NEW-MENU.js"></script>
 </body>
 </html>

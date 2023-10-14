@@ -33,7 +33,7 @@ async function search(){
     }
 
     // En caso de no enviar algun dato, remplazar // por /
-    var url = `${API_URL}/subject/?name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`;
+    var url = `${API_URL}/subject/?id=${data["id"]}&?name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`;
 
     // Obtener los datos de la busqueda
     await fetch(url)
@@ -63,6 +63,12 @@ function dataTable(data) {
         "1": "Disponible"
     };
 
+    const statusClass = {
+        "-1": "deleted",
+        "0": "unavailable",
+        "1": "available"
+    };
+
     // Crear boton de view
     const button = document.createElement('button');
     button.innerHTML = "Ver más";
@@ -82,7 +88,10 @@ function dataTable(data) {
         description.innerHTML = element.description;
 
         const status = row.insertCell(3);
-        status.innerHTML = statusData[element.id_status];
+        const statusSpan = document.createElement('span');
+        statusSpan.innerHTML = statusData[element.id_status];
+        statusSpan.classList.add("status", statusClass[element.id_status]);
+        status.appendChild(statusSpan);
 
         const action = row.insertCell(4);
         action.appendChild(button.cloneNode(true));
@@ -128,21 +137,21 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/students-icon.png";
+    img.src = "../source/subject-icon.png";
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
-    //
-    // var spanId = document.createElement("span");
-    // var inputId = document.createElement("input");
-    // spanId.textContent = "id";
-    // spanId.className = "id";
-    // inputId.type = "text";
-    // inputId.id = "id";
-    // inputId.className = "id";
-    // inputId.placeholder = "id";
-    // inputId.value = data?.id ?? "";
+    var labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    var inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
 
     var section = document.createElement("section");
     var form = document.createElement("form");
@@ -198,6 +207,9 @@ function createModalBox(data){
     header.appendChild(h3);
     header.appendChild(buttonClose);
     
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
     form.appendChild(labelName);
     form.appendChild(inputName);
 

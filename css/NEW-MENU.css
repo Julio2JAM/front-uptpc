@@ -189,6 +189,7 @@ nav a:not(.selected):hover{
 }
 
 .filter-container input,
+/* footer input, */
 .filter-container select {
     padding: 8px 12px;
     border-radius: 5px;
@@ -197,6 +198,11 @@ nav a:not(.selected):hover{
     color: #333;
     background: white;
 }
+
+/* footer input{
+    color: white;
+    background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+} */
 
 .filter-container input:hover,
 .filter-container select:hover{
@@ -258,7 +264,8 @@ nav a:not(.selected):hover{
     letter-spacing: 0.1rem;
     font-size: .8rem;
     font-weight: 900;
-    color: #323544;
+    /* color: #323544; */
+    color: white;
 }
 .table-container table tbody {
     /* background-color: #f9fbff; */
@@ -309,11 +316,24 @@ nav a:not(.selected):hover{
     cursor: pointer;
     border-radius: 3px;
     border: none;
-    background: #4682B4;
+    /* background: #4682B4; */
+    background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
     padding: 9px 18px;
     font-weight: bold;
     text-transform: uppercase;
     color: white;
+}
+
+.table-container .change-button{
+    float: right;
+    margin-left: .5rem;
+    /* fallback for old browsers */
+    /* background: #cc2b5e;   */
+    background: #ff9999;
+}
+
+.table-container footer .active{
+    background-image: linear-gradient(135deg, #f34079 40%, #fc894d);
 }
 
 @media only screen and (max-height: 800px) {

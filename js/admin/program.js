@@ -2,6 +2,12 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
+
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
@@ -77,8 +83,3 @@ function loadClassroomEvents(){
     a.forEach(a => a.addEventListener("click", async (event) => await loadData(event)));
 }
 
-document.querySelectorAll(".card-content button[id*=change]").forEach(element => {
-    element.addEventListener("click", () => {
-        location.hred = `${element.id.replace("-change", "")}.html`;
-    });
-});

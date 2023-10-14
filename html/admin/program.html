@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programa</title>
-    <link rel="stylesheet" href="../css/card.css">
     <link rel="stylesheet" href="../css/NEW-MENU.css">
 </head>
 <body>
@@ -23,52 +22,57 @@
             <a id="exit">Salir<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"/></svg></a>
         </nav>
     </header>
-    
-    <div class="card-container">
-        <div class="horizontal-card with-table">
-            <div class="card-content">
 
-                <div class="filter-container">
-                    <input type="text" placeholder="Filtrar por asignatura" id="filter-subject">
-                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
-                    <input type="text" placeholder="Filtrar por apellido" id="filter-lastname">
-                    <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
-                    <select id="filter-status">
-                        <option value="">Seleccione un estado</option>
-                        <option value="-1">Eliminado</option>
-                        <option value="0">No disponible</option>
-                        <option value="1">Disponible</option>
-                    </select>
-                    <button type="button" id="search" class="filter-button active">Filter</button>
+    <div class="container">
+        <div class="table-container">
+
+            <header class="filter-container">
+                <input type="text" placeholder="Filtrar por asignatura" id="filter-subject">
+                <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                <input type="text" placeholder="Filtrar por apellido" id="filter-lastname">
+                <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
+                <select id="filter-status">
+                    <option value="">Seleccione un estado</option>
+                    <option value="-1">Eliminado</option>
+                    <option value="0">No disponible</option>
+                    <option value="1">Disponible</option>
+                </select>
+                <div class="filter-btn-container">
+                    <button type="button" id="search-filter-btn">Filtrar</button>
+                    <button type="reset" id="reset-filter-btn">Borrar</button>
                 </div>
+            </header>
+            
+            <section class="table-overflow">  <!-- style="display: flex;" TEMPORAL -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Asignatura</th>
+                            <th>Docente</th>
+                            <th>seccion</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </section>
 
-                <div class="color-table">
-                    <table class="table" id="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Asignatura</th>
-                                <th>Docente</th>
-                                <th>Cedula</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <button id="new" class="modal-box-buttom button-table">Cargar</button>
-                <button id="Load" class="modal-box-buttom button-table">Guardar</button>
-                <input type="text" placeholder="Classroom" class="button-table" id="classroom">
+            <footer>
+                <button type="button" id="new">Cargar docentes</button>
+                <button type="button" id="Load">Guardar</button>
+                <input type="text" placeholder="Classroom" id="classroom">
 
-                <button class="filter-button" id="classroom-change">Secciones</button>
-                <button class="filter-button" id="enrollment-change">Registrar estudiantes</button>
-                <button class="filter-button active" id="program-change">Registrar docentes</button>
-            </div>
+                <button class="change-button" id="classroom-change">Secciones</button>
+                <button class="change-button" id="enrollment-change">Registrar estudiantes</button>
+                <button class="change-button active" id="program-change">Registrar docentes</button>
+            </footer>
         </div>
-        
     </div>
-
-    <script src="../js/classroom2.js"></script>
+    
+    <script src="../js/program.js"></script>
+    <script src="../js/NEW-MENU.js"></script>
 </body>
 </html>
