@@ -84,17 +84,16 @@ function dataTable(data) {
         const row = tbody.insertRow(-1);
 
         const id = row.insertCell(0);
-        id.innerText = element.student.id;
+        id.innerText = element.id;
 
-        console.log(element);
         const name = row.insertCell(1);
-        name.innerText = element.student.person.name ?? "No name";
+        name.innerText = element?.student.person.name ?? "No name";
 
         const lastname = row.insertCell(2);
-        lastname.innerText = element.student.person.lastName ?? "No last name";
+        lastname.innerText = element?.student.person.lastName ?? "No last name";
 
         const cedule = row.insertCell(3);
-        cedule.innerText = element.student.person.cedule;
+        cedule.innerText = element?.student.person.cedule;
 
         const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
@@ -299,14 +298,13 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
     });
 });
 
-/*
 document.getElementById("new").addEventListener("click", async () => await createModalBoxTable());
 async function createModalBoxTable(){
 
     // Crear divs contenedores
     var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
+    modal.className = "modal";
+    modal.id = "modal";
 
     var modalContent = document.createElement("div");
     modalContent.className = "horizontal-card with-table";
@@ -437,4 +435,3 @@ async function createModalBoxTable(){
         }
     })
 }
-*/

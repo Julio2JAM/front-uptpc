@@ -122,7 +122,7 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/professor2-icon.png";
+    img.src = "../../source/professor2-icon.png";
 
     h3.appendChild(img);
     h3.innerHTML += "Docente";

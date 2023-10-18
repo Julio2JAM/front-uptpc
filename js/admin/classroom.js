@@ -71,7 +71,7 @@ function dataTable(data){
         const datetimeEnd = row.insertCell(3);
         datetimeEnd.textContent = element.datetime_end ?? "Sin fecha de fin.";
 
-        const status = row.insertCell(3);
+        const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
@@ -123,7 +123,7 @@ function createModalBox(data) {
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/classroom-icon.png";
+    img.src = "../../source/classroom-icon.png";
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
