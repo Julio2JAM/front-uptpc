@@ -32,11 +32,8 @@ async function search(){
         return;
     }
 
-    // En caso de no enviar algun dato, remplazar // por /
-    var url = `${API_URL}/subject/?id=${data["id"]}&?name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`;
-
     // Obtener los datos de la busqueda
-    await fetch(url)
+    await fetch(`${API_URL}/subject/?id=${data["id"]}&name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);

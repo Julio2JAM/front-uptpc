@@ -8,84 +8,55 @@ document.getElementById("classroom").addEventListener("click", async () => await
 // Crear modal box con el nombre de las secciones activas.
 async function createModalList(data){
 
-    // Crear divs contenedores
-    var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
+    const validateModalMenu = document.getElementById("modal-menu");
 
-    var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card";
-    modalContent.id = "modal-content";
+    const div = document.createElement("div");
+    div.id = "modal-menu";
+    div.className = "modal-menu";
 
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
+    const ul = document.createElement("ul");
+    ul.id = "classList";
 
-    //
-    const title = document.createElement("h3");
-    title.innerHTML = "Seleccione una seccion.";
-    cardContent.appendChild(title);
-
-    const fieldset = document.createElement("fieldset");
-    const legend = document.createElement("legend");
-    legend.innerHTML = "Classrooms";
-
-    fieldset.appendChild(legend);
-    cardContent.appendChild(fieldset);
-
-    modalContent.appendChild(cardContent);
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
-    modal.addEventListener("click", (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
-        }
-    });
-
-    //const ul = document.createElement("ul");
     await fetch(`${API_URL}/classroom/`)
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.innerHTML = element?.name;
+            a.addEventListener("click", () => loadClassroomEvents(element.id))
 
-            //const li = document.createElement("li");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            //li.appendChild(checkbox);
-
-            const text = document.createElement("a");
-            text.innerHTML = element.name;
-            text.id = element.id;
-            //li.appendChild(text);
-
-            //const hr = document.createElement("hr");
-
-            //ul.appendChild(li);
-            fieldset.appendChild(text);
+            li.appendChild(a);
+            ul.appendChild(li);
         });
-        loadClassroomEvents();
-        //fieldset.appendChild(ul);
     })
     .catch(error => error);
-
+    
+    if(!ul.firstChild){
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.innerHTML = "Sin secciones para seleccionar";
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
+    
+    div.appendChild(ul);
+    document.body.appendChild(div);
+    
+    const modalMenu = document.getElementById("modal-menu");
+    modalMenu.addEventListener("click", event => {
+        if (event.target.id === "modal-menu" || event.target.nodeName == "A") {
+            document.getElementById("modal-menu").remove();
+        }
+    });
 }
 
 // Agregar eventos de click para a la lista de secciones, para obtener datos de la seccion seleccionada.
-function loadClassroomEvents(){
-    const a = document.querySelectorAll("fieldset a");
-    a.forEach(a => a.addEventListener("click", async (event) => await loadData(event)));
-}
-
-// Cargar estudiantes de la seccion seleccionada
-async function loadData(data) {
-    document.getElementById("modal-box").remove();
-
-    await fetch(`${API_URL}/enrollment/classroom/${data.target.id}/student`)
+async function loadClassroomEvents(id){
+    await fetch(`${API_URL}/enrollment/?idClassroom=${id}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
-
 }
 
 function dataTable(data) {
@@ -95,7 +66,19 @@ function dataTable(data) {
 
     const button = document.createElement("button");
     button.className = "view-button";
-    button.innerText = "view";
+    button.innerText = "Ver mas";
+
+    const statusData = {
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
+    };
+
+    const statusClass = {
+        "-1": "deleted",
+        "0": "unavailable",
+        "1": "available"
+    };
 
     data.forEach(element => {
         const row = tbody.insertRow(-1);
@@ -105,15 +88,21 @@ function dataTable(data) {
 
         console.log(element);
         const name = row.insertCell(1);
-        name.innerText = element.student.name ?? "No name";
+        name.innerText = element.student.person.name ?? "No name";
 
         const lastname = row.insertCell(2);
-        lastname.innerText = element.student.lastname ?? "No last name";
+        lastname.innerText = element.student.person.lastName ?? "No last name";
 
         const cedule = row.insertCell(3);
-        cedule.innerText = element.student.cedule;
+        cedule.innerText = element.student.person.cedule;
+
+        const status = row.insertCell(4);
+        const statusSpan = document.createElement('span');
+        statusSpan.innerText = statusData[element.id_status];
+        statusSpan.classList.add("status", statusClass[element.id_status]);
+        status.appendChild(statusSpan);
         
-        const action = row.insertCell(4);
+        const action = row.insertCell(5);
         action.appendChild(button.cloneNode(true));
     });
 
@@ -126,22 +115,192 @@ function addEvents(){
 }
 
 async function detail(event){
-
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`http://localhost:3000/api/student/${id}`)
+    await fetch(`${API_URL}/enrollment/?idStudent=${id}`)
     .then(response => response.json())
-    .then(data => {
-        data.delete = true;
-        createModalBox(data)
-    })
+    .then(data => createModalBox(data[0]))
     .catch(error => console.log(error));
-
 }
 
-document.getElementById("new").addEventListener("click", async () => await createModalBoxTable());
+function createModalBox(data){
+    // Crear divs contenedores
+    var modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "modal";
 
+    var modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+
+    var header = document.createElement("header");
+    
+    // Crear elementos del DOM
+    var h3 = document.createElement("h3");
+    var img = document.createElement("img");
+    img.src = "../../source/student-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Estudiante";
+    
+    var buttonClose = document.createElement("button");
+    buttonClose.className = "close-btn";
+    buttonClose.innerHTML = "&times;"
+
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+
+    var section = document.createElement("section");
+    var form = document.createElement("form");
+
+    // ID
+    var labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    var inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
+
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
+    // Name
+    var labelName = document.createElement("label");
+    labelName.for = "name";
+    labelName.innerHTML = "Nombre:";
+    var inputName = document.createElement("input");
+    inputName.type = "text";
+    inputName.id = "name";
+    inputName.placeholder = "Nombre";
+    inputName.value = data?.student.person.name ?? "";
+
+    form.appendChild(labelName);
+    form.appendChild(inputName);
+    
+    // Last name
+    var labelLastname = document.createElement("label");
+    labelLastname.for = "lastname";
+    labelLastname.innerHTML = "Apellido:";
+    var inputLastname = document.createElement("input");
+    inputLastname.type = "text";
+    inputLastname.id = "lastname";
+    inputLastname.placeholder = "Apellido";
+    inputLastname.value = data?.student.person.lastName ?? "";
+
+    form.appendChild(labelLastname);
+    form.appendChild(inputLastname);
+
+    // Cedule
+    var labelCedule = document.createElement("label");
+    labelCedule.for = "cedule";
+    labelCedule.innerHTML = "Cedula:";
+    var inputCedule = document.createElement("input");
+    inputCedule.type = "text";
+    inputCedule.id = "cedule";
+    inputCedule.placeholder = "Cedula";
+    inputCedule.value = data?.student.person.cedule ?? "";
+    
+    form.appendChild(labelCedule);
+    form.appendChild(inputCedule);
+
+    // Phone
+    var labelPhone = document.createElement("label");
+    labelPhone.for = "phone";
+    labelPhone.innerHTML = "Telefono:";
+    var inputPhone = document.createElement("input");
+    inputPhone.type = "text";
+    inputPhone.id = "phone";
+    inputPhone.placeholder = "Telefono";
+    inputPhone.value = data?.student.person.phone ?? "";
+
+    form.appendChild(labelPhone);
+    form.appendChild(inputPhone);
+
+    // Email
+    var labelEmail = document.createElement("label");
+    labelEmail.for = "email";
+    labelEmail.innerHTML = "Email:";
+    var inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.id = "email";
+    inputEmail.placeholder = "Email";
+    inputEmail.value = data?.student.person.email ?? "";
+
+    form.appendChild(labelEmail);
+    form.appendChild(inputEmail);
+
+    // Status
+    var labelStatus = document.createElement("label");
+    var selectStatus = document.createElement("select");
+    var options = [
+        {value: -1, label: "Eliminado"},
+        {value: 0, label: "No disponible"},
+        {value: 1, label: "Disponible"}
+    ];
+    labelStatus.textContent = "Estado";
+    selectStatus.id = "status";
+    for (var option of options) {
+        selectStatus.add(new Option(option.label, option.value));
+    }
+    selectStatus.value = data?.id_status ?? 1;
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
+    var footer = document.createElement("footer");
+
+    var buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.type = "submit";
+    buttonSubmit.id = "save";
+    buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+
+    var buttonReset = document.createElement("button");
+    buttonReset.type = "reset";
+    buttonReset.id = "reset";
+    buttonReset.innerHTML = "Borrar";
+
+    
+    section.appendChild(form);
+    
+    footer.appendChild(buttonSubmit);
+    footer.appendChild(buttonReset);
+    
+    modalContent.appendChild(header);
+    modalContent.appendChild(section);
+    modalContent.appendChild(footer);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    buttonClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+        if(event.target.id == "modal"){
+            closeModal();
+        }
+    });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+        }, 260);
+    }
+}
+
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
+
+/*
+document.getElementById("new").addEventListener("click", async () => await createModalBoxTable());
 async function createModalBoxTable(){
 
     // Crear divs contenedores
@@ -278,150 +437,4 @@ async function createModalBoxTable(){
         }
     })
 }
-
-function createModalBox(data){
-
-    // Crear divs contenedores
-    var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
-
-    var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card";
-    modalContent.id = "modal-content";
-
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
-
-    // Crear elementos del DOM
-    var img = document.createElement("img");
-    img.src = "../source/students.jpeg";
-    modalContent.appendChild(img);
-    
-
-    var spanId = document.createElement("span");
-    spanId.innerText = "ID";
-    spanId.className = "id";
-    var inputId = document.createElement("input");
-    
-    inputId.id = "id";
-    inputId.type = "text";
-    inputId.className = "id";
-    inputId.value = data?.id ?? "";
-
-    cardContent.appendChild(spanId);
-    cardContent.appendChild(inputId);
-
-    // Name
-    var spanName = document.createElement("span");
-    spanName.innerText = "Name";
-    var inputName = document.createElement("input");
-    inputName.type = "text";
-    inputName.value = data?.name ?? "";
-    inputName.disabled = true;
-
-    cardContent.appendChild(spanName);
-    cardContent.appendChild(inputName);
-    
-    // Lastname
-    var spanLastname = document.createElement("span");
-    spanLastname.innerHTML = "Last name";
-    var inputLastname = document.createElement("input");
-    inputLastname.type = "text";
-    inputLastname.value = data?.lastname ?? "";
-    inputLastname.disabled = true;
-
-    cardContent.appendChild(spanLastname);
-    cardContent.appendChild(inputLastname);
-
-    // Cedule
-    var spanCedule = document.createElement("span");
-    spanCedule.innerText = "Cedule";
-    var inputCedule = document.createElement("input");
-    inputCedule.type = "text";
-    inputCedule.value = data?.cedule ?? "";
-    inputCedule.disabled = true;
-
-    cardContent.appendChild(spanCedule);
-    cardContent.appendChild(inputCedule);
-
-    // Email
-    var spanEmail = document.createElement("span");
-    spanEmail.innerText = "Email";
-    var inputEmail = document.createElement("input");
-    inputEmail.type = "email";
-    inputEmail.value = data?.email ?? "";
-    inputEmail.disabled = true;
-
-    cardContent.appendChild(spanEmail);
-    cardContent.appendChild(inputEmail);
-
-    // Phone
-    var spanPhone = document.createElement("span");
-    spanPhone.innerText = "Phone";
-    var inputPhone = document.createElement("input");
-    inputPhone.type = "text";
-    inputPhone.value = data?.phone ?? "";
-    inputPhone.disabled = true;
-
-
-    cardContent.appendChild(spanPhone);
-    cardContent.appendChild(inputPhone);
-
-    // Save
-    var inputSubmit = document.createElement("input");
-    inputSubmit.id = (data.delete) ? "delete" : "save";
-    inputSubmit.type = "submit";
-    inputSubmit.value = (data.delete) ? "Delete from this classroom" : "Save";
-    inputSubmit.addEventListener("click", async () => await enrollmentData((data.delete) ? "delete" : "save"));
-
-    cardContent.appendChild(inputSubmit);
-
-    modalContent.appendChild(cardContent);
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
-    modal.addEventListener("click", (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
-        }
-    });
-}
-
-async function enrollmentData (action){
-
-    if(action === "delete"){
-
-        var method = "PUT";
-        var data = {
-            id:document.getElementById("id").value,
-            status_id:0
-        };
-
-    }else{
-
-        var method = "POST";
-        var data = {
-            id_classroom:document.getElementById("id-classroom").value,
-            id_student:document.getElementById("id-student").value,
-        };
-
-    }
-
-    await fetch(`http://localhost:3000/enrollment/`, {
-        method: method,
-        headers: {"Content-type": "application/json"},
-        body: data
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => error);
-
-}
-
-document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
-    element.addEventListener("click", () => {
-        location.href = `${element.id.replace("-change", "")}.html`;
-    });
-});
+*/

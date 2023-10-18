@@ -11,9 +11,8 @@ async function classroom(){
     div.className = "modal-menu";
 
     const ul = document.createElement("ul");
-    const liLength = 0;
 
-    fetch(`${API_URL}/enrollment/?idStudent=${1}`)
+    await fetch(`${API_URL}/enrollment/?idStudent=${1}`)
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
@@ -27,11 +26,12 @@ async function classroom(){
     })
     .catch(error => error);
 
-    if(liLength == 0){
+    if(!ul.firstChild){
         const li = document.createElement("li");
         const a = document.createElement("a");
         a.innerHTML = "Sin secciones para seleccionar";
         li.appendChild(a);
+        ul.appendChild(li);
     }
     
     div.appendChild(ul);
