@@ -148,6 +148,10 @@ nav a:not(.selected):hover{
     width: 100%;
 }
 
+.table-container.fixed{
+    max-width: 1200px;
+}
+
 .table-container{
     font-family: Mukta, sans-serif;
     display: flex;
@@ -174,6 +178,7 @@ nav a:not(.selected):hover{
     gap: .5rem;
     grid-template-columns:  1fr;
     /* padding: 8px 12px; */
+    align-items: center;
 }
 
 @media (min-width: 520px) {
@@ -228,6 +233,10 @@ nav a:not(.selected):hover{
     border-bottom-right-radius: 10px;
 } */
 
+.filter-btn-container{
+    display: flex;
+    justify-content: space-around;
+}
 
 .filter-btn-container button {
     cursor: pointer;

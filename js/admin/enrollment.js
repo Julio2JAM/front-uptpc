@@ -53,6 +53,9 @@ async function createModalList(data){
 
 // Agregar eventos de click para a la lista de secciones, para obtener datos de la seccion seleccionada.
 async function loadClassroomEvents(id){
+    const classroom = document.getElementById("classroom");
+    classroom.value = id;
+
     await fetch(`${API_URL}/enrollment/?idClassroom=${id}`)
     .then(response => response.json())
     .then(data => dataTable(data))
@@ -263,7 +266,6 @@ function createModalBox(data){
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
 
-    
     section.appendChild(form);
     
     footer.appendChild(buttonSubmit);
@@ -302,136 +304,185 @@ document.getElementById("new").addEventListener("click", async () => await creat
 async function createModalBoxTable(){
 
     // Crear divs contenedores
-    var modal = document.createElement("div");
+    const modal = document.createElement("div");
     modal.className = "modal";
     modal.id = "modal";
 
-    var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card with-table";
-    modalContent.id = "modal-content";
+    const container = document.createElement("div");
+    container.className = "container";
 
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
-    
-    // Crear elementos para filtrar
-    var filterContent = document.createElement("div");
-    filterContent.className = "filter-container";
+    const tableContainer = document.createElement("div");
+    tableContainer.className = "table-container fixed";
 
-    var inputName = document.createElement("input");
-    inputName.id = "filter-name";
+    //
+    const header = document.createElement("header");
+    header.className = "filter-container";
+
+    const inputId = document.createElement("input");
+    inputId.id = "filter-id";
+    inputId.type = "text";
+    inputId.placeholder = "Filtrar por id";
+
+    const inputName = document.createElement("input");
+    inputName.id = "filter-nombre";
     inputName.type = "text";
-    inputName.placeholder = "Filter by Name";
+    inputName.placeholder = "Filtrar por nombre";
 
-    var inputLastname = document.createElement("input");
+    const inputLastname = document.createElement("input");
     inputLastname.id = "filter-lastname";
     inputLastname.type = "text";
-    inputLastname.placeholder = "Filter by Last name";
+    inputLastname.placeholder = "Filtrar por apellido";
 
-    var inputCedule = document.createElement("input");
+    const inputCedule = document.createElement("input");
     inputCedule.id = "filter-cedule";
     inputCedule.type = "text";
-    inputCedule.placeholder = "Filter by Cedule";
+    inputCedule.placeholder = "Filtrar por ";
 
-    var buttonSearch = document.createElement("button");
+    const buttonSearch = document.createElement("button");
     buttonSearch.id = "search";
     buttonSearch.className = "filter-button active";
     buttonSearch.innerHTML = "Filter";
     
+    const filterButtonContainer = document.createElement("div");
+    filterButtonContainer.className = "filter-btn-container";
+
+    const search = document.createElement("button");
+    search.type = "button";
+    search.id = "search-filter-btn";
+    search.innerHTML = "Filtrar";
+    const reset = document.createElement("button");
+    reset.type = "reset";
+    reset.id = "reset-filter-btn";
+    reset.innerHTML = "Borrar";
+
+    //
+    filterButtonContainer.appendChild(search);
+    filterButtonContainer.appendChild(reset);
+
     // Agregar elementos al contenedor
-    filterContent.appendChild(inputName);
-    filterContent.appendChild(inputLastname);
-    filterContent.appendChild(inputCedule);
-    filterContent.appendChild(buttonSearch);
+    header.appendChild(inputId);
+    header.appendChild(inputName);
+    header.appendChild(inputLastname);
+    header.appendChild(inputCedule);
+    header.appendChild(filterButtonContainer);
+
+    //
+    tableContainer.appendChild(header);
+
+    const section = document.createElement("section");
+    section.className = "table-overflow";
 
     // Crear un elemento <table>, un elemento <thead> y un elemento <tbody>
-    var colorTable = document.createElement("div");
-    colorTable.className = "color-table";
-    var tabla = document.createElement("table");
-    tabla.className = "table"
-    var thead = document.createElement("thead");
-    var tbody = document.createElement("tbody");
-    tbody.className = "tbody-modal-box";
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const trHead = document.createElement("tr");
+    const tbody = document.createElement("tbody");
 
-    // Crear una fila de encabezado <tr> y tres celdas de encabezado <th>
-    var encabezado = document.createElement("tr");
-    var celda0 = document.createElement("th");
-    var celda1 = document.createElement("th");
-    var celda2 = document.createElement("th");
-    var celda3 = document.createElement("th");
-    var celda4 = document.createElement("th");
-
-    // Agregar texto a las celdas de encabezado
-    celda0.innerHTML = "ID";
-    celda1.innerHTML = "Nombres";
-    celda2.innerHTML = "Apellidos";
-    celda3.innerHTML = "Cedula";
-    celda4.innerHTML = "Agregar";
+    const thID = document.createElement("th");
+    thID.innerHTML = "ID"
+    const thName = document.createElement("th");
+    thName.innerHTML = "Nombres"
+    const thLastname = document.createElement("th");
+    thLastname.innerHTML = "Apellidos"
+    const thCedule = document.createElement("th");
+    thCedule.innerHTML = "Cedula"
+    const thState = document.createElement("th");
+    thState.innerHTML = "Estado"
+    const thAction = document.createElement("th");
+    thAction.innerHTML = "Acción"
 
     // Agregar las celdas de encabezado a la fila de encabezado
-    encabezado.appendChild(celda0);
-    encabezado.appendChild(celda1);
-    encabezado.appendChild(celda2);
-    encabezado.appendChild(celda3);
-    encabezado.appendChild(celda4);
+    trHead.appendChild(thID);
+    trHead.appendChild(thName);
+    trHead.appendChild(thLastname);
+    trHead.appendChild(thCedule);
+    trHead.appendChild(thState);
+    trHead.appendChild(thAction);
 
-    // Agregar la fila de encabezado al elemento <thead>
-    thead.appendChild(encabezado);
+    const statusData = {
+        "-1": "Eliminado",
+        "0": "No disponible",
+        "1": "Disponible"
+    };
+    
+    const statusClass = {
+      "-1": "deleted",
+      "0": "unavailable",
+      "1": "available"
+    };
 
-    // Agregar el elemento <thead> y <tbody> a la tabla
-    tabla.appendChild(thead);
-    tabla.appendChild(tbody);
-
-    // Agregar todo
-    colorTable.appendChild(tabla);
-    cardContent.appendChild(filterContent);
-    cardContent.appendChild(colorTable);
-
-    //checkbox
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-
-    await fetch(`${API_URL}/enrollment/studentNoClassroom`)
+    await fetch(`${API_URL}/enrollment/studentNoClassroom/`)
     .then(response => response.json())
-    .then(data => data.forEach(element => {
-        const row = tbody.insertRow(-1);
+    .then(data => {
+        data.forEach(element => {
+            const row = tbody.insertRow(-1);
 
-        const id = row.insertCell(0);
-        id.innerText = element.id;
+            const id = row.insertCell(0);
+            id.innerText = element.id;
 
-        const name = row.insertCell(1);
-        name.innerText = element.person?.name ?? "No name";
+            const name = row.insertCell(1);
+            name.innerText = element.person.name;
 
-        const lastname = row.insertCell(2);
-        lastname.innerText = element.person?.lastName ?? "No last name";
+            const lastname = row.insertCell(2);
+            lastname.innerText = element.person.lastName ?? "";
 
-        const cedule = row.insertCell(3);
-        cedule.innerText = element.person?.cedule;
-
-        const check = row.insertCell(4);
-        check.appendChild(checkbox.cloneNode(true));
-
-        check.firstChild.addEventListener('click', (event) => {
-            event.stopPropagation();
-            row.style.background = check.firstChild.checked ? "#e8e8e8" : ""
+            const cedule = row.insertCell(3);
+            cedule.innerText = element.person.cedule;
+            
+            const status = row.insertCell(4);
+            const statusSpan = document.createElement('span');
+            statusSpan.innerHTML = statusData[element.id_status];
+            statusSpan.classList.add("status", statusClass[element.id_status]);
+            status.appendChild(statusSpan);
+            
+            const action = row.insertCell(5);
+            action.innerHTML = "Aqui debe ir un check"
         });
-
-        row.addEventListener("click", (event) => {
-            event.stopPropagation();
-            check.firstChild.checked = check.firstChild.checked ? false : true
-            row.style.background = check.firstChild.checked ? "#e8e8e8" : "";
-        });
-        
-    }))
+    })
     .catch(error => error);
 
-    modalContent.appendChild(cardContent);
-    modal.appendChild(modalContent);
+    // Agregar la fila de encabezado al elemento <thead>
+    thead.appendChild(trHead);
+
+    // Agregar el elemento <thead> y <tbody> a la tabla
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    //
+    section.appendChild(table);
+    tableContainer.appendChild(section);
+
+    //
+    const footer = document.createElement("footer");
+    const loadButton = document.createElement("button");
+    loadButton.id = "load";
+    loadButton.innerHTML = "Cargar";
+    const cancelButton = document.createElement("button");
+    cancelButton.id = "cancel";
+    cancelButton.innerHTML = "Cancelar";
+
+    //
+    footer.appendChild(loadButton);
+    footer.appendChild(cancelButton);
+    tableContainer.appendChild(footer);
+
+    container.appendChild(tableContainer);
+    modal.appendChild(container);
+
     document.body.appendChild(modal);
 
-    modal.addEventListener('click', (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
+    buttonClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+        if(event.target.id == "modal"){
+            closeModal();
         }
-    })
+    });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+        }, 260);
+    }
 }
