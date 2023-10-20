@@ -319,6 +319,8 @@ nav a:not(.selected):hover{
 
 .table-container footer{
     margin-top: auto;
+    display: flex;
+    /* justify-content: space-between; */
 }
 
 .table-container footer button{
@@ -334,11 +336,15 @@ nav a:not(.selected):hover{
 }
 
 .table-container .change-button{
-    float: right;
-    margin-left: .5rem;
+    /* margin-left: auto; */
     /* fallback for old browsers */
     /* background: #cc2b5e;   */
     background: #ff9999;
+}
+
+footer .right-btns{
+    /* margin-left: .5rem; */
+    float: right;
 }
 
 .table-container footer .active{
