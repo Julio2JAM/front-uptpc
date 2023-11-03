@@ -108,7 +108,7 @@ async function detail(event) {
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
 // Funcion para crear el modal box
-function createModalBox(data) {
+async function createModalBox(data) {
 
     // Crear divs contenedores
     var modal = document.createElement("div");
@@ -235,15 +235,15 @@ function createModalBox(data) {
     modal.addEventListener("click", (event) => {
         if(event.target.id == "modal"){
             closeModal();
-            event.target.remove();
         }
     });
 
-    function closeModal() {
+    async function closeModal() {
         modal.classList.add("close-modal");
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 
@@ -255,14 +255,14 @@ async function save(){
     const id  = document.getElementById("id").value;
     const jsonData = {
         name: document.getElementById("name").value, 
-        datetime_start: document.getElementById("datetime_start").value, 
-        datetime_end: document.getElementById("datetime_end").value,
-        id_status: document.getElementById("status").value
+        datetime_start: !document.getElementById("datetime_start").value ? null : document.getElementById("datetime_start").value , 
+        datetime_end: !document.getElementById("datetime_end").value ? null : document.getElementById("datetime_end").value,
+        id_status: Number(document.getElementById("status").value)
     };
 
     const method = id ? "PUT" : "POST";
     const tableBody = document.querySelector("tbody");
-    id ? jsonData.id = id : null;
+    if(id) jsonData.id = id;
     
     await fetch(`${API_URL}/classroom`, {
         method: method,

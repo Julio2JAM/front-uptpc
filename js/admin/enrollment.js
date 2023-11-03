@@ -282,7 +282,6 @@ function createModalBox(data){
     modal.addEventListener("click", (event) => {
         if(event.target.id == "modal"){
             closeModal();
-            event.target.remove();
         }
     });
 
@@ -291,6 +290,7 @@ function createModalBox(data){
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 }
@@ -461,10 +461,15 @@ async function createModalBoxTable(){
     const cancelButton = document.createElement("button");
     cancelButton.id = "cancel";
     cancelButton.innerHTML = "Cancelar";
+    const closeButton = document.createElement("button");
+    closeButton.id = "close";
+    closeButton.className = "change-button";
+    closeButton.innerHTML = "Salir";
 
     //
     footer.appendChild(loadButton);
     footer.appendChild(cancelButton);
+    footer.appendChild(closeButton);
     tableContainer.appendChild(footer);
 
     container.appendChild(tableContainer);
@@ -472,7 +477,7 @@ async function createModalBoxTable(){
 
     document.body.appendChild(modal);
 
-    buttonClose.addEventListener("click", closeModal);
+    closeButton.addEventListener("click", closeModal);
     modal.addEventListener("click", (event) => {
         if(event.target.id == "modal"){
             closeModal();
@@ -484,6 +489,7 @@ async function createModalBoxTable(){
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 }

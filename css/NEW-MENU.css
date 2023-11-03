@@ -181,21 +181,29 @@ nav a:not(.selected):hover{
     align-items: center;
 }
 
+.filter-container form{
+    display: grid;
+    gap: .5rem;
+    grid-template-columns: 1fr;
+    /* padding: 8px 12px; */
+    align-items: center;
+}
+
 @media (min-width: 520px) {
-    .filter-container{
+    .filter-container form{
         grid-template-columns: 1fr 1fr;
     }
 }
 
 @media (min-width: 777px){
-    .filter-container{
+    .filter-container form{
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
 }
 
-.filter-container input,
+.filter-container form input,
 /* footer input, */
-.filter-container select {
+.filter-container form select {
     padding: 8px 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -209,8 +217,8 @@ nav a:not(.selected):hover{
     background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
 } */
 
-.filter-container input:hover,
-.filter-container select:hover{
+.filter-container form input:hover,
+.filter-container form select:hover{
     border: 1px solid #6fb6ff;
 }
 
@@ -319,8 +327,6 @@ nav a:not(.selected):hover{
 
 .table-container footer{
     margin-top: auto;
-    display: flex;
-    /* justify-content: space-between; */
 }
 
 .table-container footer button{
@@ -336,7 +342,8 @@ nav a:not(.selected):hover{
 }
 
 .table-container .change-button{
-    /* margin-left: auto; */
+    float: right;
+    margin-left: .5rem;
     /* fallback for old browsers */
     /* background: #cc2b5e;   */
     background: #ff9999;

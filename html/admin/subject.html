@@ -28,19 +28,21 @@
         <div class="table-container">
 
             <header class="filter-container">
-                <input type="text" placeholder="Filtrar por id" id="filter-id">
-                <input type="text" placeholder="Filtrar por nombre" id="filter-name">
-                <input type="text" placeholder="Filtrar por descripción" id="filter-description">
-                <select id="filter-status">
-                    <option value="">Seleccione un estado</option>
-                    <option value="-1">Eliminado</option>
-                    <option value="0">No disponible</option>
-                    <option value="1">Disponible</option>
-                </select>
-                <div class="filter-btn-container">
-                    <button type="button" id="search-filter-btn">Filtrar</button>
-                    <button type="reset" id="reset-filter-btn">Borrar</button>
-                </div>
+                <form id="filter-form">
+                    <input type="text" placeholder="Filtrar por id" id="filter-id">
+                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                    <input type="text" placeholder="Filtrar por descripción" id="filter-description">
+                    <select id="filter-status">
+                        <option value="">Seleccione un estado</option>
+                        <option value="-1">Eliminado</option>
+                        <option value="0">No disponible</option>
+                        <option value="1">Disponible</option>
+                    </select>
+                    <div class="filter-btn-container">
+                        <button type="button" id="search-filter-btn">Filtrar</button>
+                        <button type="reset" form="filter-form" id="reset-filter-btn">Borrar</button>
+                    </div>
+                </form>
             </header>
             
             <section class="table-overflow">  <!-- style="display: flex;" TEMPORAL -->
@@ -61,11 +63,13 @@
 
             <footer>
                 <button type="button" id="new">Nueva asignatura</button>
+                <button type="submit" id="export-pdf">Exportar a PDF</button>
             </footer>
         </div>
     </div>
 
     <script src="../../js/admin/subject.js"></script>
     <script src="../../js/NEW-MENU.js"></script>
+    <script src="../../js/libs/html2pdf.bundle.min.js"></script>
 </body>
 </html>

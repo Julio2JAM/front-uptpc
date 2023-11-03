@@ -232,7 +232,6 @@ function createModalBox(data){
     modal.addEventListener("click", (event) => {
         if(event.target.id == "modal"){
             closeModal();
-            event.target.remove();
         }
     });
 
@@ -241,6 +240,7 @@ function createModalBox(data){
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 }
@@ -272,3 +272,28 @@ async function save (){
     // Comentado puede que temporalmente
     //document.getElementById("modal-box").remove();
 };
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
+
+function exportPDF() {
+    // const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    // const data = new Object;
+    // for(const element of elements) {
+        // data[element.id.replace("filter-","")] = element.value;
+    // }
+    // window.open("../TABLE-TO-PDF.html");
+
+    const ElementToPDF = document.querySelector(".container");
+    const dateNow = new Date();
+    const dateString = `${dateNow.getFullYear()}-${dateNow.getMonth()+1}-${dateNow.getDate()}`;
+
+    const setOptions = {
+        margin: 1,
+        filename: `Asignaturas-${dateString}.pdf`,
+        image: { type: 'jpeg', quality: 0.98},
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a3", orientation: 'portrait' }
+    };
+    html2pdf().from(ElementToPDF).set(setOptions).save();
+}
