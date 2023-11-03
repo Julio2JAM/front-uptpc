@@ -232,6 +232,7 @@ function createModalBox(data){
     modal.addEventListener("click", (event) => {
         if(event.target.id == "modal"){
             closeModal();
+            event.target.remove();
         }
     });
 
@@ -243,8 +244,6 @@ function createModalBox(data){
         }, 260);
     }
 }
-
-
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){

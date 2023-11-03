@@ -235,6 +235,7 @@ function createModalBox(data) {
     modal.addEventListener("click", (event) => {
         if(event.target.id == "modal"){
             closeModal();
+            event.target.remove();
         }
     });
 
