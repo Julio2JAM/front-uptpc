@@ -1,17 +1,10 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+var printData = new Object;
 
 // Al cargar el archivo, obtener todos los registros de la tabla subject
-window.addEventListener("load", async () => await loadSubject());
-
-// Obtener todos los registros de la tabla
-async function loadSubject(){
-    await fetch(`${API_URL}/subject/`)
-    .then(response => response.json())
-    .then(data => dataTable(data))
-    .catch(error => console.log("Error de conexión, intente nuevamente en algunos segundos."));
-}
+window.addEventListener("load", async () => await search());
 
 // Al hacer click en search, obtener el elemento name y llamar a la funcion search
 document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
@@ -19,17 +12,15 @@ document.getElementById("search-filter-btn").addEventListener("click", async () 
 // Funcion para buscar un registro en la tabla search
 async function search(){
 
+    printData = new Object;
+
     // Obtener de los elementos de busqueda su contenido
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
     const data = new Object;
     for(const element of elements) {
-        data[element.id.replace("filter-","")] = element.value;
-    }
-
-    const validateData = Object.values(data).every(value => !value);
-    if(validateData){
-        await loadSubject();
-        return;
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+        printData[name] = element.value;
     }
 
     // Obtener los datos de la busqueda
@@ -277,12 +268,11 @@ async function save (){
 document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
 
 function exportPDF() {
-    // const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
-    // const data = new Object;
-    // for(const element of elements) {
-        // data[element.id.replace("filter-","")] = element.value;
-    // }
-    // window.open("../TABLE-TO-PDF.html");
+
+    // En la página A
+    const queryString = new URLSearchParams(printData).toString();
+    const url = `../TABLE-TO-PDF.html?${queryString}`;
+    window.open(url, "_blank");
 
     const ElementToPDF = document.querySelector(".container");
     const dateNow = new Date();
@@ -295,5 +285,5 @@ function exportPDF() {
         html2canvas: { scale: 2 },
         jsPDF: { unit: "in", format: "a3", orientation: 'portrait' }
     };
-    html2pdf().from(ElementToPDF).set(setOptions).save();
+    // html2pdf().from(ElementToPDF).set(setOptions).save();
 }
