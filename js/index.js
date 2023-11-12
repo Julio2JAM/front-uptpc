@@ -5,9 +5,12 @@ const API_URL = "http://localhost:3000/api"
 window.addEventListener("load", async () => await verifyToken())
 
 async function verifyToken() {
-
     const cookies = document.cookie.split(';');
     const cookieName = "token";
+
+    if(!cookies){
+        return;
+    }
 
     let cookieValue;
     for (const value of cookies) {
@@ -22,18 +25,9 @@ async function verifyToken() {
         return;
     }
 
-    const token = await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
-        .then(async (response) => {
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
-            }
-            return data;
-        })
-        .catch(error => {
-            handleMessage(error);
-            return response.status;
-        });
+    const token = await fetch(`${API_URL}/access/verifyToken/${cookieValue}`)
+    .then(response => response.json())
+    .catch(error => handleMessage(error));
 
     if (!token.token) {
         document.cookie = cookieName + '=""; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -44,8 +38,9 @@ async function verifyToken() {
         student: "assignmentStudent.html",
     }
 
-    if (!roles[token.role]) {
+    if (!token.role || !roles[token.role]) {
         handleMessage("No posee permisos para acceder.");
+        return;
     }
 
     location.href = roles[token.role];
@@ -64,18 +59,15 @@ document.getElementById("login-btn").addEventListener("click", async event => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(jsonData)
     })
-        .then(async (response) => {
-            data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
-            }
-            return data
-        })
-        .catch(error => handleMessage(error));
+    .then(response => response.json())
+    .catch(error => handleMessage("Error de conexion, intente nuevamente."));
 
-    if (login) {
-        document.cookie = `token=${login.token}; SameSite=None; Secure;`;
+    if(login.message){
+        handleMessage(login.message);
     }
+    
+    document.cookie = `token=${login.token}; SameSite=None; Secure;`;
+    await verifyToken();
 
     /*
     const http = async (url, {headers, method, body}) => {

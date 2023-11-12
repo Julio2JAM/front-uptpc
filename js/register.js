@@ -27,7 +27,7 @@ document.getElementById("username").addEventListener("input", async (event) => {
 
     await fetch(`${API_URL}/user/username/?username=${username.value}`)
     .then(response => response.json())
-    .then(data => handleMessage(username, data.message ? "The username is already used. Please choose a different" : ""))
+    .then(data => handleMessage(username, data.message ? "El nombre de usuario ya esta en uso." : ""))
     .catch(error => console.log(error))
 })
 
@@ -57,7 +57,7 @@ document.getElementById("register-btn").addEventListener("click", async event =>
         body: JSON.stringify(jsonData)
     })
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => {location.href = "index.html"})
     .catch(error => console.log(error));
 
 });
@@ -69,17 +69,17 @@ function verifyPassword(){
     const repet = document.getElementById("repet");
 
     if(password.value == ""){
-        handleMessage(password, "Password is required");
+        handleMessage(password, "La contraseña es requerida.");
         return false;
     }
     // Si password tiene una longitud menor de 8 o mayor a 16 caracteres, muestra un mensaje de error
     if(password.value.length < 8 || password.value.length > 16){
-        handleMessage(password, "The password must be between 8 and 16 caracteres");
+        handleMessage(password, "La contraseña debe tener entre 8 y 16 caracteres.");
         return false;
     }
     // Si repeat es diferente a password y repet no esta vacio, muestra un mensaje de error
     if(repet.value != password.value){
-        handleMessage(repet, "The passwords are not equals");
+        handleMessage(repet, "Las contraseñas no coinciden.");
         return false;
     }
 
@@ -114,11 +114,12 @@ for (const iterator of viewBtn) {
 };
 
 function handleMessage(obj,message){
+
     // Obtener el elemento cuya clase sea "message"
     const span = document.querySelector(".message");
 
     // Validar si el mensaje esta vacio y el elemento existe, se elimina
-    if(message == ""){
+    if(!message){
         span ? span.remove() : "" ;
 
         if(obj){
