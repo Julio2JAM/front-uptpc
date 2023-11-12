@@ -29,6 +29,10 @@ tr th:first-child{
     width: 10%;
 }
 
+table tbody td{
+    padding: 1rem;
+    text-align: center;
+}
 
 .status{
     border-radius: 3px;

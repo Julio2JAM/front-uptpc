@@ -12,11 +12,13 @@ document.getElementById("search-filter-btn").addEventListener("click", async () 
 // Funcion para buscar un registro en la tabla search
 async function search(){
 
-    printData = new Object;
+    printData = {
+        model:"subject"
+    };
 
     // Obtener de los elementos de busqueda su contenido
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
-    const data = new Object;
+    const data = {};
     for(const element of elements) {
         const name = element.id.replace("filter-","");
         data[name] = element.value;
@@ -243,7 +245,7 @@ async function save (){
     const jsonData = {
         name: document.getElementById("name").value,
         description: document.getElementById("description").value,
-        id_status: document.getElementById("status").value,
+        id_status: Number(document.getElementById("status").value),
     };
 
     // Datos para el fetch
@@ -268,22 +270,8 @@ async function save (){
 document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
 
 function exportPDF() {
-
     // En la página A
     const queryString = new URLSearchParams(printData).toString();
     const url = `../TABLE-TO-PDF.html?${queryString}`;
     window.open(url, "_blank");
-
-    const ElementToPDF = document.querySelector(".container");
-    const dateNow = new Date();
-    const dateString = `${dateNow.getFullYear()}-${dateNow.getMonth()+1}-${dateNow.getDate()}`;
-
-    const setOptions = {
-        margin: 1,
-        filename: `Asignaturas-${dateString}.pdf`,
-        image: { type: 'jpeg', quality: 0.98},
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "in", format: "a3", orientation: 'portrait' }
-    };
-    // html2pdf().from(ElementToPDF).set(setOptions).save();
 }

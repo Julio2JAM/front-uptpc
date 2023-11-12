@@ -36,23 +36,26 @@ async function levels(){
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 
 async function search() {
-  const elements = document.querySelectorAll(".filter-container input, select");
+  const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
   const data = {};
   for (const element of elements) {
     data[element.id.replace("filter-", "")] = element.value;
   }
 
+  console.log(data);
+
   await fetch(`${API_URL}/user/?username=${data["username"]}&role=${data["role"]}&id_status=${data["status"]}`)
   .then(response => response.json())
   .then(data => dataTable(data))
   .catch(error => console.log(error));
+
 }
 
 async function dataTable(data) {
 
   const table = document.querySelector("tbody");
   table.innerHTML = "";
-  const selectLevel = document.getElementById("filter-permission");
+  const selectLevel = document.getElementById("filter-role");
   const dataLevel = new Object();
   for (const option of selectLevel.options) {
     dataLevel[option.value] = option.innerText;
@@ -89,7 +92,7 @@ async function dataTable(data) {
     username.innerHTML = element.username;
   
     const level = row.insertCell(2);
-    level.innerHTML = dataLevel[element.level?.id] ?? "No select";
+    level.innerHTML = dataLevel[element.level?.id] ?? "No posee";
   
     const status = row.insertCell(3);
     const statusSpan = document.createElement('span');
@@ -145,29 +148,30 @@ function createModalBox(data){
   buttonClose.className = "close-btn";
   buttonClose.innerHTML = "&times;"
 
-  //
-  // var spanId = document.createElement("span");
-  // var inputId = document.createElement("input");
-  // spanId.textContent = "id";
-  // spanId.className = "id";
-  // inputId.type = "text";
-  // inputId.id = "id";
-  // inputId.className = "id";
-  // inputId.placeholder = "id";
-  // inputId.value = data?.id ?? "";
+  var labelId = document.createElement("label");
+  labelId.for = "id";
+  labelId.innerHTML = "ID:";
+  labelId.style.display = "none";
+  var inputId = document.createElement("input");
+  inputId.type = "text";
+  inputId.id = "id";
+  inputId.placeholder = "ID";
+  inputId.value = data?.id ?? "";
+  inputId.style.display = "none";
 
   var section = document.createElement("section");
   var form = document.createElement("form");
 
   var labelUser = document.createElement("label");
-  labelUser.for = "user";
+  labelUser.for = "username";
   labelUser.innerHTML = "Usuario:";
   var inputUser = document.createElement("input");
   inputUser.type = "text";
-  inputUser.id = "user";
+  inputUser.id = "username";
   inputUser.placeholder = "Usuario";
   inputUser.value = data?.username ?? "";
   
+  /*
   var labelPassword = document.createElement("label");
   labelPassword.for = "password";
   labelPassword.innerHTML = "Contraseña:";
@@ -176,6 +180,7 @@ function createModalBox(data){
   inputPassword.id = "password";
   inputPassword.placeholder = "Contraseña";
   inputPassword.value = data?.password ?? "";
+  */
   
   var labelPerson = document.createElement("label");
   labelPerson.for = "person";
@@ -189,7 +194,7 @@ function createModalBox(data){
   var labelRole = document.createElement("label");
   labelRole.for = "role";
   labelRole.innerHTML = "Permisos:";
-  var selectRole = document.getElementById("filter-permission");
+  var selectRole = document.getElementById("filter-role");
   selectRole = selectRole.cloneNode(true);
   selectRole.remove(0);
   selectRole.id = "level";
@@ -228,11 +233,14 @@ function createModalBox(data){
   header.appendChild(h3);
   header.appendChild(buttonClose);
   
+  form.appendChild(labelId);
+  form.appendChild(inputId);
+
   form.appendChild(labelUser);
   form.appendChild(inputUser);
 
-  form.appendChild(labelPassword);
-  form.appendChild(inputPassword);
+  // form.appendChild(labelPassword);
+  // form.appendChild(inputPassword);
 
   form.appendChild(labelPerson);
   form.appendChild(inputPerson);
@@ -276,10 +284,10 @@ function createModalBox(data){
 async function save (){
   // Obtener los elementos "name" y "description"
   const id = document.getElementById("id").value;
-  const dataUser = {
+  const jsonData = {
     username: document.getElementById("username").value,
-    level: document.getElementById("level").value,
-    id_status: document.getElementById("status").value,
+    id_role: document.getElementById("level").value,
+    id_status: Number(document.getElementById("status").value),
   }
 
   const method = id ? "PUT" : "POST";
@@ -289,7 +297,7 @@ async function save (){
   await fetch(`${API_URL}/user`, {
       method: method,
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(dataUser)
+      body: JSON.stringify(jsonData)
   })
   .then(response => response.json())
   .then(data => search())

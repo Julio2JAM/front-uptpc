@@ -64,6 +64,7 @@ document.getElementById("login-btn").addEventListener("click", async event => {
 
     if(login.message){
         handleMessage(login.message);
+        return;
     }
     
     document.cookie = `token=${login.token}; SameSite=None; Secure;`;
@@ -127,7 +128,7 @@ function handleMessage(message) {
     if (!message && span) {
         span.remove();
 
-        // Validar que el mensaje esta vacio y el elemento no exista para retornar
+    // Validar que el mensaje esta vacio y el elemento no exista para retornar
     } else if (!message && !span) {
         return;
     }
