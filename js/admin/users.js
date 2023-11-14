@@ -190,6 +190,7 @@ function createModalBox(data){
   inputPerson.id = "person";
   inputPerson.placeholder = "Propietario";
   inputPerson.value = data?.person?.id ?? "";
+  inputPerson.addEventListener("click", () => createModalBoxTable(data?.person?.id));
 
   var labelRole = document.createElement("label");
   labelRole.for = "role";
@@ -278,6 +279,225 @@ function createModalBox(data){
           modal.remove();
       }, 260);
   }
+}
+
+async function createModalBoxTable(idPerson = ""){
+
+  // Crear divs contenedores
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.id = "modal-table";
+
+  const container = document.createElement("div");
+  container.className = "container";
+
+  const tableContainer = document.createElement("div");
+  tableContainer.className = "table-container fixed";
+
+  //
+  const header = document.createElement("header");
+  header.className = "filter-container";
+  const form = document.createElement("form");
+
+  const inputId = document.createElement("input");
+  inputId.id = "filter-id";
+  inputId.type = "text";
+  inputId.placeholder = "Filtrar por id";
+  inputId.value = idPerson;
+
+  const inputName = document.createElement("input");
+  inputName.id = "filter-nombre";
+  inputName.type = "text";
+  inputName.placeholder = "Filtrar por nombre";
+
+  const inputLastname = document.createElement("input");
+  inputLastname.id = "filter-lastname";
+  inputLastname.type = "text";
+  inputLastname.placeholder = "Filtrar por apellido";
+
+  const inputCedule = document.createElement("input");
+  inputCedule.id = "filter-cedule";
+  inputCedule.type = "text";
+  inputCedule.placeholder = "Filtrar por ";
+
+  const buttonSearch = document.createElement("button");
+  buttonSearch.id = "search";
+  buttonSearch.className = "filter-button active";
+  buttonSearch.innerHTML = "Filter";
+  
+  const filterButtonContainer = document.createElement("div");
+  filterButtonContainer.className = "filter-btn-container";
+
+  const search = document.createElement("button");
+  search.type = "button";
+  search.id = "search-filter-btn";
+  search.innerHTML = "Filtrar";
+  const reset = document.createElement("button");
+  reset.type = "reset";
+  reset.id = "reset-filter-btn";
+  reset.innerHTML = "Borrar";
+
+  //
+  filterButtonContainer.appendChild(search);
+  filterButtonContainer.appendChild(reset);
+
+  // Agregar elementos al contenedor
+  form.appendChild(inputId);
+  form.appendChild(inputName);
+  form.appendChild(inputLastname);
+  form.appendChild(inputCedule);
+  form.appendChild(filterButtonContainer);
+
+  //
+  header.appendChild(form);
+
+  //
+  tableContainer.appendChild(header);
+
+  const section = document.createElement("section");
+  section.className = "table-overflow";
+
+  // Crear un elemento <table>, un elemento <thead> y un elemento <tbody>
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const trHead = document.createElement("tr");
+  const tbody = document.createElement("tbody");
+
+  const thID = document.createElement("th");
+  thID.innerHTML = "ID"
+  const thName = document.createElement("th");
+  thName.innerHTML = "Nombres"
+  const thLastname = document.createElement("th");
+  thLastname.innerHTML = "Apellidos"
+  const thCedule = document.createElement("th");
+  thCedule.innerHTML = "Cedula"
+  const thState = document.createElement("th");
+  thState.innerHTML = "Estado"
+  const thAction = document.createElement("th");
+  thAction.innerHTML = "Acción"
+
+  // Agregar las celdas de encabezado a la fila de encabezado
+  trHead.appendChild(thID);
+  trHead.appendChild(thName);
+  trHead.appendChild(thLastname);
+  trHead.appendChild(thCedule);
+  trHead.appendChild(thState);
+  trHead.appendChild(thAction);
+
+  const statusData = {
+      "-1": "Eliminado",
+      "0": "No disponible",
+      "1": "Disponible"
+  };
+  
+  const statusClass = {
+    "-1": "deleted",
+    "0": "unavailable",
+    "1": "available"
+  };
+
+  await fetch(`${API_URL}/person/?id=${idPerson}`)
+  .then(response => response.json())
+  .then(data => {
+      data.forEach(element => {
+          const row = tbody.insertRow(-1);
+
+          const id = row.insertCell(0);
+          id.innerText = element.id;
+
+          const name = row.insertCell(1);
+          name.innerText = element.name;
+
+          const lastname = row.insertCell(2);
+          lastname.innerText = element.lastName ?? "";
+
+          const cedule = row.insertCell(3);
+          cedule.innerText = element.cedule;
+          
+          const status = row.insertCell(4);
+          const statusSpan = document.createElement('span');
+          statusSpan.innerHTML = statusData[element.id_status];
+          statusSpan.classList.add("status", statusClass[element.id_status]);
+          status.appendChild(statusSpan);
+          
+          const action = row.insertCell(5);
+          action.append(createButtonAssign(element.id));
+      });
+  })
+  .catch(error => error);
+
+  // Agregar la fila de encabezado al elemento <thead>
+  thead.appendChild(trHead);
+
+  // Agregar el elemento <thead> y <tbody> a la tabla
+  table.appendChild(thead);
+  table.appendChild(tbody);
+
+  //
+  section.appendChild(table);
+  tableContainer.appendChild(section);
+
+  //
+  const footer = document.createElement("footer");
+  const closeButton = document.createElement("button");
+  closeButton.id = "close";
+  closeButton.className = "change-button";
+  closeButton.innerHTML = "Salir";
+
+  //
+  footer.appendChild(closeButton);
+  tableContainer.appendChild(footer);
+
+  container.appendChild(tableContainer);
+  modal.appendChild(container);
+
+  document.body.appendChild(modal);
+
+  closeButton.addEventListener("click", closeModal);
+  modal.addEventListener("click", (event) => {
+      if(event.target.id == "modal"){
+          closeModal();
+      }
+  });
+
+  function closeModal() {
+      modal.classList.add("close-modal");
+      setTimeout(() => {
+          modal.style.display = "none";
+          modal.classList.remove("close-modal");
+          modal.remove();
+      }, 260);
+  }
+}
+
+function createButtonAssign(id){
+  const button = document.createElement("button");
+  button.innerHTML = "Asignar";
+  button.className = "new";
+  button.addEventListener("click", async () => await assignPerson(id));
+  return button;
+}
+
+async function assignPerson(id) {
+  await fetch(`${API_URL}/user/`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      id: document.getElementById("id").value,
+      id_person:id
+    })
+  })
+  .then(response => response.json)
+  .then(data => console.log(data))
+  .catch(error => console.error('Ha ocurrido un error: ', error));
+
+  const modalTable = document.getElementById("modal-table");
+  modalTable.classList.add("close-modal");
+  setTimeout(() => {
+      modalTable.style.display = "none";
+      modalTable.classList.remove("close-modal");
+      modalTable.remove();
+  }, 260);
 }
 
 // Obtener el elemento "save" y agregarle un evento

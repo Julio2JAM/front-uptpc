@@ -329,6 +329,7 @@ nav a:not(.selected):hover{
     margin-top: auto;
 }
 
+.new,
 .table-container footer button{
     cursor: pointer;
     border-radius: 3px;
