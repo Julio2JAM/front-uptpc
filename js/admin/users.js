@@ -189,7 +189,7 @@ function createModalBox(data){
   inputPerson.type = "text";
   inputPerson.id = "person";
   inputPerson.placeholder = "Propietario";
-  inputPerson.value = data?.person?.id ?? "";
+  inputPerson.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
   inputPerson.addEventListener("click", () => createModalBoxTable(data?.person?.id));
 
   var labelRole = document.createElement("label");
@@ -484,7 +484,7 @@ async function assignPerson(id) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       id: document.getElementById("id").value,
-      id_person:id
+      person:id
     })
   })
   .then(response => response.json)
