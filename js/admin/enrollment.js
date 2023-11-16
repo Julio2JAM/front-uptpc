@@ -301,6 +301,8 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
     });
 });
 
+var newStudentList = [];
+
 document.getElementById("new").addEventListener("click", async () => await createModalBoxTable());
 async function createModalBoxTable(){
 
@@ -318,6 +320,7 @@ async function createModalBoxTable(){
     //
     const header = document.createElement("header");
     header.className = "filter-container";
+    const form = document.createElement("form");
 
     const inputId = document.createElement("input");
     inputId.id = "filter-id";
@@ -361,11 +364,14 @@ async function createModalBoxTable(){
     filterButtonContainer.appendChild(reset);
 
     // Agregar elementos al contenedor
-    header.appendChild(inputId);
-    header.appendChild(inputName);
-    header.appendChild(inputLastname);
-    header.appendChild(inputCedule);
-    header.appendChild(filterButtonContainer);
+    form.appendChild(inputId);
+    form.appendChild(inputName);
+    form.appendChild(inputLastname);
+    form.appendChild(inputCedule);
+    form.appendChild(filterButtonContainer);
+
+    //
+    header.appendChild(form);
 
     //
     tableContainer.appendChild(header);
@@ -437,7 +443,7 @@ async function createModalBoxTable(){
             status.appendChild(statusSpan);
             
             const action = row.insertCell(5);
-            action.innerHTML = "Aqui debe ir un check"
+            action.append(createCheck(element.id));
         });
     })
     .catch(error => error);
@@ -492,4 +498,34 @@ async function createModalBoxTable(){
             modal.remove();
         }, 260);
     }
+}
+
+function createCheck(id){
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = id + "-checkbox";
+    checkbox.value = id;
+    checkbox.addEventListener("change", (event) => addStudent(event))
+
+    // const label = document.createElement("label");
+    // label.for = checkbox.id;
+    return checkbox;
+}
+
+function addStudent(event){
+    console.log(event.target)
+}
+
+async function loadEnrollment(){
+    await fetch(`${API_URL}/enrollment`, {
+        method: "POST",
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify({
+            "student": newStudentList,
+            "classroom": document.getElementById("classroom").id
+        })
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Ha ocurrido un error: ', error));
 }
