@@ -158,6 +158,17 @@ function createModalBox(data) {
     inputId.value = data?.id ?? "";
     inputId.style.display = "none";
 
+    var labelIdPerson = document.createElement("label");
+    labelIdPerson.for = "idPerson";
+    labelIdPerson.innerHTML = "Person ID:";
+    labelIdPerson.style.display = "none";
+    var inputIdPerson = document.createElement("input");
+    inputIdPerson.type = "text";
+    inputIdPerson.id = "idPerson";
+    inputIdPerson.placeholder = "ID";
+    inputIdPerson.value = data?.person?.id ?? "";
+    inputIdPerson.style.display = "none";
+
     var section = document.createElement("section");
     var form = document.createElement("form");
 
@@ -226,6 +237,13 @@ function createModalBox(data) {
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputUser.value = data?.username ?? "";
+        inputPerson.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
+        selectRole.value = data?.level?.id ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
 
     h3.appendChild(img);
     h3.innerHTML += "User:";
@@ -235,6 +253,9 @@ function createModalBox(data) {
 
     form.appendChild(labelId);
     form.appendChild(inputId);
+
+    form.appendChild(labelIdPerson);
+    form.appendChild(inputIdPerson);
 
     form.appendChild(labelUser);
     form.appendChild(inputUser);
@@ -420,7 +441,7 @@ async function createModalBoxTable(idPerson = "") {
             status.appendChild(statusSpan);
 
             const action = row.insertCell(5);
-            action.append(createButtonAssign(element.id));
+            action.append(createButtonAssign(element.id, element.name + " " + element.lastName));
         });
     })
     .catch(error => error);
@@ -469,34 +490,27 @@ async function createModalBoxTable(idPerson = "") {
     }
 }
 
-function createButtonAssign(id) {
+function createButtonAssign(id, name) {
     const button = document.createElement("button");
     button.innerHTML = "Asignar";
     button.className = "new";
-    button.addEventListener("click", async () => await assignPerson(id));
+    button.addEventListener("click", () => {
+        const imputIdPerson = document.getElementById("idPerson");
+        imputIdPerson.value = id;
+
+        const imputPerson = document.getElementById("person");
+        imputPerson.value = name;
+
+        const modalTable = document.getElementById("modal-table");
+        modalTable.classList.add("close-modal");
+        setTimeout(() => {
+            modalTable.style.display = "none";
+            modalTable.classList.remove("close-modal");
+            modalTable.remove();
+        }, 260);
+
+    });
     return button;
-}
-
-async function assignPerson(id) {
-    await fetch(`${API_URL}/user/`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-            id: document.getElementById("id").value,
-            person: id
-        })
-    })
-    .then(response => response.json)
-    .then(data => console.log(data))
-    .catch(error => console.error('Ha ocurrido un error: ', error));
-
-    const modalTable = document.getElementById("modal-table");
-    modalTable.classList.add("close-modal");
-    setTimeout(() => {
-        modalTable.style.display = "none";
-        modalTable.classList.remove("close-modal");
-        modalTable.remove();
-    }, 260);
 }
 
 // Obtener el elemento "save" y agregarle un evento
@@ -505,8 +519,9 @@ async function save() {
     const id = document.getElementById("id").value;
     const jsonData = {
         username: document.getElementById("username").value,
-        id_role: document.getElementById("level").value,
+        idRole: document.getElementById("level").value,
         id_status: Number(document.getElementById("status").value),
+        idPerson: document.getElementById("idPerson").value,
     }
 
     const method = id ? "PUT" : "POST";

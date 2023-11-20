@@ -1,20 +1,38 @@
 const API_URL = "http://localhost:3000/api";
 
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
+const field = {
+    id              :   "id",
+    name            :   "Nombre",
+    lastName        :   "Apellido",
+    phone           :   "Numero de telefono",
+    email           :   "Correo electrónico",
+    description     :   "Descripción",
+    datetime_start  :   "fecha de inicio",
+    datetime_end    :   "fecha de cierre",
+    datetime        :   "fecha de registro",
+    datetime_update :   "fecha de actualización",
+    id_status       :   "Estado",
+};
 
-for (const [value, key] of urlParams) {
-    console.log(value, key);
-}
+// const urlParams = new URLSearchParams(window.location.search);
+// let query = Array.from(urlParams)
+//     .filter(([key]) => key !== 'model')
+//     .map(([key, value]) => `${key}=${value}`)
+//     .join('&');
 
+// query = "?" + query;
 
+const urlParams = new URLSearchParams(window.location.search);
 if(!urlParams.has("model")){
-
+    window.close();
 }
+const model = urlParams.get("model"); 
+urlParams.delete("model");
+const query = urlParams.toString();
 
 getData();
 async function getData(){
-    await fetch(`${API_URL}/${urlParams.get("model")}`)
+    await fetch(`${API_URL}/${model}/?${query}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(err => err);
@@ -22,11 +40,15 @@ async function getData(){
 
 function dataTable(data) {
 
-    // console.log(Object.keys(data[0]));
-    // return
-    console.log(data[0]);
-
     const thead = document.querySelector("thead");
+    // const tr = document.createElement("tr");
+    // for (const key in data[0]) {
+    //     if(!field.hasOwnProperty(key)){
+    //         continue;
+    //     }
+
+    // }
+
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
   
@@ -71,7 +93,7 @@ function dataTable(data) {
     savePDF()
 }
 
-function savePDF(){
+async function savePDF(){
     const ElementToPDF = document.body;
     const dateNow = new Date();
     const dateString = `${dateNow.getFullYear()}-${dateNow.getMonth()+1}-${dateNow.getDate()}`;
@@ -80,8 +102,9 @@ function savePDF(){
         margin: 1,
         filename: `Asignaturas-${dateString}.pdf`,
         image: { type: 'jpeg', quality: 0.98},
-        html2canvas: { scale: 2, letterRendering: true },
+        html2canvas: { scale: 3, letterRendering: true },
         jsPDF: { unit: "in", format: "a3", orientation: 'portrait' }
     };
-    html2pdf().from(ElementToPDF).set(setOptions).save();
+    await html2pdf().from(ElementToPDF).set(setOptions).save();
+    window.close();
 }

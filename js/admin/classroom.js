@@ -212,6 +212,13 @@ async function createModalBox(data) {
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {        
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.name ?? "";
+        inputDatetimeEnd.value = data?.datetime_end ?? "";
+        inputDatetimeStart.value = data?.datetime_start ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
 
     h3.appendChild(img);
     h3.innerHTML += "Seccion";

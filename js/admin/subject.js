@@ -26,7 +26,7 @@ async function search(){
     }
 
     // Obtener los datos de la busqueda
-    await fetch(`${API_URL}/subject/?id=${data["id"]}&name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`)
+    await fetch(`${API_URL}/subject/?id=${data["id"]}&name=${data["name"]}&description=${data["description"]}&id_status=${data["id_status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -105,7 +105,10 @@ async function detail(event){
 
     await fetch(`${API_URL}/subject/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data[0]))
+    .then(data => {
+        createModalBox(data[0]);
+        dataModalBox(data[0]);
+    })
     .catch(err => console.error(err));
 
 }
@@ -132,6 +135,10 @@ function createModalBox(data){
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
+    var section = document.createElement("section");
+    var form = document.createElement("form");
+    form.id = "modal-form";
+
     var labelId = document.createElement("label");
     labelId.for = "id";
     labelId.innerHTML = "ID:";
@@ -142,9 +149,6 @@ function createModalBox(data){
     inputId.placeholder = "ID";
     inputId.value = data?.id ?? "";
     inputId.style.display = "none";
-
-    var section = document.createElement("section");
-    var form = document.createElement("form");
 
     var labelName = document.createElement("label");
     labelName.for = "name";
@@ -181,7 +185,10 @@ function createModalBox(data){
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -190,6 +197,12 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.name ?? "";
+        inputDescription.value = data?.description ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
 
     h3.appendChild(img);
     h3.innerHTML += "Asignatura";

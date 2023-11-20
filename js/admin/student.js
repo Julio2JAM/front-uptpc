@@ -233,7 +233,15 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
-
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.person.name ?? "";
+        inputLastname.value = data?.person.lastName ?? "";
+        inputCedule.value = data?.person.cedule ?? "";
+        inputPhone.value = data?.person.phone ?? "";
+        inputEmail.value = data?.person.email ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
     
     section.appendChild(form);
     
