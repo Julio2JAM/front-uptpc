@@ -131,6 +131,10 @@ function createModalBox(data){
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
     img.src = "../../source/subject-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Asignatura";
+
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
@@ -203,9 +207,6 @@ function createModalBox(data){
         inputDescription.value = data?.description ?? "";
         selectStatus.value = data?.id_status ?? 1;
     });
-
-    h3.appendChild(img);
-    h3.innerHTML += "Asignatura";
 
     header.appendChild(h3);
     header.appendChild(buttonClose);

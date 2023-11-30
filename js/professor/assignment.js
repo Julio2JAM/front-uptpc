@@ -1,67 +1,6 @@
 API_URL = 'http://localhost:3000/api'
 
-
-// Agregar evento de click para mostrar una lista con todas las secciones activas.
-document.getElementById("classroom").addEventListener("click", async () => await createModalList());
-
-// Crear modal box con el nombre de las secciones activas.
-async function createModalList(data){
-
-    // Crear divs contenedores
-    var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
-
-    var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card";
-    modalContent.id = "modal-content";
-
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
-
-    //
-    const title = document.createElement("h3");
-    title.innerHTML = "Seleccione una seccion.";
-    cardContent.appendChild(title);
-
-    const fieldset = document.createElement("fieldset");
-    const legend = document.createElement("legend");
-    legend.innerHTML = "Classrooms";
-
-    fieldset.appendChild(legend);
-    cardContent.appendChild(fieldset);
-
-    modalContent.appendChild(cardContent);
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
-    modal.addEventListener("click", (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
-        }
-    });
-
-    //const ul = document.createElement("ul");
-    await fetch(`${API_URL}/enrollment/?idStudent=${1}`)
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(element => {
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-
-            const text = document.createElement("span");
-            text.innerHTML = element.classroom.name;
-            text.id = element.id;
-
-            fieldset.appendChild(text);
-        });
-        searchByClassroom();
-    })
-    .catch(error => error);
-
-}
-
+/*
 //
 window.addEventListener('load', async () => await loadData(null));
 
@@ -122,13 +61,9 @@ function createButtons(innerText, className, id, clickCb){
     btn.addEventListener("click", () => clickCb(idReplace))
     return btn;
 }
+*/
 
-async function detail(id) {
-    await fetch(`${API_URL}/program/?id=${id}`)
-    .then(response => response.json())
-    .then(data => createModalBox(data))
-    .catch(err => console.error(err))
-}
+document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
 function createModalBox(data){
     // Crear divs contenedores
@@ -147,7 +82,7 @@ function createModalBox(data){
     img.src = "../../source/student-icon.png";
 
     h3.appendChild(img);
-    h3.innerHTML += "Estudiante";
+    h3.innerHTML += "Actividad";
     
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
@@ -241,7 +176,7 @@ function createModalBox(data){
     // datetimeEnd
     var labelDatetimeEnd = document.createElement("label");
     labelDatetimeEnd.for = "datetimesend";
-    labelDatetimeEnd.innerHTML = "Fecha de cierre:";
+    labelDatetimeEnd.innerHTML = "Fecha de final:";
     var inputDatetimeEnd = document.createElement("input");
     inputDatetimeEnd.type = "date";
     inputDatetimeEnd.id = "datetime_end";
@@ -281,12 +216,12 @@ function createModalBox(data){
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
     buttonReset.addEventListener("click", () => {
-        inputId.value = data?.id ?? "";
-        inputName.value = data?.person.name ?? "";
-        inputLastname.value = data?.person.lastName ?? "";
-        inputCedule.value = data?.person.cedule ?? "";
-        inputPhone.value = data?.person.phone ?? "";
-        inputEmail.value = data?.person.email ?? "";
+        inputTitle.value = data?.id ?? "";
+        inputDescription.value = data?.person.name ?? "";
+        inputPorcentage.value = data?.person.lastName ?? "";
+        inputBase.value = data?.person.cedule ?? "";
+        inputDatetimeStart.value = data?.person.phone ?? "";
+        inputDatetimeEnd.value = data?.person.email ?? "";
         selectStatus.value = data?.id_status ?? 1;
     });
     
@@ -317,4 +252,11 @@ function createModalBox(data){
             modal.remove();
         }, 260);
     }
+}
+
+async function detail(id) {
+    await fetch(`${API_URL}/program/?id=${id}`)
+    .then(response => response.json())
+    .then(data => createModalBox(data))
+    .catch(err => console.error(err))
 }
