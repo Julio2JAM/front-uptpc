@@ -1,6 +1,7 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = 'http://localhost:3000/api';
+var printData = new Object;
 
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
@@ -298,4 +299,14 @@ async function save() {
     .then(response => search())
     .then(data => data)
     .catch(err => err);
+}
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
+
+function exportPDF() {
+    // En la página A
+    const queryString = new URLSearchParams(printData).toString();
+    const url = `../TABLE-TO-PDF.html?${queryString}`;
+    window.open(url, "_blank");
 }

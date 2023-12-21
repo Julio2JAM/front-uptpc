@@ -1,18 +1,17 @@
 API_URL = 'http://localhost:3000/api'
 
-/*
 //
-window.addEventListener('load', async () => await loadData(null));
+window.addEventListener('load', async () => await search(null));
 
 //
-async function loadData(enrollment) {
+async function search() {
     const filters = document.querySelectorAll('.filter-container input, select');
     const data = new Object();
     for (const element of filters) {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/program/?enrollment=${enrollment ?? 2}&subjectName=${data.subject}&professorName=${data.professor}&status=${data.status}`)
+    await fetch(`${API_URL}/assignment/`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(err => console.error(err))
@@ -44,14 +43,15 @@ function dataTable(data){
         cellStatus.innerHTML = status[element.id_status];
 
         const cellAction = row.insertCell(4);
-        const btnDetail = createButtons("Ver mas", "view-button", `btn-detail-${element.id}`, detail)
-        const btnActivity = createButtons("Actividades", "view-button", `btn-activity-${element.id}`, detail)
+        // const btnDetail = createButtons("Ver mas", "view-button", `btn-detail-${element.id}`, detail)
+        // const btnActivity = createButtons("Actividades", "view-button", `btn-activity-${element.id}`, detail)
 
         cellAction.appendChild(btnDetail);
         cellAction.appendChild(btnActivity);
     });
 }
 
+/*
 function createButtons(innerText, className, id, clickCb){
     const btn = document.createElement("button");
     btn.innerText = innerText;
@@ -260,3 +260,36 @@ async function detail(id) {
     .then(data => createModalBox(data))
     .catch(err => console.error(err))
 }
+
+// Obtener el elemento "save" y agregarle un evento
+async function save (){
+    // Obtener datos para crear o actualizar el registro.
+    const id = document.getElementById("id").value;
+    const jsonData = {
+        title: document.getElementById("name").value,
+        description: document.getElementById("description").value,
+        porcentage: document.getElementById("description").value,
+        base: document.getElementById("description").value,
+        datetime_start: document.getElementById("description").value,
+        datetime_end: document.getElementById("description").value,
+        id_status: Number(document.getElementById("status").value),
+        id_professor: 1 //! TEMPORAL
+    };
+
+    // Datos para el fetch
+    const method = id ? "PUT" : "POST";
+    if(id) jsonData.id = id;
+    
+    // Gardar o actualizar los elementos en la base de datos
+    await fetch(`${API_URL}/assignment/`, {
+        method: method,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
+
+    // Comentado puede que temporalmente
+    //document.getElementById("modal-box").remove();
+};
