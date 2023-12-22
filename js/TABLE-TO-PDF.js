@@ -79,13 +79,18 @@ async function getData(){
 
 function dataTable(data) {
 
-    fields.sort((a, b) => a.priority - b.priority);
+    const thead = document.querySelector("thead");
+    const tr = document.createElement("tr");
+    const tableFields = [];
+
+    // fields.sort((a, b) => a.priority - b.priority);
     for (const value of fields) {
         if(!data[0][value.field]){
             continue;
         }
+        tableFields.push(value.field);
         const th = document.createElement("th");
-        th.innerHTML = data[0][value.field];
+        th.innerHTML = [value.translate];
         tr.appendChild(th);
     }
     thead.appendChild(tr);
@@ -107,21 +112,20 @@ function dataTable(data) {
   
     data.forEach( element => {
         const row = tbody.insertRow(-1);
-        var cont = 0;
-        for (const key in element) {
-            const value = row.insertCell(cont);
-            cont++;
-            if(key == "id_status"){
+        for (const key in tableFields) {
+            const value = tableFields[key];
+            const cell = row.insertCell(key);
+            if(value == "id_status"){
                 const statusSpan = document.createElement('span');
-                statusSpan.innerHTML = statusData[element[key]];
-                statusSpan.classList.add("status", statusClass[element[key]]);
-                value.appendChild(statusSpan);
+                statusSpan.innerHTML = statusData[element[value]];
+                statusSpan.classList.add("status", statusClass[element[value]]);
+                cell.appendChild(statusSpan);
                 continue;
-            }else if(key == "datetime" || key == "datetime_update"){
-                value.innerHTML = new Date(element[key]).toLocaleString();
+            }else if(value == "datetime" || value == "datetime_update"){
+                cell.innerHTML = new Date(element[value]).toLocaleString();
                 continue;
             }
-            value.innerHTML = element[key];
+            cell.innerHTML = element[value];
         }
     });
 
