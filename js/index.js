@@ -40,21 +40,36 @@ async function verifyToken() {
     .then(response => response.json())
     .catch(error => handleMessage(error));
 
-    if (!token.token) {
+    if (token.error) {
         document.cookie = cookieName + '=""; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 
     const roles = {
-        admin: "menu.html",
-        student: "assignmentStudent.html",
+        1: "/admin/menu.html",
+        2: "/student/assignmentStudent.html",
+        3: "/professor/assignmentStudent.html",
     }
 
-    if (!token.role || !roles[token.role]) {
+    if (!token.user.role || !roles[token.user.role]) {
         handleMessage("No posee permisos para acceder.");
         return;
     }
 
-    location.href = roles[token.role];
+/*
+    Asi deberia ser la data de rol:
+
+    const role = await fetch(`${API_URL}/role/?id=${token.user.role}`)
+    .then(response => response.json())
+    .catch(error => handleMessage(error));
+
+    const roles = {
+        admin: "/admin/menu.html",
+        student: "/student/assignmentStudent.html",
+        professor: "/professor/assignmentStudent.html",
+    }
+*/
+
+    location.href = roles[token.user.role];
 }
 
 document.getElementById("login-btn").addEventListener("click", async event => {
@@ -73,12 +88,16 @@ document.getElementById("login-btn").addEventListener("click", async event => {
     .then(response => response.json())
     .catch(error => handleMessage("Error de conexion, intente nuevamente."));
 
-    if(login.message){
-        handleMessage(login.message);
+    if(login.status == 400){
+        handleMessage("Usuario o contraseña incorrecta."); //login.message
+        return;
+    }else if(login.status == 401){
+        handleMessage("Permisos insuficientes."); //login.message
         return;
     }
     
-    document.cookie = `token=${login.token}; SameSite=None; Secure;`;
+    // document.cookie = `token=${login.token}; SameSite=None; Secure;`; //! TEST
+    sessionStorage.setItem('token', login.token);
     await verifyToken();
 
     /*
@@ -149,7 +168,6 @@ function handleMessage(message) {
         span.textContent = message;
         return;
     }
-
 
     // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
     //const div = document.getElementsByClassName("container")[0];
