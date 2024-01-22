@@ -6,37 +6,14 @@ window.addEventListener("load", async () => await verifyToken())
 
 async function verifyToken() {
 
-    // Array de cookies, separadas por ';'.
-    const cookies = document.cookie.split(';');
-
-    // Nombre de la cookie a buscar.
-    const cookieName = "token";
+    const tokenValue = sessionStorage.getItem('token');
 
     // Si el array esta vacio, quiere decir que no hay cookies registradas.
-    if(!cookies){
+    if(!tokenValue){
         return;
     }
 
-    // Buscar en las cookies
-    let cookieValue;
-    for (const value of cookies) {
-        // Validar que la cookie evaluada, comience por el nombre que se está buscando.
-        if (value.startsWith(cookieName)) {
-            // Obtener el valor de la cookie, eliminando el nombre +1 caracter, porque al obtener el array de cookies, los valores obtenidos son tipo JSON, es decir "nombre:valor", de esta manera, se elimina "nombre:", dejando solo el valor.
-            cookieValue = value.substring(cookieName.length + 1);
-            // Decodificar el valor obtenido y asignarlo a la variable anteriormente declarada 'cookieValue'.
-            cookieValue = decodeURIComponent(cookieValue);
-            // Detener el ciclo de busqueda.
-            break;
-        }
-    }
-
-    // Validar que se haya obtenido una cookie, es decir, que cookieValue no este vacia.
-    if (!cookieValue) {
-        return;
-    }
-
-    const token = await fetch(`${API_URL}/access/verifyToken/${cookieValue}`)
+    const token = await fetch(`${API_URL}/access/verifyToken/${tokenValue}`)
     .then(response => response.json())
     .catch(error => handleMessage(error));
 
@@ -45,9 +22,9 @@ async function verifyToken() {
     }
 
     const roles = {
-        1: "/admin/menu.html",
-        2: "/student/assignmentStudent.html",
-        3: "/professor/assignmentStudent.html",
+        1: "admin/menu.html",
+        2: "student/assignmentStudent.html",
+        3: "professor/assignmentStudent.html",
     }
 
     if (!token.user.role || !roles[token.user.role]) {
