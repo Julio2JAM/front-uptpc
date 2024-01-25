@@ -13,13 +13,17 @@ window.addEventListener('load', async () => await search());
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 
 async function search() {
+    
     const elements = document.querySelectorAll(".filter-container input, select");
-    const data = new Object;
+    // console.log(elements);
+    const data = {};
     for(const element of elements) {
-        data[element.id.replace("filter-","")] = element.value;
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+        printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data.name}&personLastName=${data.lastName}&personCedule=${data.cedule}&id_status=${data.status}`)
+    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&id_status=${data["id_status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -283,10 +287,10 @@ async function save() {
             cedule: document.getElementById("cedule").value,
             email: document.getElementById("email").value,
             phone: document.getElementById("phone").value,
-            status: document.getElementById("status").value
         },
         representative1: {},
         representative2: {},
+        id_status: document.getElementById("id_status").value
     }
     if(id) jsonData.id = id;
     const method = id ? "PUT" : "POST";
