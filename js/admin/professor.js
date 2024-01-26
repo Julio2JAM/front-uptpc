@@ -226,7 +226,7 @@ function createModalBox(data){
         {value: 1, label: "Disponible"}
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
+    selectStatus.id = "id_status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
@@ -299,7 +299,7 @@ async function save(){
             email: document.getElementById("email").value,
             phone: document.getElementById("phone").value,
         },
-        id_status: document.getElementById("status").value,
+        id_status: document.getElementById("id_status").value,
     };
     
     // Datos para el fetch

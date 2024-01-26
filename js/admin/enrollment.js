@@ -1,6 +1,7 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+const token = sessionStorage.getItem('token');
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
@@ -8,7 +9,7 @@ document.getElementById("classroom").addEventListener("click", async () => await
 // Crear modal box con el nombre de las secciones activas.
 async function createModalList(data){
 
-    const validateModalMenu = document.getElementById("modal-menu");
+    // const validateModalMenu = document.getElementById("modal-menu");
 
     const div = document.createElement("div");
     div.id = "modal-menu";
@@ -24,7 +25,7 @@ async function createModalList(data){
             const li = document.createElement("li");
             const a = document.createElement("a");
             a.innerHTML = element?.name;
-            a.addEventListener("click", () => loadClassroomEvents(element.id))
+            a.addEventListener("click", () => loadClassroomEvents(element.id, element?.name))
 
             li.appendChild(a);
             ul.appendChild(li);
@@ -52,14 +53,19 @@ async function createModalList(data){
 }
 
 // Agregar eventos de click para a la lista de secciones, para obtener datos de la seccion seleccionada.
-async function loadClassroomEvents(id){
+async function loadClassroomEvents(id, name){
     const classroom = document.getElementById("classroom");
+    // classroom.value = name;
     classroom.value = id;
 
-    await fetch(`${API_URL}/enrollment/?idClassroom=${id}`)
+    await fetch(`${API_URL}/enrollment/?idClassroom=${id}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
+
 }
 
 function dataTable(data) {
@@ -109,6 +115,28 @@ function dataTable(data) {
     });
 
     addEvents();
+}
+
+document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
+async function search() {
+    
+    const elements = document.querySelectorAll(".filter-container input, select");
+
+    const data = {};
+    for(const element of elements) {
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+        printData[name] = element.value;
+    }
+
+    await fetch(`${API_URL}/enrollment/`, {
+        method: "GET",
+        authorization: "Bearer" + token,
+    })
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => error);
+
 }
 
 function addEvents(){
@@ -352,7 +380,7 @@ async function createModalBoxTable(){
 
     const search = document.createElement("button");
     search.type = "button";
-    search.id = "search-filter-btn";
+    search.id = "modal-search-filter-btn";
     search.innerHTML = "Filtrar";
     const reset = document.createElement("button");
     reset.type = "reset";
@@ -463,6 +491,7 @@ async function createModalBoxTable(){
     const footer = document.createElement("footer");
     const loadButton = document.createElement("button");
     loadButton.id = "load";
+    loadButton.addEventListener("click", async () => await loadEnrollment());
     loadButton.innerHTML = "Cargar";
     const cancelButton = document.createElement("button");
     cancelButton.id = "cancel";
@@ -513,19 +542,32 @@ function createCheck(id){
 }
 
 function addStudent(event){
-    console.log(event.target)
+    event.target.checked ? newStudentList[newStudentList.length] = event.target.value : newStudentList.splice(newStudentList.indexOf(event.target.value), 1);
+    console.log(event.target);
+    console.log(newStudentList);
 }
 
 async function loadEnrollment(){
-    await fetch(`${API_URL}/enrollment`, {
-        method: "POST",
-        headers: {"content-type": "application/json"},
-        body: JSON.stringify({
-            "student": newStudentList,
-            "classroom": document.getElementById("classroom").id
+
+    for (const value of newStudentList) {
+        await fetch(`${API_URL}/enrollment`, {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: JSON.stringify({
+                "student": value,
+                "classroom": document.getElementById("classroom").value
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Ha ocurrido un error: ', error));
+        .then(response => response.json())
+        .then(data => dataTable())
+        .catch(error => console.error('Ha ocurrido un error: ', error));
+    }
+
+    modal.classList.add("close-modal");
+    setTimeout(() => {
+        modal.style.display = "none";
+        modal.classList.remove("close-modal");
+        modal.remove();
+    }, 260);
+
 }
