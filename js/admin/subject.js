@@ -1,17 +1,10 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+var printData = new Object;
 
 // Al cargar el archivo, obtener todos los registros de la tabla subject
-window.addEventListener("load", async () => await loadSubject());
-
-// Obtener todos los registros de la tabla
-async function loadSubject(){
-    await fetch(`${API_URL}/subject/`)
-    .then(response => response.json())
-    .then(data => dataTable(data))
-    .catch(error => console.log("Error de conexión, intente nuevamente en algunos segundos."));
-}
+window.addEventListener("load", async () => await search());
 
 // Al hacer click en search, obtener el elemento name y llamar a la funcion search
 document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
@@ -19,24 +12,21 @@ document.getElementById("search-filter-btn").addEventListener("click", async () 
 // Funcion para buscar un registro en la tabla search
 async function search(){
 
+    printData = {
+        model:"subject"
+    };
+
     // Obtener de los elementos de busqueda su contenido
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
-    const data = new Object;
+    const data = {};
     for(const element of elements) {
-        data[element.id.replace("filter-","")] = element.value;
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+        printData[name] = element.value;
     }
-
-    const validateData = Object.values(data).every(value => !value);
-    if(validateData){
-        await loadSubject();
-        return;
-    }
-
-    // En caso de no enviar algun dato, remplazar // por /
-    var url = `${API_URL}/subject/?id=${data["id"]}&?name=${data["name"]}&description=${data["description"]}&id_status=${data["status"]}`;
 
     // Obtener los datos de la busqueda
-    await fetch(url)
+    await fetch(`${API_URL}/subject/?id=${data["id"]}&name=${data["name"]}&description=${data["description"]}&id_status=${data["id_status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -115,7 +105,10 @@ async function detail(event){
 
     await fetch(`${API_URL}/subject/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data[0]))
+    .then(data => {
+        createModalBox(data[0]);
+        dataModalBox(data[0]);
+    })
     .catch(err => console.error(err));
 
 }
@@ -137,10 +130,18 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/subject-icon.png";
+    img.src = "../../source/subject-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Asignatura";
+
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
+
+    var section = document.createElement("section");
+    var form = document.createElement("form");
+    form.id = "modal-form";
 
     var labelId = document.createElement("label");
     labelId.for = "id";
@@ -152,9 +153,6 @@ function createModalBox(data){
     inputId.placeholder = "ID";
     inputId.value = data?.id ?? "";
     inputId.style.display = "none";
-
-    var section = document.createElement("section");
-    var form = document.createElement("form");
 
     var labelName = document.createElement("label");
     labelName.for = "name";
@@ -191,7 +189,10 @@ function createModalBox(data){
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -200,9 +201,12 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
-
-    h3.appendChild(img);
-    h3.innerHTML += "Asignatura";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.name ?? "";
+        inputDescription.value = data?.description ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
 
     header.appendChild(h3);
     header.appendChild(buttonClose);
@@ -243,11 +247,10 @@ function createModalBox(data){
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 }
-
-
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
@@ -256,7 +259,7 @@ async function save (){
     const jsonData = {
         name: document.getElementById("name").value,
         description: document.getElementById("description").value,
-        id_status: document.getElementById("status").value,
+        id_status: Number(document.getElementById("status").value),
     };
 
     // Datos para el fetch
@@ -276,3 +279,13 @@ async function save (){
     // Comentado puede que temporalmente
     //document.getElementById("modal-box").remove();
 };
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
+
+function exportPDF() {
+    // En la página A
+    const queryString = new URLSearchParams(printData).toString();
+    const url = `../TABLE-TO-PDF.html?${queryString}`;
+    window.open(url, "_blank");
+}

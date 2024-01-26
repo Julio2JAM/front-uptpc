@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios</title>
-    <link rel="stylesheet" href="../css/NEW-MENU.css">
-    <link rel="stylesheet" href="../css/NEW-MODAL.css">
+    <link rel="stylesheet" href="../../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../../css/NEW-MODAL.css">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
                 <li><a id="student-professor" href="professor.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3a3 3 0 1 1-1.614 5.53M15 12a4 4 0 0 1 4 4v1h-3.348M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z"/></svg>Estudiantes / docentes</a></li>
                 <li><a id="section" href="classroom.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="20" fill="none" viewBox="0 0 18 20"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 2h4a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h4m6 0v3H6V2m6 0a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1M5 5h8m-5 5h5m-8 0h.01M5 14h.01M8 14h5"/></svg>Secciones</a></li>
                 <li><a id="subject" href="subject.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 16.5c0-1-8-2.7-9-2V1.8c1-1 9 .707 9 1.706M10 16.5V3.506M10 16.5c0-1 8-2.7 9-2V1.8c-1-1-9 .707-9 1.706"/></svg>Asignaturas</a></li>
-                <li><a class="selected" id="user" href="user.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.109 17H1v-2a4 4 0 0 1 4-4h.87M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm7.95 2.55a2 2 0 0 1 0 2.829l-6.364 6.364-3.536.707.707-3.536 6.364-6.364a2 2 0 0 1 2.829 0Z"/></svg>Usuarios</a></li>
+                <li><a id="user" class="selected" href="user.html"><svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.109 17H1v-2a4 4 0 0 1 4-4h.87M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm7.95 2.55a2 2 0 0 1 0 2.829l-6.364 6.364-3.536.707.707-3.536 6.364-6.364a2 2 0 0 1 2.829 0Z"/></svg>Usuarios</a></li>
             </ul>
             <a>Salir<svg style="width:1.2rem; height: 1.2rem; color:#646464" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"/></svg></a>
         </nav>
@@ -28,20 +28,22 @@
         <div class="table-container">
 
             <header class="filter-container">
-                <input type="text" placeholder="Filter by Username" id="filter-username">
-                <select id="filter-permission">
-                    <option value="">Select a permissions</option>
-                </select>
-                <select id="filter-status">
-                    <option value="">Seleccione un estado</option>
-                    <option value="-1">Eliminado</option>
-                    <option value="0">No disponible</option>
-                    <option value="1">Disponible</option>
-                </select>
-                <div class="filter-btn-container">
-                    <button type="button" id="search-filter-btn">Filtrar</button>
-                    <button type="reset" id="reset-filter-btn">Borrar</button>
-                </div>
+                <form id="filter-form">
+                    <input type="text" placeholder="Filter by Username" id="filter-username">
+                    <select id="filter-role">
+                        <option value="">Seleccione un permiso</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="">Seleccione un estado</option>
+                        <option value="-1">Eliminado</option>
+                        <option value="0">No disponible</option>
+                        <option value="1">Disponible</option>
+                    </select>
+                    <div class="filter-btn-container">
+                        <button type="button" id="search-filter-btn">Filtrar</button>
+                        <button type="reset" id="reset-filter-btn">Borrar</button>
+                    </div>
+                </form>
             </header>
             
             <section class="table-overflow">
@@ -62,11 +64,12 @@
 
             <footer>
                 <button type="button" id="new">Nueva usuario</button>
+                <button type="button" id="export-pdf">Exportar a PDF</button>
             </footer>
         </div>
     </div>
 
-    <script src="../js/users.js"></script>
-    <script src="../js/NEW-MENU.js"></script>
+    <script src="../../js/admin/users.js"></script>
+    <script src="../../js/NEW-MENU.js"></script>
 </body>
 </html>

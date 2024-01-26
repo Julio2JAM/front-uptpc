@@ -148,6 +148,10 @@ nav a:not(.selected):hover{
     width: 100%;
 }
 
+.table-container.fixed{
+    max-width: 1200px;
+}
+
 .table-container{
     font-family: Mukta, sans-serif;
     display: flex;
@@ -174,23 +178,32 @@ nav a:not(.selected):hover{
     gap: .5rem;
     grid-template-columns:  1fr;
     /* padding: 8px 12px; */
+    align-items: center;
+}
+
+.filter-container form{
+    display: grid;
+    gap: .5rem;
+    grid-template-columns: 1fr;
+    /* padding: 8px 12px; */
+    align-items: center;
 }
 
 @media (min-width: 520px) {
-    .filter-container{
+    .filter-container form{
         grid-template-columns: 1fr 1fr;
     }
 }
 
 @media (min-width: 777px){
-    .filter-container{
+    .filter-container form{
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
 }
 
-.filter-container input,
+.filter-container form input,
 /* footer input, */
-.filter-container select {
+.filter-container form select {
     padding: 8px 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -204,8 +217,8 @@ nav a:not(.selected):hover{
     background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
 } */
 
-.filter-container input:hover,
-.filter-container select:hover{
+.filter-container form input:hover,
+.filter-container form select:hover{
     border: 1px solid #6fb6ff;
 }
 
@@ -228,6 +241,10 @@ nav a:not(.selected):hover{
     border-bottom-right-radius: 10px;
 } */
 
+.filter-btn-container{
+    display: flex;
+    justify-content: space-around;
+}
 
 .filter-btn-container button {
     cursor: pointer;
@@ -312,6 +329,7 @@ nav a:not(.selected):hover{
     margin-top: auto;
 }
 
+.new,
 .table-container footer button{
     cursor: pointer;
     border-radius: 3px;
@@ -330,6 +348,11 @@ nav a:not(.selected):hover{
     /* fallback for old browsers */
     /* background: #cc2b5e;   */
     background: #ff9999;
+}
+
+footer .right-btns{
+    /* margin-left: .5rem; */
+    float: right;
 }
 
 .table-container footer .active{

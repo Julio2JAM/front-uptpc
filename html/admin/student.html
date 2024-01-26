@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estudiantes</title>
-    <link rel="stylesheet" href="../css/NEW-MENU.css">
-    <link rel="stylesheet" href="../css/NEW-MODAL.css">
+    <link rel="stylesheet" href="../../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../../css/NEW-MODAL.css">
 </head>
 <body>
 
@@ -28,21 +28,23 @@
         <div class="table-container">
 
             <header class="filter-container">
-                <input type="text" placeholder="Filtrar por id" id="filter-id">
-                <input type="text" placeholder="Filtrar por nombre" id="filter-name">
-                <input type="text" placeholder="Filtrar por apellido" id="filter-lastName">
-                <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
-                <select id="filter-status">
-                    <option value="">Seleccione un estado</option>
-                    <option value="-1">Eliminado</option>
-                    <option value="0">No disponible</option>
-                    <option value="1">Disponible</option>
-                </select>
+                <form>
+                    <input type="text" placeholder="Filtrar por id" id="filter-id">
+                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                    <input type="text" placeholder="Filtrar por apellido" id="filter-lastName">
+                    <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
+                    <select id="filter-id_status">
+                        <option value="">Seleccione un estado</option>
+                        <option value="-1">Eliminado</option>
+                        <option value="0">No disponible</option>
+                        <option value="1">Disponible</option>
+                    </select>
 
-                <div class="filter-btn-container">
-                    <button type="button" id="search-filter-btn">Filtrar</button>
-                    <button type="reset" id="reset-filter-btn">Borrar</button>
-                </div>
+                    <div class="filter-btn-container">
+                        <button type="button" id="search-filter-btn">Filtrar</button>
+                        <button type="reset" id="reset-filter-btn">Borrar</button>
+                    </div>
+                </form>
             </header>
             
             <section class="table-overflow">
@@ -65,13 +67,14 @@
 
             <footer>
                 <button type="button" id="new">Nuevo estudiante</button>
+                <button type="button" id="export-pdf">Exportar a PDF</button>
                 <button type="button" class="change-button active" id="student-change">Estudiantes</button>
                 <button type="button" class="change-button" id="professor-change">Docentes</button>
             </footer>
         </div>
     </div>
 
-    <script src="../js/student.js"></script>
-    <script src="../js/NEW-MENU.js"></script>
+    <script src="../../js/admin/student.js"></script>
+    <script src="../../js/NEW-MENU.js"></script>
 </body>
 </html>

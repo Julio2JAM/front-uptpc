@@ -1,6 +1,7 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = 'http://localhost:3000/api';
+var printData = new Object;
 
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
@@ -12,13 +13,17 @@ window.addEventListener('load', async () => await search());
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 
 async function search() {
+    
     const elements = document.querySelectorAll(".filter-container input, select");
-    const data = new Object;
+    // console.log(elements);
+    const data = {};
     for(const element of elements) {
-        data[element.id.replace("filter-","")] = element.value;
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+        printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data.name}&personLastName=${data.lastName}&personCedule=${data.cedule}&id_status=${data.status}`)
+    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&id_status=${data["id_status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -108,7 +113,7 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/student-icon.png";
+    img.src = "../../source/student-icon.png";
 
     h3.appendChild(img);
     h3.innerHTML += "Estudiante";
@@ -233,7 +238,15 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
-
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.person.name ?? "";
+        inputLastname.value = data?.person.lastName ?? "";
+        inputCedule.value = data?.person.cedule ?? "";
+        inputPhone.value = data?.person.phone ?? "";
+        inputEmail.value = data?.person.email ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
     
     section.appendChild(form);
     
@@ -259,6 +272,7 @@ function createModalBox(data){
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 }
@@ -273,10 +287,10 @@ async function save() {
             cedule: document.getElementById("cedule").value,
             email: document.getElementById("email").value,
             phone: document.getElementById("phone").value,
-            status: document.getElementById("status").value
         },
         representative1: {},
         representative2: {},
+        id_status: document.getElementById("id_status").value
     }
     if(id) jsonData.id = id;
     const method = id ? "PUT" : "POST";
@@ -289,4 +303,14 @@ async function save() {
     .then(response => search())
     .then(data => data)
     .catch(err => err);
+}
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
+
+function exportPDF() {
+    // En la página A
+    const queryString = new URLSearchParams(printData).toString();
+    const url = `../TABLE-TO-PDF.html?${queryString}`;
+    window.open(url, "_blank");
 }

@@ -70,6 +70,12 @@
 .modal-content section select:focus{
     outline: none;
 }
+.modal-content section input:hover,
+.modal-content section select:hover,
+.modal-content section input:focus,
+.modal-content section select:focus{
+    border: 1px solid #6fb6ff;
+}
 .modal-content section input,
 .modal-content section select{
     padding: 10px;

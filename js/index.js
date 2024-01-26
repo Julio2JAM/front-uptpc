@@ -6,49 +6,47 @@ window.addEventListener("load", async () => await verifyToken())
 
 async function verifyToken() {
 
-    const cookies = document.cookie.split(';');
-    const cookieName = "token";
+    const tokenValue = sessionStorage.getItem('token');
 
-    let cookieValue;
-    for (const value of cookies) {
-        if (value.startsWith(cookieName)) {
-            cookieValue = value.substring(cookieName.length + 1);
-            cookieValue = decodeURIComponent(cookieValue);
-            break;
-        }
-    }
-
-    if (!cookieValue) {
+    // Si el array esta vacio, quiere decir que no hay cookies registradas.
+    if(!tokenValue){
         return;
     }
 
-    const token = await fetch(`http://localhost:3000/api/access/verifyToken/${cookieValue}`)
-        .then(async (response) => {
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
-            }
-            return data;
-        })
-        .catch(error => {
-            handleMessage(error);
-            return response.status;
-        });
+    const token = await fetch(`${API_URL}/access/verifyToken/${tokenValue}`)
+    .then(response => response.json())
+    .catch(error => handleMessage(error));
 
-    if (!token.token) {
+    if (token.error) {
         document.cookie = cookieName + '=""; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 
     const roles = {
-        admin: "menu.html",
-        student: "assignmentStudent.html",
+        1: "admin/menu.html",
+        2: "student/assignmentStudent.html",
+        3: "professor/assignmentStudent.html",
     }
 
-    if (!roles[token.role]) {
+    if (!token.user.role || !roles[token.user.role]) {
         handleMessage("No posee permisos para acceder.");
+        return;
     }
 
-    location.href = roles[token.role];
+/*
+    Asi deberia ser la data de rol:
+
+    const role = await fetch(`${API_URL}/role/?id=${token.user.role}`)
+    .then(response => response.json())
+    .catch(error => handleMessage(error));
+
+    const roles = {
+        admin: "/admin/menu.html",
+        student: "/student/assignmentStudent.html",
+        professor: "/professor/assignmentStudent.html",
+    }
+*/
+
+    location.href = roles[token.user.role];
 }
 
 document.getElementById("login-btn").addEventListener("click", async event => {
@@ -64,18 +62,20 @@ document.getElementById("login-btn").addEventListener("click", async event => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(jsonData)
     })
-        .then(async (response) => {
-            data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message ?? "Error de conexión, intente nuevamente en algunos segundos.");
-            }
-            return data
-        })
-        .catch(error => handleMessage(error));
+    .then(response => response.json())
+    .catch(error => handleMessage("Error de conexion, intente nuevamente."));
 
-    if (login) {
-        document.cookie = `token=${login.token}; SameSite=None; Secure;`;
+    if(login.status == 400){
+        handleMessage("Usuario o contraseña incorrecta."); //login.message
+        return;
+    }else if(login.status == 401){
+        handleMessage("Permisos insuficientes."); //login.message
+        return;
     }
+    
+    // document.cookie = `token=${login.token}; SameSite=None; Secure;`; //! TEST
+    sessionStorage.setItem('token', login.token);
+    await verifyToken();
 
     /*
     const http = async (url, {headers, method, body}) => {
@@ -135,7 +135,7 @@ function handleMessage(message) {
     if (!message && span) {
         span.remove();
 
-        // Validar que el mensaje esta vacio y el elemento no exista para retornar
+    // Validar que el mensaje esta vacio y el elemento no exista para retornar
     } else if (!message && !span) {
         return;
     }
@@ -145,7 +145,6 @@ function handleMessage(message) {
         span.textContent = message;
         return;
     }
-
 
     // Obtener el div y el hr, getElementsByClassName devuelve un arreglo, por eso se accede a la pos 0
     //const div = document.getElementsByClassName("container")[0];

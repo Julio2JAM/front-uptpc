@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matriculas</title>
-    <link rel="stylesheet" href="../css/NEW-MENU.css">
-    <link rel="stylesheet" href="../css/NEW-MODAL.css">
+    <link rel="stylesheet" href="../../css/NEW-MENU.css">
+    <link rel="stylesheet" href="../../css/NEW-MODAL.css">
 </head>
 <body>
 
@@ -28,6 +28,7 @@
         <div class="table-container">
 
             <header class="filter-container">
+                <form>
                     <input type="text" placeholder="Filtrar por nombre" id="filter-name">
                     <input type="text" placeholder="Filtrar por apellido" id="filter-lastname">
                     <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
@@ -37,10 +38,11 @@
                         <option value="0">No disponible</option>
                         <option value="1">Disponible</option>
                     </select>
-                <div class="filter-btn-container">
-                    <button type="button" id="search-filter-btn">Filtrar</button>
-                    <button type="reset" id="reset-filter-btn">Borrar</button>
-                </div>
+                    <div class="filter-btn-container">
+                        <button type="button" id="search-filter-btn">Filtrar</button>
+                        <button type="reset" id="reset-filter-btn">Borrar</button>
+                    </div>
+                </form>
             </header>
             
             <section class="table-overflow">  <!-- style="display: flex;" TEMPORAL -->
@@ -51,6 +53,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Cedula</th>
+                            <th>Estado</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -71,7 +74,7 @@
         </div>
     </div>
 
-    <script src="../js/enrollment.js"></script>
-    <script src="../js/NEW-MENU.js"></script>
+    <script src="../../js/admin/enrollment.js"></script>
+    <script src="../../js/NEW-MENU.js"></script>
 </body>
 </html>

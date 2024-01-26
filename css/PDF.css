@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Mukta, sans-serif;
+}
+
+table{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    /* color: #fff; */
+}
+
+table thead{
+    box-shadow:  0 5px 10px #e1e5ee;
+    background-color: #ddd;
+    position: sticky;
+    top: 0;
+}
+
+table thead th{
+    padding: 0.5rem;
+    letter-spacing: 0.1rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+tr th:first-child{
+    width: 10%;
+}
+
+table tbody td{
+    padding: 1rem;
+    text-align: center;
+}
+
+.status{
+    border-radius: 3px;
+    background-color: red;
+    padding: 6px 16px;
+    text-align: center;
+}
+.available{
+    background-color: #c8e6c9;
+    color: #388e3c;
+}
+.unavailable{
+    background-color: #fff0c2;
+    color: #a68b00;
+}
+.deleted{
+    background-color: #ffcdd2;
+    color: #c62828;
+}

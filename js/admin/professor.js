@@ -122,7 +122,7 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../source/professor2-icon.png";
+    img.src = "../../source/professor2-icon.png";
 
     h3.appendChild(img);
     h3.innerHTML += "Docente";
@@ -247,6 +247,15 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.person.name ?? "";
+        inputLastname.value = data?.person.lastName ?? "";
+        inputCedule.value = data?.person.cedule ?? "";
+        inputPhone.value = data?.person.phone ?? "";
+        inputEmail.value = data?.person.email ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
     
     section.appendChild(form);
     
@@ -272,6 +281,7 @@ function createModalBox(data){
         setTimeout(() => {
             modal.style.display = "none";
             modal.classList.remove("close-modal");
+            modal.remove();
         }, 260);
     }
 }
