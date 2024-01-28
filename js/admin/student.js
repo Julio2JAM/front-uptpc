@@ -23,7 +23,7 @@ async function search() {
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&id_status=${data["id_status"]}`)
+    await fetch(`${API_URL}/student/?id=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&id_status=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
@@ -217,7 +217,7 @@ function createModalBox(data){
         {value: 1, label: "Disponible"}
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
+    selectStatus.id = "id_status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
