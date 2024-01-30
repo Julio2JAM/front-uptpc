@@ -2,12 +2,20 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
+var printData = [];
+
+// Cambiar de pagina.
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
 // Crear modal box con el nombre de las secciones activas.
-async function createModalList(data){
+async function createModalList(){
 
     // const validateModalMenu = document.getElementById("modal-menu");
 
@@ -68,6 +76,7 @@ async function loadClassroomEvents(id, name){
 
 }
 
+// Cargar registros en la tabla HTML
 function dataTable(data) {
 
     const tbody = document.querySelector("tbody");
@@ -117,11 +126,16 @@ function dataTable(data) {
     addEvents();
 }
 
+// Filtrar registros segun parametros enviados
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 async function search() {
-    
-    const elements = document.querySelectorAll(".filter-container input, select");
 
+    const classroom = document.getElementById("classroom").value;
+    if(!classroom){
+        return;
+    }
+
+    const elements = document.querySelectorAll(".filter-container input, select");
     const data = {};
     for(const element of elements) {
         const name = element.id.replace("filter-","");
@@ -129,9 +143,9 @@ async function search() {
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/`, {
-        method: "GET",
-        authorization: "Bearer" + token,
+    await fetch(`${API_URL}/enrollment/?idClassroom=${classroom}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}`, {
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
     })
     .then(response => response.json())
     .then(data => dataTable(data))
@@ -139,22 +153,29 @@ async function search() {
 
 }
 
+// Boton para ver detalles.
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
+// Get a API para obtener los detalles del estudiante por su registro en enrollment
 async function detail(event){
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/enrollment/?idStudent=${id}`)
+    await fetch(`${API_URL}/enrollment/?id=${id}`, {
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => createModalBox(data[0]))
     .catch(error => console.log(error));
 }
 
+// 
 function createModalBox(data){
+    console.log(data);
     // Crear divs contenedores
     var modal = document.createElement("div");
     modal.className = "modal";
@@ -272,7 +293,7 @@ function createModalBox(data){
         {value: 1, label: "Disponible"}
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
+    selectStatus.id = "id_status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
@@ -293,6 +314,15 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.student.person.name ?? "";
+        inputLastname.value = data?.student.person.lastName ?? "";
+        inputCedule.value = data?.student.person.cedule ?? "";
+        inputPhone.value = data?.student.person.phone ?? "";
+        inputEmail.value = data?.student.person.email ?? "";
+        selectStatus.value = data?.student.id_status ?? 1;
+    });
 
     section.appendChild(form);
     
@@ -323,11 +353,25 @@ function createModalBox(data){
     }
 }
 
-document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
-    element.addEventListener("click", () => {
-        location.href = `${element.id.replace("-change", "")}.html`;
-    });
-});
+// Obtener el elemento "save" y agregarle un evento
+async function save() {
+
+    const jsonData = {
+        id : document.getElementById("id").value,
+        id_status: Number(document.getElementById("status").value),
+    }
+
+    // Gardar los elementos en la base de datos
+    await fetch(`${API_URL}/enrollment`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
+
+};
 
 var newStudentList = [];
 
@@ -559,7 +603,7 @@ async function loadEnrollment(){
             })
         })
         .then(response => response.json())
-        .then(data => dataTable())
+        .then(data => search())
         .catch(error => console.error('Ha ocurrido un error: ', error));
     }
 

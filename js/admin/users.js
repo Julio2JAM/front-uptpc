@@ -42,8 +42,6 @@ async function search() {
         data[element.id.replace("filter-", "")] = element.value;
     }
 
-    console.log(data);
-
     await fetch(`${API_URL}/user/?username=${data["username"]}&role=${data["role"]}&id_status=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))

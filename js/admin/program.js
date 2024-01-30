@@ -12,7 +12,7 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
 // Crear modal box con el nombre de las secciones activas.
-async function createModalList(data){
+async function createModalList(){
 
     const validateModalMenu = document.getElementById("modal-menu");
 
@@ -118,3 +118,190 @@ function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
+
+// Obtener todos los datos de un elemento
+async function detail(event) {
+
+    const row = event.target.closest('tr');
+    const id = row.cells[0].textContent;
+
+    await fetch(`${API_URL}/user/?id=${id}`)
+    .then(response => response.json())
+    .then(data => createModalBox(data[0]))
+    .catch(err => console.error(err));
+
+}
+
+document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
+
+async function search() {
+
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+
+    await fetch(`${API_URL}/program/?subjectName=${data["subject"]}&role=${data["role"]}&id_status=${data["status"]}`)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => console.log(error));
+}
+
+document.getElementById("new").addEventListener("click", () => createModalBox(null));
+
+function createModalBox(data) {
+    // Crear divs contenedores
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "modal";
+
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+
+    const header = document.createElement("header");
+
+    // Crear elementos del DOM
+    const h3 = document.createElement("h3");
+    const img = document.createElement("img");
+    img.src = "../../source/user-icon.png";
+    const buttonClose = document.createElement("button");
+    buttonClose.className = "close-btn";
+    buttonClose.innerHTML = "&times;"
+
+    const labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    const inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
+
+    const section = document.createElement("section");
+    const form = document.createElement("form");
+
+    const labelPerson = document.createElement("label");
+    labelPerson.for = "person";
+    labelPerson.innerHTML = "Propietario:";
+    const inputPerson = document.createElement("input");
+    inputPerson.type = "text";
+    inputPerson.id = "person";
+    inputPerson.placeholder = "Propietario";
+    inputPerson.value = data?.person?.name + " " + data?.person?.lastName;
+
+    const labelSubject = document.createElement("label");
+    labelSubject.for = "subject";
+    labelSubject.innerHTML = "Materia:";
+    const inputSubject = document.createElement("input");
+    inputSubject.type = "text";
+    inputSubject.id = "subject";
+    inputSubject.placeholder = "Materia";
+    inputSubject.value = data?.subject.name;
+
+    var labelStatus = document.createElement("label");
+    var selectStatus = document.createElement("select");
+    var options = [
+        { value: -1, label: "Eliminado" },
+        { value: 0, label: "No disponible" },
+        { value: 1, label: "Disponible" }
+    ];
+    labelStatus.textContent = "Estado";
+    selectStatus.id = "status";
+    for (var option of options) {
+        selectStatus.add(new Option(option.label, option.value));
+    }
+    selectStatus.value = data?.id_status ?? 1;
+
+    var footer = document.createElement("footer");
+
+    var buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.type = "submit";
+    buttonSubmit.id = "save";
+    buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+
+    var buttonReset = document.createElement("button");
+    buttonReset.type = "reset";
+    buttonReset.id = "reset";
+    buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputUser.value = data?.username ?? "";
+        inputPerson.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
+        selectRole.value = data?.level?.id ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
+
+    h3.appendChild(img);
+    h3.innerHTML += "User:";
+
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
+    form.appendChild(labelPerson);
+    form.appendChild(inputPerson);
+
+    form.appendChild(labelSubject);
+    form.appendChild(inputSubject);
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
+    section.appendChild(form);
+
+    footer.appendChild(buttonSubmit);
+    footer.appendChild(buttonReset);
+
+    modalContent.appendChild(header);
+    modalContent.appendChild(section);
+    modalContent.appendChild(footer);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    buttonClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+        if (event.target.id == "modal") {
+            closeModal();
+        }
+    });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+            modal.remove();
+        }, 260);
+    }
+}
+
+// Obtener el elemento "save" y agregarle un evento
+async function save() {
+    
+    // Obtener los elementos "name" y "description"
+    const id = document.getElementById("id").value;
+    const jsonData = {
+        idPerson: document.getElementById("idPerson").value,
+        idSubject: document.getElementById("idSubject").value,
+    }
+
+    const method = id ? "PUT" : "POST";
+    if (id) jsonData.id = id;
+
+    // Gardar los elementos en la base de datos
+    await fetch(`${API_URL}/program`, {
+        method: method,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
+};
