@@ -1,4 +1,6 @@
-API_URL = 'http://localhost:3000/api'
+API_URL = 'http://localhost:3000/api';
+const token = sessionStorage.getItem('token');
+
 
 document.getElementById("select-classroon").addEventListener("click", async () => await classroom());
 async function classroom(){
@@ -9,7 +11,10 @@ async function classroom(){
 
     const ul = document.createElement("ul");
 
-    await fetch(`${API_URL}/enrollment/?idStudent=${1}`)
+    await fetch(`${API_URL}/enrollment/`, {
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {

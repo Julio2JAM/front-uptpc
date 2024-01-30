@@ -1,71 +1,56 @@
-API_URL = 'http://localhost:3000/api'
-
+API_URL = 'http://localhost:3000/api';
+const token = sessionStorage.getItem('token');
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
 // Crear modal box con el nombre de las secciones activas.
-async function createModalList(data){
+async function createModalList(){
 
-    // Crear divs contenedores
-    var modal = document.createElement("div");
-    modal.className = "modal-box";
-    modal.id = "modal-box";
+    const div = document.createElement("div");
+    div.id = "modal-menu";
+    div.className = "modal-menu";
 
-    var modalContent = document.createElement("div");
-    modalContent.className = "horizontal-card";
-    modalContent.id = "modal-content";
-
-    var cardContent = document.createElement("div");
-    cardContent.className = "card-content";
-    cardContent.id = "card-content";
-
-    //
-    const title = document.createElement("h3");
-    title.innerHTML = "Seleccione una seccion.";
-    cardContent.appendChild(title);
-
-    const fieldset = document.createElement("fieldset");
-    const legend = document.createElement("legend");
-    legend.innerHTML = "Classrooms";
-
-    fieldset.appendChild(legend);
-    cardContent.appendChild(fieldset);
-
-    modalContent.appendChild(cardContent);
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
-    modal.addEventListener("click", (event) => {
-        if(event.target.id === "modal-box"){
-            event.target.remove();
-        }
-    });
+    const ul = document.createElement("ul");
+    ul.id = "classList";
 
     //const ul = document.createElement("ul");
-    await fetch(`${API_URL}/enrollment/?idStudent=${1}`)
+    await fetch(`${API_URL}/enrollment/`, {
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.innerHTML = element?.name;
+            a.addEventListener("click", () => loadData(element.id))
 
-            const text = document.createElement("span");
-            text.innerHTML = element.classroom.name;
-            text.id = element.id;
-
-            fieldset.appendChild(text);
+            li.appendChild(a);
+            ul.appendChild(li);
         });
-        searchByClassroom();
     })
     .catch(error => error);
+    
+    if(!ul.firstChild){
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.innerHTML = "Sin secciones para seleccionar";
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
+    
+    div.appendChild(ul);
+    document.body.appendChild(div);
+    
+    const modalMenu = document.getElementById("modal-menu");
+    modalMenu.addEventListener("click", event => {
+        if (event.target.id === "modal-menu" || event.target.nodeName == "A") {
+            document.getElementById("modal-menu").remove();
+        }
+    });
 
-}
-
-//
-function searchByClassroom(){
-    const span = document.querySelectorAll("fieldset span");
-    span.forEach(element => element.addEventListener("click", async (event) => await loadData(event)));
 }
 
 //
@@ -79,10 +64,10 @@ async function loadData(enrollment) {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/program/?enrollment=${enrollment ?? 2}&subjectName=${data.subject}&professorName=${data.professor}&status=${data.status}`)
-        .then(response => response.json())
-        .then(data => dataTable(data))
-        .catch(err => console.error(err))
+    await fetch(`${API_URL}/enrollment/program/?enrollment=${enrollment}&subjectName=${data.subject}&professorName=${data.professor}&status=${data.status}`)
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(err => console.error(err))
 }
 
 function dataTable(data){
