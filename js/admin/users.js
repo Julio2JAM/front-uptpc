@@ -320,26 +320,25 @@ async function createModalBoxTable(idPerson = "") {
     inputId.type = "text";
     inputId.placeholder = "Filtrar por id";
     inputId.value = idPerson;
+    form.appendChild(inputId);
 
     const inputName = document.createElement("input");
     inputName.id = "filter-nombre";
     inputName.type = "text";
     inputName.placeholder = "Filtrar por nombre";
+    form.appendChild(inputName);
 
     const inputLastname = document.createElement("input");
     inputLastname.id = "filter-lastname";
     inputLastname.type = "text";
     inputLastname.placeholder = "Filtrar por apellido";
+    form.appendChild(inputLastname);
 
     const inputCedule = document.createElement("input");
     inputCedule.id = "filter-cedule";
     inputCedule.type = "text";
-    inputCedule.placeholder = "Filtrar por ";
-
-    const buttonSearch = document.createElement("button");
-    buttonSearch.id = "search";
-    buttonSearch.className = "filter-button active";
-    buttonSearch.innerHTML = "Filter";
+    inputCedule.placeholder = "Filtrar por cedula";
+    form.appendChild(inputCedule);
 
     const filterButtonContainer = document.createElement("div");
     filterButtonContainer.className = "filter-btn-container";
@@ -348,26 +347,17 @@ async function createModalBoxTable(idPerson = "") {
     search.type = "button";
     search.id = "search-filter-btn";
     search.innerHTML = "Filtrar";
+    filterButtonContainer.appendChild(search);
+
     const reset = document.createElement("button");
     reset.type = "reset";
     reset.id = "reset-filter-btn";
     reset.innerHTML = "Borrar";
-
-    //
-    filterButtonContainer.appendChild(search);
     filterButtonContainer.appendChild(reset);
 
     // Agregar elementos al contenedor
-    form.appendChild(inputId);
-    form.appendChild(inputName);
-    form.appendChild(inputLastname);
-    form.appendChild(inputCedule);
     form.appendChild(filterButtonContainer);
-
-    //
     header.appendChild(form);
-
-    //
     tableContainer.appendChild(header);
 
     const section = document.createElement("section");
@@ -381,23 +371,26 @@ async function createModalBoxTable(idPerson = "") {
 
     const thID = document.createElement("th");
     thID.innerHTML = "ID"
+    trHead.appendChild(thID);
+
     const thName = document.createElement("th");
     thName.innerHTML = "Nombres"
+    trHead.appendChild(thName);
+
     const thLastname = document.createElement("th");
     thLastname.innerHTML = "Apellidos"
+    trHead.appendChild(thLastname);
+
     const thCedule = document.createElement("th");
     thCedule.innerHTML = "Cedula"
-    const thState = document.createElement("th");
-    thState.innerHTML = "Estado"
+    trHead.appendChild(thCedule);
+
+    const thStatus = document.createElement("th");
+    thStatus.innerHTML = "Estado"
+    trHead.appendChild(thStatus);
+
     const thAction = document.createElement("th");
     thAction.innerHTML = "Acción"
-
-    // Agregar las celdas de encabezado a la fila de encabezado
-    trHead.appendChild(thID);
-    trHead.appendChild(thName);
-    trHead.appendChild(thLastname);
-    trHead.appendChild(thCedule);
-    trHead.appendChild(thState);
     trHead.appendChild(thAction);
 
     const statusData = {
