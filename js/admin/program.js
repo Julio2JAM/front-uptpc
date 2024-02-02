@@ -14,8 +14,6 @@ document.getElementById("classroom").addEventListener("click", async () => await
 // Crear modal box con el nombre de las secciones activas.
 async function createModalList(){
 
-    const validateModalMenu = document.getElementById("modal-menu");
-
     const div = document.createElement("div");
     div.id = "modal-menu";
     div.className = "modal-menu";
@@ -119,22 +117,14 @@ function addEvents(){
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
-// Obtener todos los datos de un elemento
-async function detail(event) {
-
-    const row = event.target.closest('tr');
-    const id = row.cells[0].textContent;
-
-    await fetch(`${API_URL}/user/?id=${id}`)
-    .then(response => response.json())
-    .then(data => createModalBox(data[0]))
-    .catch(err => console.error(err));
-
-}
-
-document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
+//! HASTA AQUI SE HA REVISADO EL CODIGO, DE AQUI PARA ATRAS TODO DEBE FUNCIONAR
 
 async function search() {
+
+    const classroom = document.getElementById("classroom").value;
+    if(!classroom){
+        return;
+    }
 
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
     const data = {};
@@ -143,11 +133,27 @@ async function search() {
     }
 
     //! IN DEV
-    await fetch(`${API_URL}/program/?subjectName=${data["subject"]}&subjectName=${data["subject"]}`)
+    await fetch(`${API_URL}/program/?idClassroom=${classroom}&subjectName=${data["subject"]}&subjectName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => console.log(error));
 }
+
+// Obtener todos los datos de un elemento
+async function detail(event) {
+
+    const row = event.target.closest('tr');
+    const id = row.cells[0].textContent;
+
+    await fetch(`${API_URL}/program/?id=${id}`)
+    .then(response => response.json())
+    .then(data => createModalBox(data[0]))
+    .catch(err => console.error(err));
+
+}
+
+document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
+
 
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
 
@@ -161,14 +167,22 @@ function createModalBox(data) {
     modalContent.className = "modal-content";
 
     const header = document.createElement("header");
+    const section = document.createElement("section");
+    const form = document.createElement("form");
 
     // Crear elementos del DOM
     const h3 = document.createElement("h3");
+
     const img = document.createElement("img");
-    img.src = "../../source/user-icon.png";
+    img.src = "../../source/professor2-icon.png";
     const buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
+
+    h3.appendChild(img);
+    h3.innerHTML += "User:";
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
 
     const labelId = document.createElement("label");
     labelId.for = "id";
@@ -181,8 +195,23 @@ function createModalBox(data) {
     inputId.value = data?.id ?? "";
     inputId.style.display = "none";
 
-    const section = document.createElement("section");
-    const form = document.createElement("form");
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
+    // PERSON
+    const labelIdPerson = document.createElement("label");
+    labelIdPerson.for = "idPerson";
+    labelIdPerson.innerHTML = "Person ID:";
+    labelIdPerson.style.display = "none";
+    const inputIdPerson = document.createElement("input");
+    inputIdPerson.type = "text";
+    inputIdPerson.id = "idPerson";
+    inputIdPerson.placeholder = "ID";
+    inputIdPerson.value = data.professor?.person.id ?? "";
+    inputIdPerson.style.display = "none";
+
+    form.appendChild(labelIdPerson);
+    form.appendChild(inputIdPerson);
 
     const labelPerson = document.createElement("label");
     labelPerson.for = "person";
@@ -191,7 +220,27 @@ function createModalBox(data) {
     inputPerson.type = "text";
     inputPerson.id = "person";
     inputPerson.placeholder = "Propietario";
-    inputPerson.value = data?.person?.name + " " + data?.person?.lastName;
+    inputPerson.value = data.professor?.person.id ? data.professor?.person.name + " " + data.professor?.person.lastName : "";
+    inputPerson.addEventListener("click", () => createModalBoxTable(data?.person?.id));
+
+    form.appendChild(labelPerson);
+    form.appendChild(inputPerson);
+    // PERSON
+
+    // SUBJECT
+    const labelIdSubject = document.createElement("label");
+    labelIdSubject.for = "idSubject";
+    labelIdSubject.innerHTML = "Subject ID:";
+    labelIdSubject.style.display = "none";
+    const inputIdSubject = document.createElement("input");
+    inputIdSubject.type = "text";
+    inputIdSubject.id = "idSubject";
+    inputIdSubject.placeholder = "ID";
+    inputIdSubject.value = data?.subject?.id ?? "";
+    inputIdSubject.style.display = "none";
+
+    form.appendChild(labelIdSubject);
+    form.appendChild(inputIdSubject);
 
     const labelSubject = document.createElement("label");
     labelSubject.for = "subject";
@@ -200,31 +249,40 @@ function createModalBox(data) {
     inputSubject.type = "text";
     inputSubject.id = "subject";
     inputSubject.placeholder = "Materia";
-    inputSubject.value = data?.subject.name;
+    inputSubject.value = data.subject.name;
+    inputSubject.addEventListener("click", () => createModalBoxTable(data.subject.id));
 
-    var labelStatus = document.createElement("label");
-    var selectStatus = document.createElement("select");
-    var options = [
+    form.appendChild(labelSubject);
+    form.appendChild(inputSubject);
+    // SUBJECT
+
+    const labelStatus = document.createElement("label");
+    const selectStatus = document.createElement("select");
+    const options = [
         { value: -1, label: "Eliminado" },
         { value: 0, label: "No disponible" },
         { value: 1, label: "Disponible" }
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
-    for (var option of options) {
+    selectStatus.id = "id_status";
+    for (const option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
 
-    var footer = document.createElement("footer");
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
 
-    var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    const buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
 
-    var buttonReset = document.createElement("button");
+    const buttonReset = document.createElement("button");
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
@@ -236,26 +294,9 @@ function createModalBox(data) {
         selectStatus.value = data?.id_status ?? 1;
     });
 
-    h3.appendChild(img);
-    h3.innerHTML += "User:";
-
-    header.appendChild(h3);
-    header.appendChild(buttonClose);
-
-    form.appendChild(labelId);
-    form.appendChild(inputId);
-
-    form.appendChild(labelPerson);
-    form.appendChild(inputPerson);
-
-    form.appendChild(labelSubject);
-    form.appendChild(inputSubject);
-
-    form.appendChild(labelStatus);
-    form.appendChild(selectStatus);
-
     section.appendChild(form);
 
+    const footer = document.createElement("footer");
     footer.appendChild(buttonSubmit);
     footer.appendChild(buttonReset);
 
@@ -289,8 +330,7 @@ async function save() {
     // Obtener los elementos "name" y "description"
     const id = document.getElementById("id").value;
     const jsonData = {
-        idPerson: document.getElementById("idPerson").value,
-        idSubject: document.getElementById("idSubject").value,
+        id_status: document.getElementById("id_status").value
     }
 
     const method = id ? "PUT" : "POST";

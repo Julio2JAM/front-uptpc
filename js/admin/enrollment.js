@@ -136,14 +136,14 @@ async function search() {
     }
 
     const elements = document.querySelectorAll(".filter-container input, select");
-    const data = {};
+    const data = new Object;
     for(const element of elements) {
         const name = element.id.replace("filter-","");
         data[name] = element.value;
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/?idClassroom=${classroom}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}`, {
+    await fetch(`${API_URL}/enrollment/?idClassroom=${classroom}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -175,7 +175,7 @@ async function detail(event){
 
 // 
 function createModalBox(data){
-    console.log(data);
+
     // Crear divs contenedores
     var modal = document.createElement("div");
     modal.className = "modal";
@@ -358,7 +358,7 @@ async function save() {
 
     const jsonData = {
         id : document.getElementById("id").value,
-        id_status: Number(document.getElementById("status").value),
+        id_status: document.getElementById("id_status").value,
     }
 
     // Gardar los elementos en la base de datos
