@@ -120,6 +120,7 @@ function addEvents() {
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
+document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 async function search() {
 
     const classroom = document.getElementById("classroom").value;
@@ -137,6 +138,7 @@ async function search() {
         .then(response => response.json())
         .then(data => dataTable(data))
         .catch(error => console.log(error));
+
 }
 
 // Obtener todos los datos de un elemento
@@ -152,11 +154,13 @@ async function detail(event) {
 
 }
 
-document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
-
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
-
 function createModalBox(data) {
+
+    if(!document.getElementById("classroom").value){
+        return;
+    }
+
     // Crear divs contenedores
     const modal = document.createElement("div");
     modal.className = "modal";
@@ -197,14 +201,14 @@ function createModalBox(data) {
     form.appendChild(labelId);
     form.appendChild(inputId);
 
-    // PERSON
+    // PROFESSOR
     const labelIdPerson = document.createElement("label");
-    labelIdPerson.for = "idPerson";
+    labelIdPerson.for = "idProfessor";
     labelIdPerson.innerHTML = "Person ID:";
     labelIdPerson.style.display = "none";
     const inputIdPerson = document.createElement("input");
     inputIdPerson.type = "text";
-    inputIdPerson.id = "idPerson";
+    inputIdPerson.id = "idProfessor";
     inputIdPerson.placeholder = "ID";
     inputIdPerson.value = data?.professor.person.id ?? "";
     inputIdPerson.style.display = "none";
@@ -213,18 +217,18 @@ function createModalBox(data) {
     form.appendChild(inputIdPerson);
 
     const labelPerson = document.createElement("label");
-    labelPerson.for = "person";
+    labelPerson.for = "professor";
     labelPerson.innerHTML = "Docente:";
     const inputPerson = document.createElement("input");
     inputPerson.type = "text";
-    inputPerson.id = "person";
+    inputPerson.id = "professorName";
     inputPerson.placeholder = "Docente";
     inputPerson.value = data?.professor.person.id ? data?.professor.person.name + " " + data?.professor.person.lastName : "";
     inputPerson.addEventListener("click", () => createModalBoxTable(data?.person.id, "professor"));
 
     form.appendChild(labelPerson);
     form.appendChild(inputPerson);
-    // PERSON
+    // PROFESSOR
 
     // SUBJECT
     const labelIdSubject = document.createElement("label");
@@ -246,7 +250,7 @@ function createModalBox(data) {
     labelSubject.innerHTML = "Materia:";
     const inputSubject = document.createElement("input");
     inputSubject.type = "text";
-    inputSubject.id = "subject";
+    inputSubject.id = "subjectName";
     inputSubject.placeholder = "Materia";
     inputSubject.value = data?.subject.name ?? "";
     inputSubject.addEventListener("click", () => createModalBoxTable(data?.subject.id, "subject"));
@@ -323,14 +327,14 @@ function createModalBox(data) {
     }
 }
 
-async function createModalBoxTable(data = "", tableBD) {
+async function createModalBoxTable(idData = "", tableBD) {
 
     const professorFilter = [
         { 
             id: "id",
             type: "text",
             placeholder: "Filtrar por id",
-            value: data
+            value: idData
         },
         { 
             id: "name",
@@ -338,7 +342,7 @@ async function createModalBoxTable(data = "", tableBD) {
             placeholder: "Filtrar por nombre",
         },
         { 
-            id: "lastname",
+            id: "lastName",
             type: "text",
             placeholder: "Filtrar por apellido",
         },
@@ -354,7 +358,7 @@ async function createModalBoxTable(data = "", tableBD) {
             id: "id",
             type: "text",
             placeholder: "Filtrar por id",
-            value: data
+            value: idData
         },
         { 
             id: "name",
@@ -445,37 +449,39 @@ async function createModalBoxTable(data = "", tableBD) {
         "1": "available"
     };
 
-    const dataBD = await fetch(`${API_URL}/${tableBD}/?id=${data}`)
+    const dataBD = await fetch(`${API_URL}/${tableBD}/?id=${idData}`)
     .then(response => response.json())
     .then(data => data)
     .catch(error => error);
 
-    console.log(dataBD);
+    if(!(dataBD instanceof Error)){
+        dataBD.forEach(element => {
+            const row = tbody.insertRow(-1);
+            var iterator = 0;
 
-    /*
-    dataBD.forEach(element => {
-        
-        const id = row.insertCell(0);
-        id.innerText = element.id;
-
-        const name = row.insertCell(1);
-        name.innerText = element.name;
-
-        const lastname = row.insertCell(2);
-        lastname.innerText = element.lastName ?? "";
-
-        const cedule = row.insertCell(3);
-        cedule.innerText = element.cedule;
-
-        const status = row.insertCell(4);
-        const statusSpan = document.createElement('span');
-        statusSpan.innerHTML = statusData[element.id_status];
-        statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
-
-        const action = row.insertCell(5);
-        action.append(createButtonAssign(element.id, element.name + " " + element.lastName));
-    });*/
+            if(tableBD == "professor"){
+                const id = element.id;
+                const id_status = element.id_status;
+                element = element.person;
+                element.id = id;
+                element.id_status = id_status;
+            }
+    
+            for (const value of filter) {
+                const td = row.insertCell(iterator++);
+                td.innerText = element[value.id];
+            }
+            const status = row.insertCell(iterator++);
+            const statusSpan = document.createElement('span');
+            statusSpan.innerHTML = statusData[element.id_status];
+            statusSpan.classList.add("status", statusClass[element.id_status]);
+            status.appendChild(statusSpan);
+    
+            const action = row.insertCell(iterator);
+            action.append(createButtonAssign(element, tableBD));
+    
+        });
+    }
 
     // Agregar la fila de encabezado al elemento <thead>
     thead.appendChild(trHead);
@@ -521,68 +527,16 @@ async function createModalBoxTable(data = "", tableBD) {
     }
 }
 
-// IN DEV
-/*
-function modelDataTable(data) {
-
-    const tbody = document.querySelector("tbody");
-    tbody.innerHTML = "";
-
-    const button = document.createElement("button");
-    button.className = "view-button";
-    button.innerText = "Ver mas";
-
-    const statusData = {
-        "-1": "Eliminado",
-        "0": "No disponible",
-        "1": "Disponible"
-    };
-
-    const statusClass = {
-        "-1": "deleted",
-        "0": "unavailable",
-        "1": "available"
-    };
-
-    data.forEach(element => {
-        const row = tbody.insertRow(-1);
-
-        const id = row.insertCell(0);
-        id.innerText = element.id;
-
-        const subject = row.insertCell(1);
-        subject.innerText = element?.subject.name;
-
-        const professor = row.insertCell(2);
-        professor.innerText = element?.professor.person.name + " " + element?.professor.person.lastName;
-
-        const classroom = row.insertCell(3);
-        classroom.innerText = element?.classroom.name;
-
-        const status = row.insertCell(4);
-        const statusSpan = document.createElement('span');
-        statusSpan.innerText = statusData[element.id_status];
-        statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
-
-        const action = row.insertCell(5);
-        action.appendChild(button.cloneNode(true));
-    });
-
-    addEvents();
-}
-*/
-
-function createButtonAssign(id, name) {
+function createButtonAssign(data, table) {
     const button = document.createElement("button");
     button.innerHTML = "Asignar";
     button.className = "new";
     button.addEventListener("click", () => {
-        const imputIdPerson = document.getElementById("idPerson");
-        imputIdPerson.value = id;
+        const imputId = document.getElementById("id" + table.charAt(0).toUpperCase() + table.slice(1));
+        imputId.value = data.id;
 
-        const imputPerson = document.getElementById("person");
-        imputPerson.value = name;
+        const imputName = document.getElementById(table + "Name");
+        imputName.value = data.name ?? (data?.person?.name + " " + data?.person?.lastName);
 
         const modalTable = document.getElementById("modal-table");
         modalTable.classList.add("close-modal");
@@ -602,11 +556,16 @@ async function save() {
     // Obtener los elementos "name" y "description"
     const id = document.getElementById("id").value;
     const jsonData = {
+        idProfessor: document.getElementById("idProfessor").value,
+        idSubject: document.getElementById("idSubject").value,
+        idClassroom: document.getElementById("classroom").value,
         id_status: document.getElementById("id_status").value
     }
 
     const method = id ? "PUT" : "POST";
     if (id) jsonData.id = id;
+
+    console.log(jsonData);
 
     // Gardar los elementos en la base de datos
     await fetch(`${API_URL}/program`, {
@@ -614,7 +573,7 @@ async function save() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(jsonData)
     })
-        .then(response => response.json())
-        .then(data => search())
-        .catch(error => console.error('Ha ocurrido un error: ', error));
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
 };
