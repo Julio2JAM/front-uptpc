@@ -30,9 +30,10 @@
 
             <header class="filter-container">
                 <form>
-                    <input type="text" placeholder="Filtrar por nombre del docente" id="filter-professor-name">
-                    <input type="text" placeholder="Filtrar por apellido del docente" id="filter-professor-lastname">
-                    <input type="text" placeholder="Filtrar por asignatura" id="filter-subject">
+                    <input type="text" placeholder="Filtrar por id" id="filter-id">
+                    <input type="text" placeholder="Filtrar por nombre" id="filter-name">
+                    <input type="text" placeholder="Filtrar por apellido" id="filter-lastName">
+                    <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
                     <select id="filter-status">
                         <option value="">Seleccione un estado</option>
                         <option value="-1">Eliminado</option>
@@ -51,8 +52,9 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <!-- <th>Docente</th> -->
-                            <th>Asignatura</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Cedula</th>
                             <th>Estado</th>
                             <th>Acción</th>
                         </tr>

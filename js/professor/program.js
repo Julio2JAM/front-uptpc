@@ -7,18 +7,13 @@ window.addEventListener("load", async () => await search());
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 async function search() {
 
-    const classroom = document.getElementById("classroom").value;
-    if (!classroom) {
-        return;
-    }
-
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
     const data = {};
     for (const element of elements) {
         data[element.id.replace("filter-", "")] = element.value;
     }
 
-    await fetch(`${API_URL}/program/`, {
+    await fetch(`${API_URL}/program/?subjectName=${data["subjectName"]}&subjectDescripcion=${data["subjectDescripcion"]}&classroomName=${data["classroomName"]}&idStatus=${data["status"]}`, {
         method: "GET",
         headers: {authorization: 'Bearer ' + token}
     })
@@ -59,7 +54,7 @@ function dataTable(data) {
         subject.innerText = element?.subject.name;
 
         const description = row.insertCell(2);
-        subject.innerText = element?.subject.description;
+        description.innerText = element?.subject.description ?? "No posee descripcion.";
 
         const classroom = row.insertCell(3);
         classroom.innerText = element?.classroom.name;
@@ -71,8 +66,7 @@ function dataTable(data) {
         status.appendChild(statusSpan);
 
         const datetime = row.insertCell(5);
-        classroom.innerText = element?.datetime;
+        datetime.innerText = element?.datetime;
     });
 
-    addEvents();
 }
