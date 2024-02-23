@@ -17,7 +17,7 @@ async function createModalList(){
     const ul = document.createElement("ul");
     ul.id = "classList";
 
-    await fetch(`${API_URL}/enrollment/`,{
+    await fetch(`${API_URL}/program/`,{
         method: "GET",
         headers: {authorization: 'Bearer ' + token}
     })
@@ -68,6 +68,25 @@ async function loadClassroomEvents(id, name){
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => error);
+
+}
+
+document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
+async function search() {
+
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+
+    await fetch(`${API_URL}/enrollment/?idPerson=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => console.log(error));
 
 }
 
