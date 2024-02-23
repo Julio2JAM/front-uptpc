@@ -80,7 +80,8 @@ async function search() {
         data[element.id.replace("filter-", "")] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/?idPerson=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
+    const idClassroom = document.getElementById("classroom").value;
+    await fetch(`${API_URL}/enrollment/?idClassroom=${idClassroom}&id=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
         method: "GET",
         headers: {authorization: 'Bearer ' + token}
     })
