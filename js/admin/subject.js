@@ -107,7 +107,6 @@ async function detail(event){
     .then(response => response.json())
     .then(data => {
         createModalBox(data[0]);
-        dataModalBox(data[0]);
     })
     .catch(err => console.error(err));
 

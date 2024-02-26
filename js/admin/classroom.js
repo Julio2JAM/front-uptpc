@@ -93,7 +93,6 @@ function addEvents(){
 
 // Funcion para mostrar los detalles de cada registro
 async function detail(event) {
-
     const row = event.target.closest("tr");
     const id = row.cells[0].innerHTML;
 
@@ -131,57 +130,42 @@ async function createModalBox(data) {
     var section = document.createElement("section");
     var form = document.createElement("form");
 
-    // ID
-    var labelId = document.createElement("label");
-    labelId.for = "id";
-    labelId.innerHTML = "ID:";
-    labelId.style.display = "none";
-    var inputId = document.createElement("input");
-    inputId.type = "text";
-    inputId.id = "id";
-    inputId.placeholder = "ID";
-    inputId.value = data?.id ?? "";
-    inputId.style.display = "none";
+    const classroomData = [
+        {
+            id: "id",
+            placeholder: "ID",
+            value: data?.id ?? "",
+        },
+        {
+            id: "name",
+            placeholder: "Nombre",
+            value: data?.name ?? ""
+        },
+        {
+            id: "datetimeStart",
+            type: "date",
+            placeholder: "Fecha de inicio",
+            value: data?.datetime_start ?? ""
+        },
+        {
+            id: "datetimeEnd",
+            type: "date",
+            placeholder: "Fecha de final",
+            value: data?.datetime_end ?? ""
+        }
+    ];
 
-    form.appendChild(labelId);
-    form.appendChild(inputId);
-
-    // Name
-    var labelName = document.createElement("label");
-    labelName.for = "name";
-    labelName.innerHTML = "Nombre:";
-    var inputName = document.createElement("input");
-    inputName.type = "text";
-    inputName.id = "name";
-    inputName.placeholder = "Nombre";
-    inputName.value = data?.name ?? "";
-
-    form.appendChild(labelName);
-    form.appendChild(inputName);
-
-    // datetimeStart
-    var labelDatetimeStart = document.createElement("label");
-    labelDatetimeStart.for = "datetimestart";
-    labelDatetimeStart.innerHTML = "Fecha de inicio:";
-    var inputDatetimeStart = document.createElement("input");
-    inputDatetimeStart.type = "date";
-    inputDatetimeStart.id = "datetime_start";
-    inputDatetimeStart.value = data?.datetime_start ?? "";
-
-    form.appendChild(labelDatetimeStart);
-    form.appendChild(inputDatetimeStart);
-
-    // datetimeEnd
-    var labelDatetimeEnd = document.createElement("label");
-    labelDatetimeEnd.for = "datetimesend";
-    labelDatetimeEnd.innerHTML = "Fecha de cierre:";
-    var inputDatetimeEnd = document.createElement("input");
-    inputDatetimeEnd.type = "date";
-    inputDatetimeEnd.id = "datetime_end";
-    inputDatetimeEnd.value = data?.datetime_end ?? "";
-
-    form.appendChild(labelDatetimeEnd);
-    form.appendChild(inputDatetimeEnd);
+    for (const value of classroomData) {
+        const label = document.createElement("label");
+        label.for = value.id;
+        label.innerHTML = value.placeholder + ":";
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        form.appendChild(label);
+        form.appendChild(input);
+    }
+    form.querySelector('label').style.display = "none";
+    form.querySelector('input').style.display = "none";
     
     var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
