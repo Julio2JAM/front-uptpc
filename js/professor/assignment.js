@@ -140,7 +140,7 @@ function createModalBox(data){
             placeholder: "Descripcion",
             value: data?.description ?? ""
         },
-        {
+        /*{
             id: "porcentage",
             placeholder: "Porcentaje",
             value: data?.porcentage ?? ""
@@ -149,7 +149,7 @@ function createModalBox(data){
             id: "base",
             placeholder: "Base",
             value: data?.base ?? ""
-        },
+        },*/
         {
             id: "datetimeStart",
             type: "date",
@@ -193,14 +193,19 @@ function createModalBox(data){
 
     form.appendChild(labelStatus);
     form.appendChild(selectStatus);
+    section.appendChild(form);
 
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+    footer.appendChild(buttonSubmit);
 
     var buttonReset = document.createElement("button");
     buttonReset.type = "reset";
@@ -215,10 +220,6 @@ function createModalBox(data){
         inputDatetimeEnd.value = data?.person.email ?? "";
         selectStatus.value = data?.id_status ?? 1;
     });
-    
-    section.appendChild(form);
-    
-    footer.appendChild(buttonSubmit);
     footer.appendChild(buttonReset);
     
     modalContent.appendChild(header);
@@ -247,15 +248,16 @@ function createModalBox(data){
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
+
     // Obtener datos para crear o actualizar el registro.
     const id = document.getElementById("id").value;
     const jsonData = {
-        title: document.getElementById("name").value,
+        title: document.getElementById("title").value,
         description: document.getElementById("description").value,
-        porcentage: document.getElementById("description").value,
-        base: document.getElementById("description").value,
-        datetime_start: document.getElementById("description").value,
-        datetime_end: document.getElementById("description").value,
+        // porcentage: document.getElementById("description").value,
+        // base: document.getElementById("description").value,
+        datetime_start: document.getElementById("datetimeStart").value,
+        datetime_end: document.getElementById("datetimeEnd").value,
         id_status: Number(document.getElementById("status").value),
     };
 
