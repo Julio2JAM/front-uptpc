@@ -3,6 +3,7 @@ const token = sessionStorage.getItem('token');
 
 //
 window.addEventListener('load', async () => await search(null));
+document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
 
 //
 async function search() {
@@ -12,7 +13,7 @@ async function search() {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/assignment/`,{
+    await fetch(`${API_URL}/assignment/?id=${data["id"]}&title=${data["title"]}&datetime_start=${data["datetime_start"]}&datetime_end=${data["datetime_end"]}&id_status=${data["status"]}`,{
         method: "GET",
         headers: {authorization: 'Bearer ' + token}
     })
@@ -44,10 +45,10 @@ function dataTable(data){
 
     const dataFields = {
         id: null,
-        name: "Sin nombre.",
+        title: "Sin nombre.",
         description: "Descripción vacia.",
-        porcentage: "No asignado.",
-        base:"No asignado.",
+        // porcentage: "No asignado.",
+        // base:"No asignado.",
         datetime_start:"No asignado.",
         datetime_end:"No asignado.",
     };
@@ -133,7 +134,7 @@ function createModalBox(data){
         {
             id: "title",
             placeholder: "Titulo",
-            value: data?.name ?? ""
+            value: data?.title ?? ""
         },
         {
             id: "description",
@@ -256,8 +257,8 @@ async function save (){
         description: document.getElementById("description").value,
         // porcentage: document.getElementById("description").value,
         // base: document.getElementById("description").value,
-        datetime_start: document.getElementById("datetimeStart").value,
-        datetime_end: document.getElementById("datetimeEnd").value,
+        datetime_start: !document.getElementById("datetimeStart").value ? null : document.getElementById("datetimeStart").value , 
+        datetime_end: !document.getElementById("datetimeEnd").value ? null : document.getElementById("datetimeEnd").value,
         id_status: Number(document.getElementById("status").value),
     };
 

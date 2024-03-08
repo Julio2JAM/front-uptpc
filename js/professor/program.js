@@ -59,14 +59,14 @@ function dataTable(data) {
         const classroom = row.insertCell(3);
         classroom.innerText = element?.classroom.name;
 
-        const status = row.insertCell(4);
+        const datetime = row.insertCell(4);
+        datetime.innerText = new Date(element?.datetime).toLocaleDateString('es-pa');
+
+        const status = row.insertCell(5);
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
         status.appendChild(statusSpan);
-
-        const datetime = row.insertCell(5);
-        datetime.innerText = element?.datetime;
     });
 
 }
