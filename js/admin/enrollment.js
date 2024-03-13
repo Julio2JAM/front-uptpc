@@ -2,12 +2,20 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
+var printData = [];
+
+// Cambiar de pagina.
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("classroom").addEventListener("click", async () => await createModalList());
 
 // Crear modal box con el nombre de las secciones activas.
-async function createModalList(data){
+async function createModalList(){
 
     // const validateModalMenu = document.getElementById("modal-menu");
 
@@ -68,6 +76,7 @@ async function loadClassroomEvents(id, name){
 
 }
 
+// Cargar registros en la tabla HTML
 function dataTable(data) {
 
     const tbody = document.querySelector("tbody");
@@ -91,47 +100,43 @@ function dataTable(data) {
 
     data.forEach(element => {
         const row = tbody.insertRow(-1);
+        
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element?.student.person.name ?? "No name";
+        row.insertCell(2).innerText = element?.student.person.lastName ?? "No last name";
+        row.insertCell(3).innerText = element?.student.person.cedule;
 
-        const id = row.insertCell(0);
-        id.innerText = element.id;
-
-        const name = row.insertCell(1);
-        name.innerText = element?.student.person.name ?? "No name";
-
-        const lastname = row.insertCell(2);
-        lastname.innerText = element?.student.person.lastName ?? "No last name";
-
-        const cedule = row.insertCell(3);
-        cedule.innerText = element?.student.person.cedule;
-
-        const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
         
-        const action = row.insertCell(5);
-        action.appendChild(button.cloneNode(true));
+        row.insertCell(4).appendChild(statusSpan);
+        row.insertCell(5).appendChild(button.cloneNode(true));
     });
 
     addEvents();
 }
 
+// Filtrar registros segun parametros enviados
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 async function search() {
-    
-    const elements = document.querySelectorAll(".filter-container input, select");
 
-    const data = {};
+    const classroom = document.getElementById("classroom").value;
+    if(!classroom){
+        return;
+    }
+
+    const elements = document.querySelectorAll(".filter-container input, select");
+    const data = new Object;
     for(const element of elements) {
         const name = element.id.replace("filter-","");
         data[name] = element.value;
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/`, {
-        method: "GET",
-        authorization: "Bearer" + token,
+    await fetch(`${API_URL}/enrollment/?idClassroom=${classroom}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
     })
     .then(response => response.json())
     .then(data => dataTable(data))
@@ -139,22 +144,29 @@ async function search() {
 
 }
 
+// Boton para ver detalles.
 function addEvents(){
     const buttons = document.querySelectorAll("tbody button");
     buttons.forEach(button => button.addEventListener("click", async (event) => await detail(event)));
 }
 
+// Get a API para obtener los detalles del estudiante por su registro en enrollment
 async function detail(event){
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/enrollment/?idStudent=${id}`)
+    await fetch(`${API_URL}/enrollment/?id=${id}`, {
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => createModalBox(data[0]))
     .catch(error => console.log(error));
 }
 
+// 
 function createModalBox(data){
+
     // Crear divs contenedores
     var modal = document.createElement("div");
     modal.className = "modal";
@@ -272,7 +284,7 @@ function createModalBox(data){
         {value: 1, label: "Disponible"}
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
+    selectStatus.id = "id_status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
@@ -293,6 +305,15 @@ function createModalBox(data){
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputName.value = data?.student.person.name ?? "";
+        inputLastname.value = data?.student.person.lastName ?? "";
+        inputCedule.value = data?.student.person.cedule ?? "";
+        inputPhone.value = data?.student.person.phone ?? "";
+        inputEmail.value = data?.student.person.email ?? "";
+        selectStatus.value = data?.student.id_status ?? 1;
+    });
 
     section.appendChild(form);
     
@@ -323,16 +344,34 @@ function createModalBox(data){
     }
 }
 
-document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
-    element.addEventListener("click", () => {
-        location.href = `${element.id.replace("-change", "")}.html`;
-    });
-});
+// Obtener el elemento "save" y agregarle un evento
+async function save() {
+
+    const jsonData = {
+        id : document.getElementById("id").value,
+        id_status: document.getElementById("id_status").value,
+    }
+
+    // Gardar los elementos en la base de datos
+    await fetch(`${API_URL}/enrollment`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
+
+};
 
 var newStudentList = [];
 
 document.getElementById("new").addEventListener("click", async () => await createModalBoxTable());
 async function createModalBoxTable(){
+
+    if(!document.getElementById("classroom").value){
+        return;
+    }
 
     // Crear divs contenedores
     const modal = document.createElement("div");
@@ -350,25 +389,34 @@ async function createModalBoxTable(){
     header.className = "filter-container";
     const form = document.createElement("form");
 
-    const inputId = document.createElement("input");
-    inputId.id = "filter-id";
-    inputId.type = "text";
-    inputId.placeholder = "Filtrar por id";
+    const filterFields = [
+        { 
+            id: "id",
+            type: "text",
+            placeholder: "Filtrar por id",
+        },
+        { 
+            id: "name",
+            type: "text",
+            placeholder: "Filtrar por nombre",
+        },
+        { 
+            id: "lastname",
+            type: "text",
+            placeholder: "Filtrar por apellido",
+        },
+        { 
+            id: "cedule",
+            type: "text",
+            placeholder: "Filtrar por cedula",
+        },
+    ];
 
-    const inputName = document.createElement("input");
-    inputName.id = "filter-nombre";
-    inputName.type = "text";
-    inputName.placeholder = "Filtrar por nombre";
-
-    const inputLastname = document.createElement("input");
-    inputLastname.id = "filter-lastname";
-    inputLastname.type = "text";
-    inputLastname.placeholder = "Filtrar por apellido";
-
-    const inputCedule = document.createElement("input");
-    inputCedule.id = "filter-cedule";
-    inputCedule.type = "text";
-    inputCedule.placeholder = "Filtrar por ";
+    for (const value of filterFields) {
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        form.appendChild(input);
+    }
 
     const buttonSearch = document.createElement("button");
     buttonSearch.id = "search";
@@ -391,13 +439,6 @@ async function createModalBoxTable(){
     filterButtonContainer.appendChild(search);
     filterButtonContainer.appendChild(reset);
 
-    // Agregar elementos al contenedor
-    form.appendChild(inputId);
-    form.appendChild(inputName);
-    form.appendChild(inputLastname);
-    form.appendChild(inputCedule);
-    form.appendChild(filterButtonContainer);
-
     //
     header.appendChild(form);
 
@@ -413,26 +454,12 @@ async function createModalBoxTable(){
     const trHead = document.createElement("tr");
     const tbody = document.createElement("tbody");
 
-    const thID = document.createElement("th");
-    thID.innerHTML = "ID"
-    const thName = document.createElement("th");
-    thName.innerHTML = "Nombres"
-    const thLastname = document.createElement("th");
-    thLastname.innerHTML = "Apellidos"
-    const thCedule = document.createElement("th");
-    thCedule.innerHTML = "Cedula"
-    const thState = document.createElement("th");
-    thState.innerHTML = "Estado"
-    const thAction = document.createElement("th");
-    thAction.innerHTML = "Acción"
-
-    // Agregar las celdas de encabezado a la fila de encabezado
-    trHead.appendChild(thID);
-    trHead.appendChild(thName);
-    trHead.appendChild(thLastname);
-    trHead.appendChild(thCedule);
-    trHead.appendChild(thState);
-    trHead.appendChild(thAction);
+    const dataTh = ["id", "Nombres", "Apellidos", "Cedula", "Estado", "Acción"];
+    for (const value of dataTh) {
+        const th = document.createElement("th");
+        th.innerHTML = value;
+        trHead.appendChild(th);
+    }
 
     const statusData = {
         "-1": "Eliminado",
@@ -446,35 +473,31 @@ async function createModalBoxTable(){
       "1": "available"
     };
 
-    await fetch(`${API_URL}/enrollment/studentNoClassroom/`)
+    const dataBD = await fetch(`${API_URL}/enrollment/studentNoClassroom/`)
     .then(response => response.json())
-    .then(data => {
-        data.forEach(element => {
-            const row = tbody.insertRow(-1);
-
-            const id = row.insertCell(0);
-            id.innerText = element.id;
-
-            const name = row.insertCell(1);
-            name.innerText = element.person.name;
-
-            const lastname = row.insertCell(2);
-            lastname.innerText = element.person.lastName ?? "";
-
-            const cedule = row.insertCell(3);
-            cedule.innerText = element.person.cedule;
-            
-            const status = row.insertCell(4);
-            const statusSpan = document.createElement('span');
-            statusSpan.innerHTML = statusData[element.id_status];
-            statusSpan.classList.add("status", statusClass[element.id_status]);
-            status.appendChild(statusSpan);
-            
-            const action = row.insertCell(5);
-            action.append(createCheck(element.id));
-        });
-    })
+    .then(data => data)
     .catch(error => error);
+
+    dataBD.forEach(element => {
+
+        const row = tbody.insertRow(-1);
+        var iterator = 0;
+
+        for (const value of filterFields) {
+            const td = row.insertCell(iterator++);
+            td.innerText = element[value.id];
+        }
+
+        const status = row.insertCell(4);
+        const statusSpan = document.createElement('span');
+        statusSpan.innerHTML = statusData[element.id_status];
+        statusSpan.classList.add("status", statusClass[element.id_status]);
+        status.appendChild(statusSpan);
+
+        const action = row.insertCell(5);
+        action.append(createCheck(element.id));
+
+    });
 
     // Agregar la fila de encabezado al elemento <thead>
     thead.appendChild(trHead);
@@ -493,18 +516,15 @@ async function createModalBoxTable(){
     loadButton.id = "load";
     loadButton.addEventListener("click", async () => await loadEnrollment());
     loadButton.innerHTML = "Cargar";
-    const cancelButton = document.createElement("button");
-    cancelButton.id = "cancel";
-    cancelButton.innerHTML = "Cancelar";
+    footer.appendChild(loadButton);
+
     const closeButton = document.createElement("button");
     closeButton.id = "close";
     closeButton.className = "change-button";
     closeButton.innerHTML = "Salir";
-
-    //
-    footer.appendChild(loadButton);
-    footer.appendChild(cancelButton);
     footer.appendChild(closeButton);
+    
+    //
     tableContainer.appendChild(footer);
 
     container.appendChild(tableContainer);
@@ -559,7 +579,7 @@ async function loadEnrollment(){
             })
         })
         .then(response => response.json())
-        .then(data => dataTable())
+        .then(data => search())
         .catch(error => console.error('Ha ocurrido un error: ', error));
     }
 

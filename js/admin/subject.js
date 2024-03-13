@@ -67,24 +67,17 @@ function dataTable(data) {
     data.forEach(element => {
         // Insertar en la ultima posicion
         const row = tableBody.insertRow(-1);
-
-        const id = row.insertCell(0);
-        id.innerHTML = element.id;
-
-        const name = row.insertCell(1);
-        name.innerHTML = element.name;
-
-        const description = row.insertCell(2);
-        description.innerHTML = element.description;
-
-        const status = row.insertCell(3);
+        
+        row.insertCell(0).innerHTML = element.id;
+        row.insertCell(1).innerHTML = element.name;
+        row.insertCell(2).innerHTML = element.description;
+        
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
-
-        const action = row.insertCell(4);
-        action.appendChild(button.cloneNode(true));
+        
+        row.insertCell(3).appendChild(statusSpan);
+        row.insertCell(4).appendChild(button.cloneNode(true));
         //action.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     });
 
@@ -107,7 +100,6 @@ async function detail(event){
     .then(response => response.json())
     .then(data => {
         createModalBox(data[0]);
-        dataModalBox(data[0]);
     })
     .catch(err => console.error(err));
 

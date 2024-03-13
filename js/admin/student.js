@@ -53,30 +53,19 @@ function dataTable(data) {
 
     data.forEach(element => {
         const row = table.insertRow(-1);
-
-        const id = row.insertCell(0);
-        id.innerText = element.id;
-
-        const name = row.insertCell(1);
-        name.innerText = element.person.name;
-
-        const lastname = row.insertCell(2);
-        lastname.innerText = element.person.lastName ?? "";
-
-        const cedule = row.insertCell(3);
-        cedule.innerText = element.person.cedule;
         
-        const email = row.insertCell(4);
-        email.innerText = element.person.email ?? "No posee";
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element.person.name;
+        row.insertCell(2).innerText = element.person.lastName ?? "";
+        row.insertCell(3).innerText = element.person.cedule;
+        row.insertCell(4).innerText = element.person.email ?? "No posee";
 
-        const status = row.insertCell(5);
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
         
-        const action = row.insertCell(6);
-        action.appendChild(button.cloneNode(true));
+        row.insertCell(5).appendChild(statusSpan);
+        row.insertCell(6).appendChild(button.cloneNode(true));
     });
 
     addEvents();
@@ -128,85 +117,52 @@ function createModalBox(data){
     var section = document.createElement("section");
     var form = document.createElement("form");
 
-    // ID
-    var labelId = document.createElement("label");
-    labelId.for = "id";
-    labelId.innerHTML = "ID:";
-    labelId.style.display = "none";
-    var inputId = document.createElement("input");
-    inputId.type = "text";
-    inputId.id = "id";
-    inputId.placeholder = "ID";
-    inputId.value = data?.id ?? "";
-    inputId.style.display = "none";
+    const personData = [
+        {
+            id: "id",
+            placeholder: "id",
+            value: data?.id ?? "",
+        },
+        {
+            id: "name",
+            placeholder: "Nombre",
+            value: data?.person.name ?? ""
+        },
+        {
+            id: "lastname",
+            placeholder: "Apellido",
+            value: data?.person.lastname ?? ""
+        },
+        {
+            id: "cedule",
+            placeholder: "Cedula",
+            value: data?.person.cedule ?? ""
+        },
+        {
+            id: "phone",
+            placeholder: "Phone",
+            value: data?.person.phone ?? ""
+        },
+        {
+            id: "email",
+            placeholder: "Email",
+            value: data?.person.email ?? ""
+        }
+    ];
 
-    form.appendChild(labelId);
-    form.appendChild(inputId);
-
-    // Name
-    var labelName = document.createElement("label");
-    labelName.for = "name";
-    labelName.innerHTML = "Nombre:";
-    var inputName = document.createElement("input");
-    inputName.type = "text";
-    inputName.id = "name";
-    inputName.placeholder = "Nombre";
-    inputName.value = data?.person.name ?? "";
-
-    form.appendChild(labelName);
-    form.appendChild(inputName);
-    
-    // Last name
-    var labelLastname = document.createElement("label");
-    labelLastname.for = "lastname";
-    labelLastname.innerHTML = "Apellido:";
-    var inputLastname = document.createElement("input");
-    inputLastname.type = "text";
-    inputLastname.id = "lastname";
-    inputLastname.placeholder = "Apellido";
-    inputLastname.value = data?.person.lastName ?? "";
-
-    form.appendChild(labelLastname);
-    form.appendChild(inputLastname);
-
-    // Cedule
-    var labelCedule = document.createElement("label");
-    labelCedule.for = "cedule";
-    labelCedule.innerHTML = "Cedula:";
-    var inputCedule = document.createElement("input");
-    inputCedule.type = "text";
-    inputCedule.id = "cedule";
-    inputCedule.placeholder = "Cedula";
-    inputCedule.value = data?.person.cedule ?? "";
-    
-    form.appendChild(labelCedule);
-    form.appendChild(inputCedule);
-
-    // Phone
-    var labelPhone = document.createElement("label");
-    labelPhone.for = "phone";
-    labelPhone.innerHTML = "Telefono:";
-    var inputPhone = document.createElement("input");
-    inputPhone.type = "text";
-    inputPhone.id = "phone";
-    inputPhone.placeholder = "Telefono";
-    inputPhone.value = data?.person.phone ?? "";
-
-    form.appendChild(labelPhone);
-    form.appendChild(inputPhone);
-
-    // Email
-    var labelEmail = document.createElement("label");
-    labelEmail.for = "email";
-    labelEmail.innerHTML = "Email:";
-    var inputEmail = document.createElement("input");
-    inputEmail.type = "email";
-    inputEmail.id = "email";
-    inputEmail.placeholder = "Email";
-    inputEmail.value = data?.person.email ?? "";
-
-    form.appendChild(labelEmail);
-    form.appendChild(inputEmail);
+    for (const value of personData) {
+        const label = document.createElement("label");
+        label.for = value.id;
+        label.innerHTML = value.placeholder + ":";
+        // label.style.display = "none";
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        // input.style.display = "none";
+        form.appendChild(label);
+        form.appendChild(input);
+    }
+    form.querySelector('label').style.display = "none";
+    form.querySelector('input').style.display = "none";
 
     // Status
     var labelStatus = document.createElement("label");

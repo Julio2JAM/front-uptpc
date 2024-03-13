@@ -1,70 +1,101 @@
 API_URL = 'http://localhost:3000/api'
+const token = sessionStorage.getItem('token');
 
 //
 window.addEventListener('load', async () => await search(null));
+document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
 
 //
 async function search() {
     const filters = document.querySelectorAll('.filter-container input, select');
-    const data = new Object();
+    const data = {};
     for (const element of filters) {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/assignment/`)
+    await fetch(`${API_URL}/assignment/?id=${data["id"]}&title=${data["title"]}&datetime_start=${data["datetime_start"]}&datetime_end=${data["datetime_end"]}&id_status=${data["status"]}`,{
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => dataTable(data))
-    .catch(err => console.error(err))
+    .catch(err => console.log(err))
 }
 
 function dataTable(data){
-    const tbody = document.getElementById('tbody');
+
+    const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
-    const status = {
+    const button = document.createElement("button");
+    button.className = "view-button";
+    button.innerText = "Ver mas";
+
+    const statusData = {
         "-1": "Eliminado",
-        "0" : "No disponible",
-        "1" : "Disponible"
+        "0": "No disponible",
+        "1": "Disponible"
     };
 
-    data.forEach( (element) => {
+    const statusClass = {
+        "-1": "deleted",
+        "0": "unavailable",
+        "1": "available"
+    };
+
+    const dataFields = {
+        id: null,
+        title: "Sin nombre.",
+        description: "Descripción vacia.",
+        // porcentage: "No asignado.",
+        // base:"No asignado.",
+        datetime_start:"No asignado.",
+        datetime_end:"No asignado.",
+    };
+
+    data.forEach((element) => {
         const row = tbody.insertRow(-1);
 
-        const cellID = row.insertCell(0);
-        cellID.innerHTML = element.id;
-
-        const cellProfessor = row.insertCell(1);
-        cellProfessor.innerHTML = element.professor.person.name + " " + element.professor.person.lastName;
-
-        const cellSubject = row.insertCell(2);
-        cellSubject.innerHTML = element.subject.name;
-
-        const cellStatus = row.insertCell(3);
-        cellStatus.innerHTML = status[element.id_status];
-
-        const cellAction = row.insertCell(4);
-        // const btnDetail = createButtons("Ver mas", "view-button", `btn-detail-${element.id}`, detail)
-        // const btnActivity = createButtons("Actividades", "view-button", `btn-activity-${element.id}`, detail)
-
-        cellAction.appendChild(btnDetail);
-        cellAction.appendChild(btnActivity);
+        var iterator = 0;
+        for (const key in dataFields){
+            const cell = row.insertCell(iterator);
+            cell.innerHTML = element[key] ?? dataFields[key];
+            iterator++;
+        }
+        
+        const status = row.insertCell(iterator);
+        const statusSpan = document.createElement('span');
+        statusSpan.innerText = statusData[element.id_status];
+        statusSpan.classList.add("status", statusClass[element.id_status]);
+        status.appendChild(statusSpan);
+        
+        const action = row.insertCell(++iterator);
+        action.appendChild(button.cloneNode(true));
     });
+
+    addEvents();
 }
 
-/*
-function createButtons(innerText, className, id, clickCb){
-    const btn = document.createElement("button");
-    btn.innerText = innerText;
-    btn.className = className;
-    btn.id = id;
-    const idReplace = id.split('-').pop();
-    btn.addEventListener("click", () => clickCb(idReplace))
-    return btn;
+// Agregar evento de click a todos los botones de view
+function addEvents(){
+    const buttons = document.querySelectorAll("tbody button");
+    buttons.forEach(button => button.addEventListener("click", async(event) => await detail(event)));
 }
-*/
+
+async function detail(event) {
+    const row = event.target.closest("tr");
+    const id = row.cells[0].innerHTML;
+
+    await fetch(`${API_URL}/assignment/?id=${id}`,{
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.json())
+    .then(data => createModalBox(data[0]))
+    .catch(err => console.error(err))
+}
 
 document.getElementById("new").addEventListener("click", () => createModalBox(null));
-
 function createModalBox(data){
     // Crear divs contenedores
     var modal = document.createElement("div");
@@ -94,96 +125,57 @@ function createModalBox(data){
     var section = document.createElement("section");
     var form = document.createElement("form");
 
-    // ID
-    var labelId = document.createElement("label");
-    labelId.for = "id";
-    labelId.innerHTML = "ID:";
-    labelId.style.display = "none";
-    var inputId = document.createElement("input");
-    inputId.type = "text";
-    inputId.id = "id";
-    inputId.placeholder = "ID";
-    inputId.value = data?.id ?? "";
-    inputId.style.display = "none";
+    const assignmentData = [
+        {
+            id: "id",
+            placeholder: "ID",
+            value: data?.id ?? "",
+        },
+        {
+            id: "title",
+            placeholder: "Titulo",
+            value: data?.title ?? ""
+        },
+        {
+            id: "description",
+            placeholder: "Descripcion",
+            value: data?.description ?? ""
+        },
+        /*{
+            id: "porcentage",
+            placeholder: "Porcentaje",
+            value: data?.porcentage ?? ""
+        },
+        {
+            id: "base",
+            placeholder: "Base",
+            value: data?.base ?? ""
+        },*/
+        {
+            id: "datetimeStart",
+            type: "date",
+            placeholder: "Fecha de inicio",
+            value: data?.datetime_start ?? ""
+        },
+        {
+            id: "datetimeEnd",
+            type: "date",
+            placeholder: "Fecha de final",
+            value: data?.datetime_end ?? ""
+        }
+    ];
 
-    form.appendChild(labelId);
-    form.appendChild(inputId);
-
-    // Title
-    var labelTitle = document.createElement("label");
-    labelTitle.for = "title";
-    labelTitle.innerHTML = "Titulo:";
-    var inputTitle = document.createElement("input");
-    inputTitle.type = "text";
-    inputTitle.id = "title";
-    inputTitle.placeholder = "Titulo";
-    // inputTitle.value = data?.person.name ?? "";
-
-    form.appendChild(labelTitle);
-    form.appendChild(inputTitle);
-    
-    // Description
-    var labelDescription = document.createElement("label");
-    labelDescription.for = "description";
-    labelDescription.innerHTML = "Descripcion:";
-    var inputDescription = document.createElement("input");
-    inputDescription.type = "text";
-    inputDescription.id = "description";
-    inputDescription.placeholder = "Descripcion";
-    // inputDescription.value = data?.person.lastName ?? "";
-
-    form.appendChild(labelDescription);
-    form.appendChild(inputDescription);
-
-    // Porcentage
-    var labelPorcentage = document.createElement("label");
-    labelPorcentage.for = "porcentage";
-    labelPorcentage.innerHTML = "Porcentaje:";
-    var inputPorcentage = document.createElement("input");
-    inputPorcentage.type = "text";
-    inputPorcentage.id = "porcentage";
-    inputPorcentage.placeholder = "porcentaje";
-    // inputPorcentage.value = data?.person.cedule ?? "";
-    
-    form.appendChild(labelPorcentage);
-    form.appendChild(inputPorcentage);
-
-    // Base
-    var labelBase = document.createElement("label");
-    labelBase.for = "Base";
-    labelBase.innerHTML = "Base:";
-    var inputBase = document.createElement("input");
-    inputBase.type = "text";
-    inputBase.id = "base";
-    inputBase.placeholder = "Base";
-    // inputBase.value = data?.person.phone ?? "";
-
-    form.appendChild(labelBase);
-    form.appendChild(inputBase);
-
-    // datetimeStart
-    var labelDatetimeStart = document.createElement("label");
-    labelDatetimeStart.for = "datetimestart";
-    labelDatetimeStart.innerHTML = "Fecha de inicio:";
-    var inputDatetimeStart = document.createElement("input");
-    inputDatetimeStart.type = "date";
-    inputDatetimeStart.id = "datetime_start";
-    inputDatetimeStart.value = data?.datetime_start ?? "";
-
-    form.appendChild(labelDatetimeStart);
-    form.appendChild(inputDatetimeStart);
-
-    // datetimeEnd
-    var labelDatetimeEnd = document.createElement("label");
-    labelDatetimeEnd.for = "datetimesend";
-    labelDatetimeEnd.innerHTML = "Fecha de final:";
-    var inputDatetimeEnd = document.createElement("input");
-    inputDatetimeEnd.type = "date";
-    inputDatetimeEnd.id = "datetime_end";
-    inputDatetimeEnd.value = data?.datetime_end ?? "";
-
-    form.appendChild(labelDatetimeEnd);
-    form.appendChild(inputDatetimeEnd);
+    for (const value of assignmentData) {
+        const label = document.createElement("label");
+        label.for = value.id;
+        label.innerHTML = value.placeholder + ":";
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        form.appendChild(label);
+        form.appendChild(input);
+    }
+    form.querySelector('label').style.display = "none";
+    form.querySelector('input').style.display = "none";
 
     // Status
     var labelStatus = document.createElement("label");
@@ -202,14 +194,19 @@ function createModalBox(data){
 
     form.appendChild(labelStatus);
     form.appendChild(selectStatus);
+    section.appendChild(form);
 
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+    footer.appendChild(buttonSubmit);
 
     var buttonReset = document.createElement("button");
     buttonReset.type = "reset";
@@ -224,10 +221,6 @@ function createModalBox(data){
         inputDatetimeEnd.value = data?.person.email ?? "";
         selectStatus.value = data?.id_status ?? 1;
     });
-    
-    section.appendChild(form);
-    
-    footer.appendChild(buttonSubmit);
     footer.appendChild(buttonReset);
     
     modalContent.appendChild(header);
@@ -254,26 +247,19 @@ function createModalBox(data){
     }
 }
 
-async function detail(id) {
-    await fetch(`${API_URL}/program/?id=${id}`)
-    .then(response => response.json())
-    .then(data => createModalBox(data))
-    .catch(err => console.error(err))
-}
-
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
+
     // Obtener datos para crear o actualizar el registro.
     const id = document.getElementById("id").value;
     const jsonData = {
-        title: document.getElementById("name").value,
+        title: document.getElementById("title").value,
         description: document.getElementById("description").value,
-        porcentage: document.getElementById("description").value,
-        base: document.getElementById("description").value,
-        datetime_start: document.getElementById("description").value,
-        datetime_end: document.getElementById("description").value,
+        // porcentage: document.getElementById("description").value,
+        // base: document.getElementById("description").value,
+        datetime_start: !document.getElementById("datetimeStart").value ? null : document.getElementById("datetimeStart").value , 
+        datetime_end: !document.getElementById("datetimeEnd").value ? null : document.getElementById("datetimeEnd").value,
         id_status: Number(document.getElementById("status").value),
-        id_professor: 1 //! TEMPORAL
     };
 
     // Datos para el fetch
@@ -283,7 +269,10 @@ async function save (){
     // Gardar o actualizar los elementos en la base de datos
     await fetch(`${API_URL}/assignment/`, {
         method: method,
-        headers: { "content-type": "application/json" },
+        headers: { 
+            "content-type": "application/json",
+            "authorization": "Bearer " + token,
+        },
         body: JSON.stringify(jsonData)
     })
     .then(response => response.json())

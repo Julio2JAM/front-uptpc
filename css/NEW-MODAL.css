@@ -70,6 +70,13 @@
 .modal-content section select:focus{
     outline: none;
 }
+.modal-content section input:read-only,
+.modal-content section input:read-only:hover,
+.modal-content section input:read-only:focus{
+    background-color: #F5F5F5;
+    border: 1px solid #ccc;
+    cursor: initial;
+}
 .modal-content section input:hover,
 .modal-content section select:hover,
 .modal-content section input:focus,

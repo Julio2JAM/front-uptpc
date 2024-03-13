@@ -1,59 +1,34 @@
-API_URL = 'http://localhost:3000/api'
+const API_URL = "http://localhost:3000/api"
+const token = sessionStorage.getItem('token');
+var printData = [];
 
-document.getElementById("select-classroon").addEventListener("click", async () => await classroom());
-async function classroom(){
 
-    // Array de cookies, separadas por ';'.
-    const cookies = document.cookie.split(';');
+// Agregar evento de click para mostrar una lista con todas las secciones activas.
+document.getElementById("select-classroon").addEventListener("click", async () => await createModalList());
 
-    // Nombre de la cookie a buscar.
-    const cookieName = "token";
+// Crear modal box con el nombre de las secciones activas.
+async function createModalList(){
 
-    // Si el array esta vacio, quiere decir que no hay cookies registradas.
-    if(!cookies){
-        return;
-    }
-
-    // Buscar en las cookies
-    let cookieValue;
-    for (const value of cookies) {
-        // Validar que la cookie evaluada, comience por el nombre que se está buscando.
-        if (value.startsWith(cookieName)) {
-            // Obtener el valor de la cookie, eliminando el nombre +1 caracter, porque al obtener el array de cookies, los valores obtenidos son tipo JSON, es decir "nombre:valor", de esta manera, se elimina "nombre:", dejando solo el valor.
-            cookieValue = value.substring(cookieName.length + 1);
-            // Decodificar el valor obtenido y asignarlo a la variable anteriormente declarada 'cookieValue'.
-            cookieValue = decodeURIComponent(cookieValue);
-            // Detener el ciclo de busqueda.
-            break;
-        }
-    }
-
-    // Validar que se haya obtenido una cookie, es decir, que cookieValue no este vacia.
-    if (!cookieValue) {
-        return;
-    }
-    
+    // const validateModalMenu = document.getElementById("modal-menu");
     const div = document.createElement("div");
     div.id = "modal-menu";
     div.className = "modal-menu";
 
     const ul = document.createElement("ul");
+    ul.id = "classList";
 
-    await fetch(`${API_URL}/enrollment/`, {
+    await fetch(`${API_URL}/program/`,{
         method: "GET",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        credentials: 'include'
+        headers: {authorization: 'Bearer ' + token}
     })
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
             const li = document.createElement("li");
             const a = document.createElement("a");
-            a.innerHTML = element?.classroom.name;
-            a.addEventListener("click", async () => await loadData(element.id))
+            a.innerHTML = element.classroom.name;
+            a.addEventListener("click", () => loadClassroomEvents(element.classroom.id, element.classroom.name))
+
             li.appendChild(a);
             ul.appendChild(li);
         });
@@ -70,63 +45,87 @@ async function classroom(){
     
     div.appendChild(ul);
     document.body.appendChild(div);
-
+    
     const modalMenu = document.getElementById("modal-menu");
     modalMenu.addEventListener("click", event => {
         if (event.target.id === "modal-menu" || event.target.nodeName == "A") {
             document.getElementById("modal-menu").remove();
         }
     });
-    
 }
 
-async function loadData(idEnrollment){
-    await fetch(`${API_URL}/enrollment/program/?enrollment=${idEnrollment}`)
+// Agregar eventos de click para a la lista de secciones, para obtener datos de la seccion seleccionada.
+async function loadClassroomEvents(id, name){
+    const classroom = document.getElementById("classroom");
+    // classroom.value = name;
+    classroom.value = id;
+
+    await fetch(`${API_URL}/enrollment/?idClassroom=${id}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => dataTable(data))
-    .catch(err => err)
+    .catch(error => error);
+
 }
 
-function dataTable(data){
+document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
+async function search() {
+
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+
+    const idClassroom = document.getElementById("classroom").value;
+    await fetch(`${API_URL}/enrollment/?idClassroom=${idClassroom}&id=${data["id"]}&personName=${data["name"]}&personLastName=${data["lastName"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.json())
+    .then(data => dataTable(data))
+    .catch(error => console.log(error));
+
+}
+
+// Cargar registros en la tabla HTML
+function dataTable(data) {
+
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
+
+    const button = document.createElement("button");
+    button.className = "view-button";
+    button.innerText = "Ver mas";
 
     const statusData = {
         "-1": "Eliminado",
         "0": "No disponible",
         "1": "Disponible"
     };
-    
+
     const statusClass = {
-      "-1": "deleted",
-      "0": "unavailable",
-      "1": "available"
+        "-1": "deleted",
+        "0": "unavailable",
+        "1": "available"
     };
 
-    // Crear boton de view
-    const button = document.createElement('button');
-    button.innerHTML = "Ver más";
-    button.className = "view-button";
     data.forEach(element => {
         const row = tbody.insertRow(-1);
 
-        const id = row.insertCell(0);
-        id.innerHTML = element.id;
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element?.student.person.name ?? "No name";
+        row.insertCell(2).innerText = element?.student.person.lastName ?? "No last name";
+        row.insertCell(3).innerText = element?.student.person.cedule;
 
-        const profressor = row.insertCell(1);
-        profressor.innerHTML = element.professor.person.name + ' ' + element.professor.person.lastName;
-
-        const subject = row.insertCell(2);
-        subject.innerHTML = element.subject.name;
-
-        const status = row.insertCell(3);
         const statusSpan = document.createElement('span');
-        statusSpan.innerHTML = statusData[element.id_status];
+        statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
-
-        const action = row.insertCell(4);
-        action.appendChild(button.cloneNode(true));
+        
+        row.insertCell(4).appendChild(statusSpan);
+        row.insertCell(5).appendChild(button.cloneNode(true));
     });
 
     addEvents();
@@ -146,13 +145,12 @@ async function detail(event){
 
     await fetch(`${API_URL}/program/?id=${id}`)
     .then(response => response.json())
-    .then(data => createModalBox(data[0]))
+    .then(data => data/*createModalBox(data[0])*/)
     .catch(err => console.error(err));
 
 }
 
 function createModalBox(data){
-
     // Crear divs contenedores
     var modal = document.createElement("div");
     modal.className = "modal";
@@ -166,44 +164,69 @@ function createModalBox(data){
     // Crear elementos del DOM
     var h3 = document.createElement("h3");
     var img = document.createElement("img");
-    img.src = "../../source/professor2-icon.png";
+    img.src = "../../source/student-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Estudiante";
+    
     var buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+
     var section = document.createElement("section");
     var form = document.createElement("form");
-    form.id = "modal-form";
 
-    var labelId = document.createElement("label");
-    labelId.for = "id";
-    labelId.innerHTML = "ID:";
-    labelId.style.display = "none";
-    var inputId = document.createElement("input");
-    inputId.type = "text";
-    inputId.id = "id";
-    inputId.placeholder = "ID";
-    inputId.value = data?.id ?? "";
-    inputId.style.display = "none";
+    const personData = [
+        {
+            id: "id",
+            placeholder: "id",
+            value: data?.id ?? "",
+        },
+        {
+            id: "name",
+            placeholder: "Nombre",
+            value: data?.person.name ?? ""
+        },
+        {
+            id: "lastname",
+            placeholder: "Apellido",
+            value: data?.person.lastname ?? ""
+        },
+        {
+            id: "cedule",
+            placeholder: "Cedula",
+            value: data?.person.cedule ?? ""
+        },
+        {
+            id: "phone",
+            placeholder: "Phone",
+            value: data?.person.phone ?? ""
+        },
+        {
+            id: "email",
+            placeholder: "Email",
+            value: data?.person.email ?? ""
+        }
+    ];
 
-    var labelProfessor = document.createElement("label");
-    labelProfessor.for = "professor";
-    labelProfessor.innerHTML = "Docente:";
-    var inputProfessor = document.createElement("input");
-    inputProfessor.type = "text";
-    inputProfessor.id = "professor";
-    inputProfessor.placeholder = "Docente";
-    inputProfessor.value = data.professor.person?.name + " " + data.professor.person?.lastName;
-    
-    var labelSubject = document.createElement("label");
-    labelSubject.for = "subject";
-    labelSubject.innerHTML = "Asignatura:";
-    var inputSubject = document.createElement("input");
-    inputSubject.type = "text";
-    inputSubject.id = "subject";
-    inputSubject.placeholder = "Asignatura";
-    inputSubject.value = data.subject.name;
-    
+    for (const value of personData) {
+        const label = document.createElement("label");
+        label.for = value.id;
+        label.innerHTML = value.placeholder + ":";
+        // label.style.display = "none";
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        // input.style.display = "none";
+        form.appendChild(label);
+        form.appendChild(input);
+    }
+    form.querySelector('label').style.display = "none";
+    form.querySelector('input').style.display = "none";
+
+    // Status
     var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
     var options = [
@@ -212,18 +235,19 @@ function createModalBox(data){
         {value: 1, label: "Disponible"}
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
+    selectStatus.id = "id_status";
     for (var option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
-    selectStatus.disabled = true;
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
 
     var footer = document.createElement("footer");
 
-    /*
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => {});
+    buttonSubmit.addEventListener("click", async () => await save());
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -234,34 +258,18 @@ function createModalBox(data){
     buttonReset.innerHTML = "Borrar";
     buttonReset.addEventListener("click", () => {
         inputId.value = data?.id ?? "";
-        inputName.value = data?.name ?? "";
-        inputDescription.value = data?.description ?? "";
+        inputName.value = data?.person.name ?? "";
+        inputLastname.value = data?.person.lastName ?? "";
+        inputCedule.value = data?.person.cedule ?? "";
+        inputPhone.value = data?.person.phone ?? "";
+        inputEmail.value = data?.person.email ?? "";
         selectStatus.value = data?.id_status ?? 1;
     });
-    */
-
-    h3.appendChild(img);
-    h3.innerHTML += "Asignatura";
-
-    header.appendChild(h3);
-    header.appendChild(buttonClose);
     
-    form.appendChild(labelId);
-    form.appendChild(inputId);
-
-    form.appendChild(labelProfessor);
-    form.appendChild(inputProfessor);
-
-    form.appendChild(labelSubject);
-    form.appendChild(inputSubject);
-
-    form.appendChild(labelStatus);
-    form.appendChild(selectStatus);
-
     section.appendChild(form);
     
-    // footer.appendChild(buttonSubmit);
-    // footer.appendChild(buttonReset);
+    footer.appendChild(buttonSubmit);
+    footer.appendChild(buttonReset);
     
     modalContent.appendChild(header);
     modalContent.appendChild(section);

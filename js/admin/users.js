@@ -3,24 +3,19 @@
 const API_URL = "http://localhost:3000/api"
 
 // Al cargar el archivo, obtener todos los registros de la tabla subject
-window.addEventListener("load", async () => await loadData());
+window.addEventListener("load", async () => {
+    await role();
+    await search();
+});
 
-async function loadData() {
-    await fetch(`${API_URL}/user`)
-    .then(response => response.json())
-    .then(data => dataTable(data))
-    .catch(err => err);
-}
-
-async function levels() {
-
-    const select = document.getElementById("filter-permission");
+async function role() {
+    const select = document.getElementById("filter-role");
     select.innerHTML = "";
 
-    const startOption = new Option("Select a permission", "");
+    const startOption = new Option("Seleccione un permiso", "");
     select.add(startOption);
 
-    await fetch(`${API_URL}/level`)
+    await fetch(`${API_URL}/role`)
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
@@ -29,8 +24,6 @@ async function levels() {
         });
     })
     .catch(err => err);
-
-    return select;
 }
 
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
@@ -42,9 +35,7 @@ async function search() {
         data[element.id.replace("filter-", "")] = element.value;
     }
 
-    console.log(data);
-
-    await fetch(`${API_URL}/user/?username=${data["username"]}&role=${data["role"]}&id_status=${data["status"]}`)
+    await fetch(`${API_URL}/user/?username=${data["username"]}&idRole=${data["role"]}&id_status=${data["status"]}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(error => console.log(error));
@@ -54,10 +45,10 @@ async function dataTable(data) {
 
     const table = document.querySelector("tbody");
     table.innerHTML = "";
-    const selectLevel = document.getElementById("filter-role");
-    const dataLevel = new Object();
-    for (const option of selectLevel.options) {
-        dataLevel[option.value] = option.innerText;
+    const selectRole = document.getElementById("filter-role");
+    const dataRole = new Object();
+    for (const option of selectRole.options) {
+        dataRole[option.value] = option.innerText;
     }
 
     // Crear boton de view
@@ -90,8 +81,8 @@ async function dataTable(data) {
         const username = row.insertCell(1);
         username.innerHTML = element.username;
 
-        const level = row.insertCell(2);
-        level.innerHTML = dataLevel[element.level?.id] ?? "No posee";
+        const role = row.insertCell(2);
+        role.innerHTML = dataRole[element.role?.id] ?? "No posee";
 
         const status = row.insertCell(3);
         const statusSpan = document.createElement('span');
@@ -130,110 +121,141 @@ document.getElementById("new").addEventListener("click", () => createModalBox(nu
 
 function createModalBox(data) {
     // Crear divs contenedores
-    var modal = document.createElement("div");
+    const modal = document.createElement("div");
     modal.className = "modal";
     modal.id = "modal";
 
-    var modalContent = document.createElement("div");
+    const modalContent = document.createElement("div");
     modalContent.className = "modal-content";
 
-    var header = document.createElement("header");
+    const header = document.createElement("header");
+    const section = document.createElement("section");
+    const form = document.createElement("form");
 
     // Crear elementos del DOM
-    var h3 = document.createElement("h3");
-    var img = document.createElement("img");
+    const h3 = document.createElement("h3");
+
+    const img = document.createElement("img");
     img.src = "../../source/user-icon.png";
-    var buttonClose = document.createElement("button");
+    const buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
-    var labelId = document.createElement("label");
+    h3.appendChild(img);
+    h3.innerHTML += "User:";
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+
+    const labelId = document.createElement("label");
     labelId.for = "id";
     labelId.innerHTML = "ID:";
     labelId.style.display = "none";
-    var inputId = document.createElement("input");
+    const inputId = document.createElement("input");
     inputId.type = "text";
     inputId.id = "id";
     inputId.placeholder = "ID";
     inputId.value = data?.id ?? "";
     inputId.style.display = "none";
 
-    var labelIdPerson = document.createElement("label");
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
+    const labelIdPerson = document.createElement("label");
     labelIdPerson.for = "idPerson";
     labelIdPerson.innerHTML = "Person ID:";
     labelIdPerson.style.display = "none";
-    var inputIdPerson = document.createElement("input");
+    const inputIdPerson = document.createElement("input");
     inputIdPerson.type = "text";
     inputIdPerson.id = "idPerson";
     inputIdPerson.placeholder = "ID";
     inputIdPerson.value = data?.person?.id ?? "";
     inputIdPerson.style.display = "none";
 
-    var section = document.createElement("section");
-    var form = document.createElement("form");
+    form.appendChild(labelIdPerson);
+    form.appendChild(inputIdPerson);
 
-    var labelUser = document.createElement("label");
+    const labelUser = document.createElement("label");
     labelUser.for = "username";
     labelUser.innerHTML = "Usuario:";
-    var inputUser = document.createElement("input");
+    const inputUser = document.createElement("input");
     inputUser.type = "text";
     inputUser.id = "username";
     inputUser.placeholder = "Usuario";
     inputUser.value = data?.username ?? "";
+    inputUser.readOnly = data ? true : false;
 
-    /*
-    var labelPassword = document.createElement("label");
-    labelPassword.for = "password";
-    labelPassword.innerHTML = "Contraseña:";
-    var inputPassword = document.createElement("input");
-    inputPassword.type = "text";
-    inputPassword.id = "password";
-    inputPassword.placeholder = "Contraseña";
-    inputPassword.value = data?.password ?? "";
-    */
+    form.appendChild(labelUser);
+    form.appendChild(inputUser);
 
-    var labelPerson = document.createElement("label");
+    //* ESTA VALIDACION PERMITE QUE SOLO SE LE MUESTRE EL CAMPO DE PASSWORD AL MOMENTO DE CREAR UN USUARIO NUEVO,
+    //* SE PUEDE ELIMINAR ESTA VALIDACION PARA QUE SE PUEDA ACTUALIZAR LA CLAVE DE LOS USUARIOS YA EXISTETNE
+    if(!data){
+        var labelPassword = document.createElement("label");
+        labelPassword.for = "password";
+        labelPassword.innerHTML = "Contraseña:";
+        var inputPassword = document.createElement("input");
+        inputPassword.type = "text";
+        inputPassword.id = "password";
+        inputPassword.placeholder = "Contraseña";
+        inputPassword.value = data?.password ?? "";
+
+        form.appendChild(labelPassword);
+        form.appendChild(inputPassword);
+    }
+
+    const labelPerson = document.createElement("label");
     labelPerson.for = "person";
     labelPerson.innerHTML = "Propietario:";
-    var inputPerson = document.createElement("input");
+    const inputPerson = document.createElement("input");
     inputPerson.type = "text";
     inputPerson.id = "person";
     inputPerson.placeholder = "Propietario";
     inputPerson.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
     inputPerson.addEventListener("click", () => createModalBoxTable(data?.person?.id));
 
-    var labelRole = document.createElement("label");
+    form.appendChild(labelPerson);
+    form.appendChild(inputPerson);
+
+    const labelRole = document.createElement("label");
     labelRole.for = "role";
     labelRole.innerHTML = "Permisos:";
     var selectRole = document.getElementById("filter-role");
     selectRole = selectRole.cloneNode(true);
-    selectRole.remove(0);
-    selectRole.id = "level";
-    selectRole.value = data?.level?.id ?? "";
+    selectRole.id = "idRole";
+    selectRole.value = data?.role?.id ?? "";
+    console.log(data?.role?.id);
+    console.log(selectRole.value);
 
-    var labelStatus = document.createElement("label");
-    var selectStatus = document.createElement("select");
-    var options = [
+    form.appendChild(labelRole);
+    form.appendChild(selectRole);
+
+    const labelStatus = document.createElement("label");
+    const selectStatus = document.createElement("select");
+    const options = [
         { value: -1, label: "Eliminado" },
         { value: 0, label: "No disponible" },
         { value: 1, label: "Disponible" }
     ];
     labelStatus.textContent = "Estado";
-    selectStatus.id = "status";
-    for (var option of options) {
+    selectStatus.id = "id_status";
+    for (const option of options) {
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
 
-    var footer = document.createElement("footer");
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
 
-    var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    const buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
 
-    var buttonReset = document.createElement("button");
+    const buttonReset = document.createElement("button");
     buttonReset.type = "reset";
     buttonReset.id = "reset";
     buttonReset.innerHTML = "Borrar";
@@ -245,35 +267,9 @@ function createModalBox(data) {
         selectStatus.value = data?.id_status ?? 1;
     });
 
-    h3.appendChild(img);
-    h3.innerHTML += "User:";
-
-    header.appendChild(h3);
-    header.appendChild(buttonClose);
-
-    form.appendChild(labelId);
-    form.appendChild(inputId);
-
-    form.appendChild(labelIdPerson);
-    form.appendChild(inputIdPerson);
-
-    form.appendChild(labelUser);
-    form.appendChild(inputUser);
-
-    // form.appendChild(labelPassword);
-    // form.appendChild(inputPassword);
-
-    form.appendChild(labelPerson);
-    form.appendChild(inputPerson);
-
-    form.appendChild(labelRole);
-    form.appendChild(selectRole);
-
-    form.appendChild(labelStatus);
-    form.appendChild(selectStatus);
-
     section.appendChild(form);
 
+    const footer = document.createElement("footer");
     footer.appendChild(buttonSubmit);
     footer.appendChild(buttonReset);
 
@@ -324,26 +320,25 @@ async function createModalBoxTable(idPerson = "") {
     inputId.type = "text";
     inputId.placeholder = "Filtrar por id";
     inputId.value = idPerson;
+    form.appendChild(inputId);
 
     const inputName = document.createElement("input");
     inputName.id = "filter-nombre";
     inputName.type = "text";
     inputName.placeholder = "Filtrar por nombre";
+    form.appendChild(inputName);
 
     const inputLastname = document.createElement("input");
     inputLastname.id = "filter-lastname";
     inputLastname.type = "text";
     inputLastname.placeholder = "Filtrar por apellido";
+    form.appendChild(inputLastname);
 
     const inputCedule = document.createElement("input");
     inputCedule.id = "filter-cedule";
     inputCedule.type = "text";
-    inputCedule.placeholder = "Filtrar por ";
-
-    const buttonSearch = document.createElement("button");
-    buttonSearch.id = "search";
-    buttonSearch.className = "filter-button active";
-    buttonSearch.innerHTML = "Filter";
+    inputCedule.placeholder = "Filtrar por cedula";
+    form.appendChild(inputCedule);
 
     const filterButtonContainer = document.createElement("div");
     filterButtonContainer.className = "filter-btn-container";
@@ -352,26 +347,17 @@ async function createModalBoxTable(idPerson = "") {
     search.type = "button";
     search.id = "search-filter-btn";
     search.innerHTML = "Filtrar";
+    filterButtonContainer.appendChild(search);
+
     const reset = document.createElement("button");
     reset.type = "reset";
     reset.id = "reset-filter-btn";
     reset.innerHTML = "Borrar";
-
-    //
-    filterButtonContainer.appendChild(search);
     filterButtonContainer.appendChild(reset);
 
     // Agregar elementos al contenedor
-    form.appendChild(inputId);
-    form.appendChild(inputName);
-    form.appendChild(inputLastname);
-    form.appendChild(inputCedule);
     form.appendChild(filterButtonContainer);
-
-    //
     header.appendChild(form);
-
-    //
     tableContainer.appendChild(header);
 
     const section = document.createElement("section");
@@ -385,23 +371,26 @@ async function createModalBoxTable(idPerson = "") {
 
     const thID = document.createElement("th");
     thID.innerHTML = "ID"
+    trHead.appendChild(thID);
+
     const thName = document.createElement("th");
     thName.innerHTML = "Nombres"
+    trHead.appendChild(thName);
+
     const thLastname = document.createElement("th");
     thLastname.innerHTML = "Apellidos"
+    trHead.appendChild(thLastname);
+
     const thCedule = document.createElement("th");
     thCedule.innerHTML = "Cedula"
-    const thState = document.createElement("th");
-    thState.innerHTML = "Estado"
+    trHead.appendChild(thCedule);
+
+    const thStatus = document.createElement("th");
+    thStatus.innerHTML = "Estado"
+    trHead.appendChild(thStatus);
+
     const thAction = document.createElement("th");
     thAction.innerHTML = "Acción"
-
-    // Agregar las celdas de encabezado a la fila de encabezado
-    trHead.appendChild(thID);
-    trHead.appendChild(thName);
-    trHead.appendChild(thLastname);
-    trHead.appendChild(thCedule);
-    trHead.appendChild(thState);
     trHead.appendChild(thAction);
 
     const statusData = {
@@ -422,26 +411,17 @@ async function createModalBoxTable(idPerson = "") {
         data.forEach(element => {
             const row = tbody.insertRow(-1);
 
-            const id = row.insertCell(0);
-            id.innerText = element.id;
+            row.insertCell(0).innerText = element.id;
+            row.insertCell(1).innerText = element.name;
+            row.insertCell(2).innerText = element.lastName ?? "";
+            row.insertCell(3).innerText = element.cedule;
 
-            const name = row.insertCell(1);
-            name.innerText = element.name;
-
-            const lastname = row.insertCell(2);
-            lastname.innerText = element.lastName ?? "";
-
-            const cedule = row.insertCell(3);
-            cedule.innerText = element.cedule;
-
-            const status = row.insertCell(4);
             const statusSpan = document.createElement('span');
             statusSpan.innerHTML = statusData[element.id_status];
             statusSpan.classList.add("status", statusClass[element.id_status]);
-            status.appendChild(statusSpan);
-
-            const action = row.insertCell(5);
-            action.append(createButtonAssign(element.id, element.name + " " + element.lastName));
+            
+            row.insertCell(4).appendChild(statusSpan);
+            row.insertCell(5).append(createButtonAssign(element.id, element.name + " " + element.lastName));
         });
     })
     .catch(error => error);
@@ -519,13 +499,18 @@ async function save() {
     const id = document.getElementById("id").value;
     const jsonData = {
         username: document.getElementById("username").value,
-        idRole: document.getElementById("level").value,
-        id_status: Number(document.getElementById("status").value),
+        idRole: document.getElementById("idRole").value,
+        id_status: Number(document.getElementById("id_status").value),
         idPerson: document.getElementById("idPerson").value,
     }
 
     const method = id ? "PUT" : "POST";
-    if (id) jsonData.id = id;
+
+    if (id){
+        jsonData.id = id;
+    }else {
+        jsonData.password = document.getElementById("password").value;
+    }
 
     // Gardar los elementos en la base de datos
     await fetch(`${API_URL}/user`, {

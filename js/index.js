@@ -23,8 +23,8 @@ async function verifyToken() {
 
     const roles = {
         1: "admin/menu.html",
-        2: "student/assignmentStudent.html",
-        3: "professor/assignmentStudent.html",
+        2: "professor/enrollment.html",
+        3: "student/assignment.html",
     }
 
     if (!token.user.role || !roles[token.user.role]) {
