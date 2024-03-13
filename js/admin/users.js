@@ -411,26 +411,17 @@ async function createModalBoxTable(idPerson = "") {
         data.forEach(element => {
             const row = tbody.insertRow(-1);
 
-            const id = row.insertCell(0);
-            id.innerText = element.id;
+            row.insertCell(0).innerText = element.id;
+            row.insertCell(1).innerText = element.name;
+            row.insertCell(2).innerText = element.lastName ?? "";
+            row.insertCell(3).innerText = element.cedule;
 
-            const name = row.insertCell(1);
-            name.innerText = element.name;
-
-            const lastname = row.insertCell(2);
-            lastname.innerText = element.lastName ?? "";
-
-            const cedule = row.insertCell(3);
-            cedule.innerText = element.cedule;
-
-            const status = row.insertCell(4);
             const statusSpan = document.createElement('span');
             statusSpan.innerHTML = statusData[element.id_status];
             statusSpan.classList.add("status", statusClass[element.id_status]);
-            status.appendChild(statusSpan);
-
-            const action = row.insertCell(5);
-            action.append(createButtonAssign(element.id, element.name + " " + element.lastName));
+            
+            row.insertCell(4).appendChild(statusSpan);
+            row.insertCell(5).append(createButtonAssign(element.id, element.name + " " + element.lastName));
         });
     })
     .catch(error => error);

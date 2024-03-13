@@ -100,27 +100,18 @@ function dataTable(data) {
 
     data.forEach(element => {
         const row = tbody.insertRow(-1);
+        
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element?.student.person.name ?? "No name";
+        row.insertCell(2).innerText = element?.student.person.lastName ?? "No last name";
+        row.insertCell(3).innerText = element?.student.person.cedule;
 
-        const id = row.insertCell(0);
-        id.innerText = element.id;
-
-        const name = row.insertCell(1);
-        name.innerText = element?.student.person.name ?? "No name";
-
-        const lastname = row.insertCell(2);
-        lastname.innerText = element?.student.person.lastName ?? "No last name";
-
-        const cedule = row.insertCell(3);
-        cedule.innerText = element?.student.person.cedule;
-
-        const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
         
-        const action = row.insertCell(5);
-        action.appendChild(button.cloneNode(true));
+        row.insertCell(4).appendChild(statusSpan);
+        row.insertCell(5).appendChild(button.cloneNode(true));
     });
 
     addEvents();

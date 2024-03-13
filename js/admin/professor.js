@@ -55,29 +55,18 @@ function dataTable(data) {
         const row = tbody.insertRow(-1);
 
         // Crear columnas
-        const cellId = row.insertCell(0);
-        cellId.innerText = element.id;
-        
-        const cellName = row.insertCell(1);
-        cellName.innerText = element.person.name ?? "";
-        
-        const cellLastName = row.insertCell(2);
-        cellLastName.innerText = element.person.lastName ?? "";
+        row.insertCell(0).innerText = id;
+        row.insertCell(1).innerText = person.name || "";
+        row.insertCell(2).innerText = person.lastName || "";
+        row.insertCell(3).innerText = person.cedule || "";
+        row.insertCell(4).innerText = person.profession || "";
 
-        const cellCedule = row.insertCell(3);
-        cellCedule.innerText = element.person.cedule ?? "";
-
-        const cellProfession = row.insertCell(4);
-        cellProfession.innerText = element.person.profession ?? "";
-
-        const cellStatus = row.insertCell(5);
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        cellStatus.appendChild(statusSpan);
 
-        const cellAction = row.insertCell(6);
-        cellAction.appendChild(actionButton.cloneNode(true));
+        row.insertCell(5).appendChild(statusSpan);
+        row.insertCell(6).appendChild(actionButton.cloneNode(true));
 
     });
 

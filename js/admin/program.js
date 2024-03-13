@@ -90,26 +90,17 @@ function dataTable(data) {
     data.forEach(element => {
         const row = tbody.insertRow(-1);
 
-        const id = row.insertCell(0);
-        id.innerText = element.id;
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element?.subject.name;
+        row.insertCell(2).innerText = element?.professor.person.name + " " + element?.professor.person.lastName;
+        row.insertCell(3).innerText = element?.classroom.name;
 
-        const subject = row.insertCell(1);
-        subject.innerText = element?.subject.name;
-
-        const professor = row.insertCell(2);
-        professor.innerText = element?.professor.person.name + " " + element?.professor.person.lastName;
-
-        const classroom = row.insertCell(3);
-        classroom.innerText = element?.classroom.name;
-
-        const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
-
-        const action = row.insertCell(5);
-        action.appendChild(button.cloneNode(true));
+        
+        row.insertCell(4).appendChild(statusSpan);
+        row.insertCell(5).appendChild(button.cloneNode(true));
     });
 
     addEvents();

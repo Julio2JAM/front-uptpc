@@ -53,30 +53,19 @@ function dataTable(data) {
 
     data.forEach(element => {
         const row = table.insertRow(-1);
-
-        const id = row.insertCell(0);
-        id.innerText = element.id;
-
-        const name = row.insertCell(1);
-        name.innerText = element.person.name;
-
-        const lastname = row.insertCell(2);
-        lastname.innerText = element.person.lastName ?? "";
-
-        const cedule = row.insertCell(3);
-        cedule.innerText = element.person.cedule;
         
-        const email = row.insertCell(4);
-        email.innerText = element.person.email ?? "No posee";
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element.person.name;
+        row.insertCell(2).innerText = element.person.lastName ?? "";
+        row.insertCell(3).innerText = element.person.cedule;
+        row.insertCell(4).innerText = element.person.email ?? "No posee";
 
-        const status = row.insertCell(5);
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
-        status.appendChild(statusSpan);
         
-        const action = row.insertCell(6);
-        action.appendChild(button.cloneNode(true));
+        row.insertCell(5).appendChild(statusSpan);
+        row.insertCell(6).appendChild(button.cloneNode(true));
     });
 
     addEvents();
