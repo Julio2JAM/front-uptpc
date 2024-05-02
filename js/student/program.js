@@ -198,62 +198,54 @@ function createModalBox(data){
     var form = document.createElement("form");
     form.id = "modal-form";
 
-    // Name
-    var labelName = document.createElement("label");
-    labelName.for = "name";
-    labelName.innerHTML = "Nombre:";
-    var inputName = document.createElement("input");
-    inputName.type = "text";
-    inputName.id = "name";
-    inputName.placeholder = "Nombre";
-    inputName.value = data.professor?.person.name ?? "";
-    inputName.disabled = true;
+    const personData = [
+        {
+            id: "name",
+            placeholder: "Nombre",
+            value: data?.student?.person.name ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "lastname",
+            placeholder: "Apellido",
+            value: data?.student?.person.lastname ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "cedule",
+            placeholder: "Cedula",
+            value: data?.student?.person.cedule ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "phone",
+            placeholder: "Phone",
+            value: data?.student?.person.phone ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "email",
+            placeholder: "Email",
+            value: data?.student?.person.email ?? "",
+            type:"text",
+            disabled: true
+        }
+    ];
 
-    form.appendChild(labelName);
-    form.appendChild(inputName);
+    for (const value of personData) {
+        const label = document.createElement("label");
+        label.for = value.id;
+        label.innerHTML = value.placeholder + ":";
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        form.appendChild(label);
+        form.appendChild(input);
+    }
 
-    // LastName
-    var labelLastname = document.createElement("label");
-    labelLastname.for = "lastname";
-    labelLastname.innerHTML = "Apellido:";
-    var inputLastname = document.createElement("input");
-    inputLastname.type = "text";
-    inputLastname.id = "lastname";
-    inputLastname.placeholder = "Apellido";
-    inputLastname.value = data.professor?.person.lastName ?? "";
-    inputLastname.disabled = true;
-
-    form.appendChild(labelLastname);
-    form.appendChild(inputLastname);
-
-    // Phone
-    var labelPhone = document.createElement("label");
-    labelPhone.for = "phone";
-    labelPhone.innerHTML = "Telefono:";
-    var inputPhone = document.createElement("input");
-    inputPhone.type = "text";
-    inputPhone.id = "phone";
-    inputPhone.placeholder = "Telefono";
-    inputPhone.value = data.professor?.person.phone ?? "";
-    inputPhone.disabled = true;
-    
-    form.appendChild(labelPhone);
-    form.appendChild(inputPhone);
-
-    // Email
-    var labelEmail = document.createElement("label");
-    labelEmail.for = "email";
-    labelEmail.innerHTML = "Email:";
-    var inputEmail = document.createElement("input");
-    inputEmail.type = "email";
-    inputEmail.id = "email";
-    inputEmail.placeholder = "Email";
-    inputEmail.value = data.professor?.person?.email ?? "No posee";
-    inputEmail.disabled = true;
-
-    form.appendChild(labelEmail);
-    form.appendChild(inputEmail);
-    
     var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
     var options = [

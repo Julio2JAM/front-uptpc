@@ -186,27 +186,32 @@ function createModalBox(data){
         {
             id: "name",
             placeholder: "Nombre",
-            value: data?.student?.person.name ?? ""
+            value: data?.student?.person.name ?? "",
+            disabled: true
         },
         {
             id: "lastname",
             placeholder: "Apellido",
-            value: data?.student?.person.lastname ?? ""
+            value: data?.student?.person.lastname ?? "",
+            disabled: true
         },
         {
             id: "cedule",
             placeholder: "Cedula",
-            value: data?.student?.person.cedule ?? ""
+            value: data?.student?.person.cedule ?? "",
+            disabled: true
         },
         {
             id: "phone",
             placeholder: "Phone",
-            value: data?.student?.person.phone ?? ""
+            value: data?.student?.person.phone ?? "",
+            disabled: true
         },
         {
             id: "email",
             placeholder: "Email",
-            value: data?.student?.person.email ?? ""
+            value: data?.student?.person.email ?? "",
+            disabled: true
         }
     ];
 
@@ -234,6 +239,7 @@ function createModalBox(data){
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
+    selectStatus.disabled = true;
 
     form.appendChild(labelStatus);
     form.appendChild(selectStatus);

@@ -1,6 +1,7 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
-const API_URL = "http://localhost:3000/api"
+const API_URL = "http://localhost:3000/api";
+const token = sessionStorage.getItem('token');
 
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
@@ -60,7 +61,10 @@ async function loadClassroomEvents(id) {
     const classroom = document.getElementById("classroom");
     classroom.value = id;
 
-    await fetch(`${API_URL}/program/?idClassroom=${id}`)
+    await fetch(`${API_URL}/program/?idClassroom=${id}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
         .then(response => response.json())
         .then(data => dataTable(data))
         .catch(error => error);
@@ -125,7 +129,10 @@ async function search() {
         data[element.id.replace("filter-", "")] = element.value;
     }
 
-    await fetch(`${API_URL}/program/?idClassroom=${classroom}&subjectName=${data["subject"]}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`)
+    await fetch(`${API_URL}/program/?idClassroom=${classroom}&subjectName=${data["subject"]}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
         .then(response => response.json())
         .then(data => dataTable(data))
         .catch(error => console.log(error));
@@ -138,7 +145,10 @@ async function detail(event) {
     const row = event.target.closest('tr');
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/program/?id=${id}`)
+    await fetch(`${API_URL}/program/?id=${id}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
         .then(response => response.json())
         .then(data => createModalBox(data[0]))
         .catch(err => console.error(err));
@@ -556,13 +566,16 @@ async function save() {
     const method = id ? "PUT" : "POST";
     if (id) jsonData.id = id;
 
-    console.log(jsonData);
+    console.log(JSON.stringify(jsonData));
 
     // Gardar los elementos en la base de datos
     await fetch(`${API_URL}/program`, {
         method: method,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(jsonData)
+        headers: { 
+            "content-type": "application/json" ,
+            "authorization": 'Bearer ' + token
+        },
+        body: JSON.stringify(jsonData),
     })
     .then(response => response.json())
     .then(data => search())
