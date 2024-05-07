@@ -1,6 +1,13 @@
 API_URL = 'http://localhost:3000/api'
 const token = sessionStorage.getItem('token');
 
+// Cambiar de pagina.
+document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
+    element.addEventListener("click", () => {
+        location.href = `${element.id.replace("-change", "")}.html`;
+    });
+});
+
 //
 window.addEventListener('load', async () => await search(null));
 document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
