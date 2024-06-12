@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asignaturas</title>
+    <title>Actividad</title>
     <link rel="stylesheet" href="../../css/NEW-MENU.css">
     <link rel="stylesheet" href="../../css/NEW-MODAL.css">
 </head>
@@ -31,6 +31,9 @@
             <header class="filter-container">
                 <form>
                     <input type="text" placeholder="Filtrar por id" id="filter-id">
+                    <select id="filter-subject">
+                        <option value="">Seleccione una materia</option>
+                    </select>
                     <input type="text" placeholder="Filtrar por titulo" id="filter-title">
                     <!-- <input type="text" placeholder="Filtrar por porcentaje" id="filter-porcentage">
                     <input type="text" placeholder="Filtrar por base" id="filter-base"> -->
@@ -54,6 +57,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Materia</th>
                             <th>Titulo</th>
                             <th>Descripcion</th>
                             <!-- <th>Porcentaje</th>

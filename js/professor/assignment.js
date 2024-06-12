@@ -9,7 +9,32 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
 });
 
 //
-window.addEventListener('load', async () => await search(null));
+window.addEventListener("load", async () => {
+    await subject();
+    await search();
+});
+
+async function subject() {
+    const select = document.getElementById("filter-subject");
+    select.innerHTML = "";
+
+    const startOption = new Option("Seleccione una materia", "");
+    select.add(startOption);
+    
+    await fetch(`${API_URL}/program/`,{
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(element => {
+            const option = new Option(element.subject.name, element.id);
+            select.add(option);
+        });
+    })
+    .catch(err => console.log(err))
+}
+
 document.getElementById("search-filter-btn").addEventListener("click", async () => await search());
 
 //
@@ -54,7 +79,6 @@ function dataTable(data){
         id: null,
         title: "Sin nombre.",
         description: "Descripción vacia.",
-        // porcentage: "No asignado.",
         // base:"No asignado.",
         datetime_start:"No asignado.",
         datetime_end:"No asignado.",
@@ -70,6 +94,10 @@ function dataTable(data){
             iterator++;
         }
         
+        const cell = row.insertCell(1);
+        cell.innerHTML = element.subject.name
+        iterator++
+
         const status = row.insertCell(iterator);
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
@@ -184,6 +212,16 @@ function createModalBox(data){
     form.querySelector('label').style.display = "none";
     form.querySelector('input').style.display = "none";
 
+    const labelSubject = document.createElement("label");
+    labelSubject.for = "subject";
+    labelSubject.innerHTML = "Materia:";
+    const selectSubject = document.getElementById("filter-subject").cloneNode(true);
+    selectSubject.id = "idSubject";
+    selectSubject.value = data?.subject?.id ?? "";
+
+    form.appendChild(labelSubject);
+    form.appendChild(selectSubject);
+    
     // Status
     var labelStatus = document.createElement("label");
     var selectStatus = document.createElement("select");
@@ -262,7 +300,7 @@ async function save (){
     const jsonData = {
         title: document.getElementById("title").value,
         description: document.getElementById("description").value,
-        // porcentage: document.getElementById("description").value,
+        idSubject: document.getElementById("idSubject").value,
         // base: document.getElementById("description").value,
         datetime_start: !document.getElementById("datetimeStart").value ? null : document.getElementById("datetimeStart").value , 
         datetime_end: !document.getElementById("datetimeEnd").value ? null : document.getElementById("datetimeEnd").value,

@@ -223,8 +223,6 @@ function createModalBox(data) {
     selectRole = selectRole.cloneNode(true);
     selectRole.id = "idRole";
     selectRole.value = data?.role?.id ?? "";
-    console.log(data?.role?.id);
-    console.log(selectRole.value);
 
     form.appendChild(labelRole);
     form.appendChild(selectRole);
