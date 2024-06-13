@@ -49,14 +49,17 @@ async function createModalList(){
     const ul = document.createElement("ul");
     ul.id = "classList";
 
-    await fetch(`${API_URL}/classroom/`)
+    await fetch(`${API_URL}/program/`,{
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
     .then(data => {
         data.forEach(element => {
             const li = document.createElement("li");
             const a = document.createElement("a");
-            a.innerHTML = element?.name;
-            a.addEventListener("click", () => loadClassroomEvents(element.id, element?.name))
+            a.innerHTML = element.classroom.name;
+            a.addEventListener("click", () => loadClassroomEvents(element.classroom.id, element.classroom.name))
 
             li.appendChild(a);
             ul.appendChild(li);
@@ -207,9 +210,182 @@ async function save() {
 
 };
 
-var newStudentList = [];
+var newAssignmentList = [];
 
-document.getElementById("new").addEventListener("click", async () => createModalBoxTable());
+document.getElementById("new").addEventListener("click", async () => createModalBox());
+
+function createModalBox(data) {
+    // Crear divs contenedores
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "modal";
+
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+
+    const header = document.createElement("header");
+    const section = document.createElement("section");
+    const form = document.createElement("form");
+
+    // Crear elementos del DOM
+    const h3 = document.createElement("h3");
+
+    const img = document.createElement("img");
+    img.src = "../../source/user-icon.png";
+    const buttonClose = document.createElement("button");
+    buttonClose.className = "close-btn";
+    buttonClose.innerHTML = "&times;"
+
+    h3.appendChild(img);
+    h3.innerHTML += "User:";
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+
+    const labelId = document.createElement("label");
+    labelId.for = "id";
+    labelId.innerHTML = "ID:";
+    labelId.style.display = "none";
+    const inputId = document.createElement("input");
+    inputId.type = "text";
+    inputId.id = "id";
+    inputId.placeholder = "ID";
+    inputId.value = data?.id ?? "";
+    inputId.style.display = "none";
+
+    form.appendChild(labelId);
+    form.appendChild(inputId);
+
+    const labelBase = document.createElement("label");
+    labelBase.for = "base";
+    labelBase.innerHTML = "Base:";
+    const inputBase = document.createElement("input");
+    inputBase.type = "text";
+    inputBase.id = "base";
+    inputBase.placeholder = "Base";
+    inputBase.value = data?.base ?? "";
+
+    form.appendChild(labelBase);
+    form.appendChild(inputBase);
+
+    const labelPercentage = document.createElement("label");
+    labelPercentage.for = "percentage";
+    labelPercentage.innerHTML = "Porcentaje:";
+    const inputPercentage = document.createElement("input");
+    inputPercentage.type = "text";
+    inputPercentage.id = "percentage";
+    inputPercentage.placeholder = "Porcentaje";
+    inputPercentage.value = data?.percentage ?? "";
+
+    form.appendChild(labelPercentage);
+    form.appendChild(inputPercentage);
+
+    const labelIdAssignment = document.createElement("label");
+    labelIdAssignment.for = "idAssignment";
+    labelIdAssignment.innerHTML = "Assignment ID:";
+    labelIdAssignment.style.display = "none";
+    const inputIdAssignment = document.createElement("input");
+    inputIdAssignment.type = "text";
+    inputIdAssignment.id = "idAssignment";
+    inputIdAssignment.placeholder = "ID";
+    inputIdAssignment.value = data?.assignment.id ?? "";
+    inputIdAssignment.style.display = "none";
+
+    form.appendChild(labelIdAssignment);
+    form.appendChild(inputIdAssignment);
+
+    const labelAssignment = document.createElement("label");
+    labelAssignment.for = "assignment";
+    labelAssignment.innerHTML = "Actividad:";
+    const inputAssignment = document.createElement("input");
+    inputAssignment.type = "text";
+    inputAssignment.id = "assignment";
+    inputAssignment.placeholder = "Actividad";
+    inputAssignment.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
+    inputAssignment.addEventListener("click", () => createModalBoxTable(data?.person?.id));
+
+    form.appendChild(labelAssignment);
+    form.appendChild(inputAssignment);
+
+    const labelSubject = document.createElement("label");
+    labelSubject.for = "subject";
+    labelSubject.innerHTML = "Materia:";
+    const selectSubject = document.getElementById("filter-subject").cloneNode(true);
+    selectSubject.id = "filter-subject";
+    selectSubject.value = "";
+    selectSubject.disabled = true;
+    form.appendChild(selectSubject);
+
+    form.appendChild(labelSubject);
+    form.appendChild(selectSubject);
+
+    const labelStatus = document.createElement("label");
+    const selectStatus = document.createElement("select");
+    const options = [
+        { value: -1, label: "Eliminado" },
+        { value: 0, label: "No disponible" },
+        { value: 1, label: "Disponible" }
+    ];
+    labelStatus.textContent = "Estado";
+    selectStatus.id = "id_status";
+    for (const option of options) {
+        selectStatus.add(new Option(option.label, option.value));
+    }
+    selectStatus.value = data?.id_status ?? 1;
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
+    const buttonSubmit = document.createElement("button");
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
+    buttonSubmit.type = "submit";
+    buttonSubmit.id = "save";
+    buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+
+    const buttonReset = document.createElement("button");
+    buttonReset.type = "reset";
+    buttonReset.id = "reset";
+    buttonReset.innerHTML = "Borrar";
+    buttonReset.addEventListener("click", () => {
+        inputId.value = data?.id ?? "";
+        inputUser.value = data?.username ?? "";
+        inputPerson.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
+        selectRole.value = data?.level?.id ?? "";
+        selectStatus.value = data?.id_status ?? 1;
+    });
+
+    section.appendChild(form);
+
+    const footer = document.createElement("footer");
+    footer.appendChild(buttonSubmit);
+    footer.appendChild(buttonReset);
+
+    modalContent.appendChild(header);
+    modalContent.appendChild(section);
+    modalContent.appendChild(footer);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    buttonClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+        if (event.target.id == "modal") {
+            closeModal();
+        }
+    });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+            modal.remove();
+        }, 260);
+    }
+}
+
 async function createModalBoxTable(idPerson = "") {
 
     // Crear divs contenedores
@@ -378,13 +554,23 @@ async function createModalBoxTable(idPerson = "") {
 
     //
     const footer = document.createElement("footer");
+    
+    //
+    const loadButton = document.createElement("button");
+    loadButton.id = "load";
+    loadButton.className = "change-button";
+    loadButton.innerHTML = "Cargar actividades";
+    loadButton.addEventListener("click", async () => await loadAssignment());
+    footer.appendChild(loadButton);
+
+    //
     const closeButton = document.createElement("button");
     closeButton.id = "close";
     closeButton.className = "change-button";
     closeButton.innerHTML = "Salir";
+    footer.appendChild(closeButton);
 
     //
-    footer.appendChild(closeButton);
     tableContainer.appendChild(footer);
 
     container.appendChild(tableContainer);
@@ -414,28 +600,30 @@ function createCheck(id){
     checkbox.type = "checkbox";
     checkbox.id = id + "-checkbox";
     checkbox.value = id;
-    checkbox.addEventListener("change", (event) => addStudent(event))
+    checkbox.addEventListener("change", (event) => addAssignment(event))
 
     // const label = document.createElement("label");
     // label.for = checkbox.id;
     return checkbox;
 }
 
-function addStudent(event){
-    event.target.checked ? newStudentList[newStudentList.length] = event.target.value : newStudentList.splice(newStudentList.indexOf(event.target.value), 1);
-    console.log(event.target);
-    console.log(newStudentList);
+function addAssignment(event){
+    event.target.checked ? newAssignmentList[newAssignmentList.length] = event.target.value : newAssignmentList.splice(newAssignmentList.indexOf(event.target.value), 1);
+    document.getElementById('load').className = newAssignmentList.length == 0 ? "change-button" : "change-button active";
 }
 
-async function loadEnrollment(){
+async function loadAssignment(){
 
-    for (const value of newStudentList) {
-        await fetch(`${API_URL}/enrollment`, {
+    for (const value of newAssignmentList) {
+        await fetch(`${API_URL}/assignment_enrollment`, {
             method: "POST",
-            headers: {"content-type": "application/json"},
+            headers: {
+                "content-type": "application/json",
+                "authorization": "Bearer " + token
+            },
             body: JSON.stringify({
-                "student": value,
-                "classroom": document.getElementById("classroom").value
+                "idAssigment": value,
+                "idClassroom": document.getElementById("classroom").value
             })
         })
         .then(response => response.json())
