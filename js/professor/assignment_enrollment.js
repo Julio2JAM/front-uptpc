@@ -128,16 +128,17 @@ function dataTable(data) {
         const row = tbody.insertRow(-1);
         
         row.insertCell(0).innerText = element.id;
-        row.insertCell(1).innerText = element?.student.person.name ?? "No name";
-        row.insertCell(2).innerText = element?.student.person.lastName ?? "No last name";
-        row.insertCell(3).innerText = element?.student.person.cedule;
+        row.insertCell(1).innerText = element?.assignment.title ?? "Sin titulo";
+        row.insertCell(2).innerText = element?.assignment.description ?? "Sin descripcion";
+        row.insertCell(3).innerText = element?.assignment.datetime_start ?? "Sin fecha inicial";
+        row.insertCell(4).innerText = element?.assignment.datetime_end ?? "Sin fecha final";
 
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
         
-        row.insertCell(4).appendChild(statusSpan);
-        row.insertCell(5).appendChild(button.cloneNode(true));
+        row.insertCell(5).appendChild(statusSpan);
+        row.insertCell(6).appendChild(button.cloneNode(true));
     });
 
     addEvents();
@@ -181,39 +182,18 @@ async function detail(event){
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/enrollment/?id=${id}`, {
+    await fetch(`${API_URL}/assignment_enrollment/?id=${id}`, {
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
     .then(response => response.json())
-    .then(data => data)
+    .then(data => createModalBox(data[0]))
     .catch(error => console.log(error));
 }
-
-// Obtener el elemento "save" y agregarle un evento
-async function save() {
-
-    const jsonData = {
-        id : document.getElementById("id").value,
-        id_status: document.getElementById("id_status").value,
-    }
-
-    // Gardar los elementos en la base de datos
-    await fetch(`${API_URL}/enrollment`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(jsonData)
-    })
-    .then(response => response.json())
-    .then(data => search())
-    .catch(error => console.error('Ha ocurrido un error: ', error));
-
-};
 
 var newAssignmentList = [];
 
 document.getElementById("new").addEventListener("click", async () => createModalBox());
-
 function createModalBox(data) {
     // Crear divs contenedores
     const modal = document.createElement("div");
@@ -300,7 +280,8 @@ function createModalBox(data) {
     inputAssignment.type = "text";
     inputAssignment.id = "assignment";
     inputAssignment.placeholder = "Actividad";
-    inputAssignment.value = data?.person?.id ? data?.person?.name + " " + data?.person?.lastName : "";
+    inputAssignment.value = data?.assignment.id ? data?.assignment.title : "";
+    inputAssignment.disabled = data?.assignment.id ? true : false;
     inputAssignment.addEventListener("click", () => createModalBoxTable(data?.person?.id));
 
     form.appendChild(labelAssignment);
@@ -309,14 +290,15 @@ function createModalBox(data) {
     const labelSubject = document.createElement("label");
     labelSubject.for = "subject";
     labelSubject.innerHTML = "Materia:";
-    const selectSubject = document.getElementById("filter-subject").cloneNode(true);
-    selectSubject.id = "filter-subject";
-    selectSubject.value = "";
-    selectSubject.disabled = true;
-    form.appendChild(selectSubject);
+    const inputSubject = document.createElement("input");
+    inputSubject.type = "text";
+    inputSubject.id = "subject";
+    inputSubject.placeholder = "Materia";
+    inputSubject.value = data?.assignment.subject.name ?? "";
+    inputSubject.disabled = true;
 
     form.appendChild(labelSubject);
-    form.appendChild(selectSubject);
+    form.appendChild(inputSubject);
 
     const labelStatus = document.createElement("label");
     const selectStatus = document.createElement("select");
@@ -534,8 +516,8 @@ async function createModalBoxTable(idPerson = "") {
             statusSpan.classList.add("status", statusClass[element.id_status]);
             
             row.insertCell(6).appendChild(statusSpan);
-            const action = row.insertCell(7);
-            action.append(createCheck(element.id));
+            row.insertCell(7).append(createButtonAssign(element.id, element.title, element.subject.name));
+            // row.insertCell(7).append(createCheck(element.id));
 
         });
     })
@@ -556,12 +538,12 @@ async function createModalBoxTable(idPerson = "") {
     const footer = document.createElement("footer");
     
     //
-    const loadButton = document.createElement("button");
+    /*const loadButton = document.createElement("button");
     loadButton.id = "load";
     loadButton.className = "change-button";
     loadButton.innerHTML = "Cargar actividades";
     loadButton.addEventListener("click", async () => await loadAssignment());
-    footer.appendChild(loadButton);
+    footer.appendChild(loadButton);*/
 
     //
     const closeButton = document.createElement("button");
@@ -595,6 +577,63 @@ async function createModalBoxTable(idPerson = "") {
     }
 }
 
+function createButtonAssign(id, title, subject) {
+    const button = document.createElement("button");
+    button.innerHTML = "Asignar";
+    button.className = "new";
+    button.addEventListener("click", () => {
+        const imputidAssignment = document.getElementById("idAssignment");
+        imputidAssignment.value = id;
+
+        const imputAssignment = document.getElementById("assignment");
+        imputAssignment.value = title;
+
+        const imputSubject = document.getElementById("subject");
+        imputSubject.value = subject;
+
+        const modalTable = document.getElementById("modal-table");
+        modalTable.classList.add("close-modal");
+        setTimeout(() => {
+            modalTable.style.display = "none";
+            modalTable.classList.remove("close-modal");
+            modalTable.remove();
+        }, 260);
+
+    });
+    return button;
+}
+
+// Obtener el elemento "save" y agregarle un evento
+async function save() {
+
+    const id = document.getElementById("id").value;
+    const jsonData = {
+        base            : document.getElementById("base").value,
+        percentage      : document.getElementById("percentage").value,
+        idAssignment    : document.getElementById("idAssignment").value,
+        idClassroom     : document.getElementById("classroom").value,
+    }
+
+    console.log("2");
+    const method = id ? "PUT" : "POST";
+    if(id) jsonData.id = id;
+
+    // Gardar los elementos en la base de datos
+    await fetch(`${API_URL}/assignment_enrollment`, {
+        method: method,
+        headers: { 
+            "content-type": "application/json",
+            "authorization": "Bearer " + token
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
+
+};
+
+/*
 function createCheck(id){
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -606,7 +645,6 @@ function createCheck(id){
     // label.for = checkbox.id;
     return checkbox;
 }
-
 function addAssignment(event){
     event.target.checked ? newAssignmentList[newAssignmentList.length] = event.target.value : newAssignmentList.splice(newAssignmentList.indexOf(event.target.value), 1);
     document.getElementById('load').className = newAssignmentList.length == 0 ? "change-button" : "change-button active";
@@ -639,3 +677,4 @@ async function loadAssignment(){
     }, 260);
 
 }
+*/
