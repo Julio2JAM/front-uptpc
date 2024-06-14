@@ -29,7 +29,9 @@
 
             <header class="filter-container">
                 <form>
-                    <input type="text" placeholder="Filtrar por nombre de la Asignatura" id="filter-professor-name">
+                    <select id="filter-subject">
+                        <option value="">Seleccione una asignatura</option>
+                    </select>
                     <input type="text" placeholder="Filtrar por titulo de la actividad" id="filter-professor-lastname">
                     <input type="text" placeholder="Filtrar por descripcion de la actividad" id="filter-professor-lastname">
                     <select id="filter-status">
@@ -53,6 +55,8 @@
                             <th>Asignatura</th>
                             <th>Titulo</th>
                             <th>Descripcion</th>
+                            <th>Fecha de inicio</th>
+                            <th>Fecha de fin</th>
                             <th>Estado</th>
                             <th>Acción</th>
                         </tr>
