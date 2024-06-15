@@ -130,15 +130,17 @@ function dataTable(data) {
         row.insertCell(0).innerText = element.id;
         row.insertCell(1).innerText = element?.assignment.title ?? "Sin titulo";
         row.insertCell(2).innerText = element?.assignment.description ?? "Sin descripcion";
-        row.insertCell(3).innerText = element?.assignment.datetime_start ?? "Sin fecha inicial";
-        row.insertCell(4).innerText = element?.assignment.datetime_end ?? "Sin fecha final";
+        row.insertCell(3).innerText = element?.base ?? "Sin descripcion";
+        row.insertCell(4).innerText = element?.percentage ?? "Sin descripcion";
+        row.insertCell(5).innerText = element?.assignment.datetime_start ?? "Sin fecha inicial";
+        row.insertCell(6).innerText = element?.assignment.datetime_end ?? "Sin fecha final";
 
         const statusSpan = document.createElement('span');
         statusSpan.innerText = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
         
-        row.insertCell(5).appendChild(statusSpan);
-        row.insertCell(6).appendChild(button.cloneNode(true));
+        row.insertCell(7).appendChild(statusSpan);
+        row.insertCell(8).appendChild(button.cloneNode(true));
     });
 
     addEvents();
@@ -161,7 +163,7 @@ async function search() {
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/enrollment/?idClassroom=${classroom}&personName=${data["name"]}&personLastName=${data["lastname"]}&personCedule=${data["cedule"]}&idStatus=${data["status"]}`, {
+    await fetch(`${API_URL}/assignment_enrollment/?idClassroom=${classroom}&title=${data["title"]}&datatimeStart=${data["datatime_start"]}&datetimeEnd=${data["datetime_end"]}&idStatus=${data["status"]}`, {
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -195,6 +197,11 @@ var newAssignmentList = [];
 
 document.getElementById("new").addEventListener("click", async () => createModalBox());
 function createModalBox(data) {
+
+    if(!document.getElementById("classroom").value){
+        return;
+    }
+
     // Crear divs contenedores
     const modal = document.createElement("div");
     modal.className = "modal";
@@ -612,6 +619,7 @@ async function save() {
         percentage      : document.getElementById("percentage").value,
         idAssignment    : document.getElementById("idAssignment").value,
         idClassroom     : document.getElementById("classroom").value,
+        id_status       : document.getElementById("id_status").value,
     }
 
     console.log("2");

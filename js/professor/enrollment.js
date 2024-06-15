@@ -2,7 +2,6 @@ const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 var printData = [];
 
-
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("select-classroon").addEventListener("click", async () => await createModalList());
 

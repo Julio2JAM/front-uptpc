@@ -187,7 +187,10 @@ async function createModalBox(data) {
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -246,8 +249,8 @@ async function save(){
     const id  = document.getElementById("id").value;
     const jsonData = {
         name: document.getElementById("name").value, 
-        datetime_start: !document.getElementById("datetime_start").value ? null : document.getElementById("datetime_start").value , 
-        datetime_end: !document.getElementById("datetime_end").value ? null : document.getElementById("datetime_end").value,
+        datetime_start: !document.getElementById("datetimeStart").value ? null : document.getElementById("datetimeStart").value , 
+        datetime_end: !document.getElementById("datetimeEnd").value ? null : document.getElementById("datetimeEnd").value,
         id_status: Number(document.getElementById("status").value)
     };
 
