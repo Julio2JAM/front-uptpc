@@ -83,7 +83,7 @@ async function loadClassroomEvents(id, name){
     // classroom.value = name;
     classroom.value = id;
 
-    await fetch(`${API_URL}/assignment_enrollment/?idClassroom=${id}`,{
+    await fetch(`${API_URL}/assignment_entry/?idClassroom=${id}`,{
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -143,7 +143,7 @@ function createButtons(innerText, className, id, clickCb){
 }
 
 async function detail(id) {
-    await fetch(`${API_URL}/assignment_enrollment/?id=${id}`)
+    await fetch(`${API_URL}/assignment_entry/?id=${id}`)
     .then(response => response.json())
     .then(data => createModalBox(data[0]))
     .catch(err => console.error(err))
@@ -321,7 +321,7 @@ async function search() {
         data[element.id.replace("filter-","")] = element.value;
     }
 
-    await fetch(`${API_URL}/assignment_enrollment/?idClassroom=${classroom}&idSubject=${data?.subject}&professorName=${data.professor}&status=${data.status}`)
+    await fetch(`${API_URL}/assignment_entry/?idClassroom=${classroom}&idSubject=${data?.subject}&professorName=${data.professor}&status=${data.status}`)
     .then(response => response.json())
     .then(data => dataTable(data))
     .catch(err => console.error(err))

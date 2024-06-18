@@ -92,7 +92,7 @@ async function loadClassroomEvents(id, name){
     // classroom.value = name;
     classroom.value = id;
 
-    await fetch(`${API_URL}/assignment_enrollment/?idClassroom=${id}`,{
+    await fetch(`${API_URL}/assignment_entry/?idClassroom=${id}`,{
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -163,7 +163,7 @@ async function search() {
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/assignment_enrollment/?idClassroom=${classroom}&title=${data["title"]}&datatimeStart=${data["datatime_start"]}&datetimeEnd=${data["datetime_end"]}&idStatus=${data["status"]}`, {
+    await fetch(`${API_URL}/assignment_entry/?idClassroom=${classroom}&title=${data["title"]}&datatimeStart=${data["datatime_start"]}&datetimeEnd=${data["datetime_end"]}&idStatus=${data["status"]}`, {
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -184,7 +184,7 @@ async function detail(event){
     const row = event.target.closest("tr");
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/assignment_enrollment/?id=${id}`, {
+    await fetch(`${API_URL}/assignment_entry/?id=${id}`, {
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -627,7 +627,7 @@ async function save() {
     if(id) jsonData.id = id;
 
     // Gardar los elementos en la base de datos
-    await fetch(`${API_URL}/assignment_enrollment`, {
+    await fetch(`${API_URL}/assignment_entry`, {
         method: method,
         headers: { 
             "content-type": "application/json",
@@ -661,7 +661,7 @@ function addAssignment(event){
 async function loadAssignment(){
 
     for (const value of newAssignmentList) {
-        await fetch(`${API_URL}/assignment_enrollment`, {
+        await fetch(`${API_URL}/assignment_entry`, {
             method: "POST",
             headers: {
                 "content-type": "application/json",
