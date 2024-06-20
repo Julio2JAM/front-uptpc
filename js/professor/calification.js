@@ -59,16 +59,13 @@ async function loadClassroomEvents(id, name){
     // classroom.value = name;
     classroom.value = id;
 
-    const assignment_entry = await fetch(`${API_URL}/assignment_entry/?idClassroom=${id}`,{
+    await fetch(`${API_URL}/assignment_entry/assignment_students/?idClassroom=${id}`,{
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
     .then(response => response.json())
-    .then(data => data)
+    .then(data => dataTable(data))
     .catch(error => error);
-
-
-    dataTable();
 
 }
 
@@ -113,21 +110,20 @@ function dataTable(data) {
         "0": "unavailable",
         "1": "available"
     };
-
-    data.forEach(element => {
+    
+    data.student.forEach(element => {
         const row = tbody.insertRow(-1);
+        row.insertCell(0).innerText = element?.cedule;
+        row.insertCell(1).innerText = element?.fullName;
+        // row.insertCell(3).innerText = element?.assignment_entry.assignment.subject.name;
 
-        row.insertCell(0).innerText = element.id;
-        row.insertCell(1).innerText = element?.student.person.name ?? "No name";
-        row.insertCell(2).innerText = element?.student.person.lastName ?? "No last name";
-        row.insertCell(3).innerText = element?.student.person.cedule;
-
-        const statusSpan = document.createElement('span');
-        statusSpan.innerText = statusData[element.id_status];
-        statusSpan.classList.add("status", statusClass[element.id_status]);
+        // const statusSpan = document.createElement('span');
+        // statusSpan.innerText = statusData[element.id_status];
+        // statusSpan.classList.add("status", statusClass[element.id_status]);
         
-        row.insertCell(4).appendChild(statusSpan);
-        row.insertCell(5).appendChild(button.cloneNode(true));
+        // row.insertCell(4).appendChild(statusSpan);
+        // row.insertCell(5).appendChild(button.cloneNode(true));
+
     });
 
 }
