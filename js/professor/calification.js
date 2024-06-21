@@ -126,5 +126,62 @@ function dataTable(data) {
         }
     });
 
+    const loadBtn = document.getElementById('new');
+    loadBtn.addEventListener("click", async () => await load());
 }
 
+async function load(){
+
+    const tbody = document.querySelector("tbody");
+    const trArray = tbody.querySelectorAll("tr");
+
+    if(trArray.length == 0){
+        return;
+    }
+
+    const califications = [];
+    for (const tr of trArray) {
+
+        const inputs = tr.querySelectorAll("input");
+        if(inputs.length == 0){
+            continue;
+        }
+
+        for (const input of inputs) {
+            
+            if(!input.id || !input.id.includes('S') || !input.id.includes('A')){
+                continue;
+            }
+
+            const [idStudent, idAssignmentEntry] = input.id.split('-');
+            
+            if(!idStudent || !idAssignmentEntry){
+                continue;
+            }
+            if(input.id.startsWith('A')){
+                [idStudent, idAssignmentEntry] = [idAssignmentEntry, idStudent];
+            }
+
+            const data = {
+                idStudent: idStudent.slice(1),
+                idAssignmentEntry: idAssignmentEntry.slice(1),
+                value: input.value,
+            }
+            califications.push(data);
+
+        }
+
+    }
+    
+    await fetch(`${API_URL}/enrollment`, {
+        method: "POST",
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify({
+            "student": value,
+            "classroom": document.getElementById("classroom").value
+        })
+    })
+    .then(response => response.json())
+    .then(data => search())
+    .catch(error => console.error('Ha ocurrido un error: ', error));
+}

@@ -32,11 +32,8 @@
                 <form>
                     <input type="text" placeholder="Filtrar por nombre" id="filter-name">
                     <input type="text" placeholder="Filtrar por cedula" id="filter-cedule">
-                    <select id="filter-status">
-                        <option value="">Seleccione un estado</option>
-                        <option value="-1">Eliminado</option>
-                        <option value="0">No disponible</option>
-                        <option value="1">Disponible</option>
+                    <select id="filter-subject">
+                        <option value="">Seleccione una materia</option>
                     </select>
                     <div class="filter-btn-container">
                         <button type="button" id="search-filter-btn">Filtrar</button>
@@ -59,6 +56,7 @@
             </section>
 
             <footer>
+                <button class="new" type="button" id="new">Guardar</button>
                 <input type="text" placeholder="Classroom" id="classroom">
                 <button type="button" class="change-button active" id="select-classroon">Seleccionar seccion</button>
             </footer>
