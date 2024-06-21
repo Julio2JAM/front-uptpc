@@ -95,35 +95,35 @@ function dataTable(data) {
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
-    const button = document.createElement("button");
-    button.className = "view-button";
-    button.innerText = "Ver mas";
+    const thead = document.querySelector("thead").querySelector('tr');
 
-    const statusData = {
-        "-1": "Eliminado",
-        "0": "No disponible",
-        "1": "Disponible"
-    };
+    const arrayInputs = [];
+    data.assignment_entry.forEach(element => {
 
-    const statusClass = {
-        "-1": "deleted",
-        "0": "unavailable",
-        "1": "available"
-    };
-    
+        const th = document.createElement("th");
+        th.innerHTML = element?.assignment.title;
+        thead.appendChild(th);
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = 0;
+        input.max = element?.base;
+        input.id = element?.id;
+
+        arrayInputs.push(input);
+
+    });
+
     data.student.forEach(element => {
         const row = tbody.insertRow(-1);
-        row.insertCell(0).innerText = element?.cedule;
-        row.insertCell(1).innerText = element?.fullName;
-        // row.insertCell(3).innerText = element?.assignment_entry.assignment.subject.name;
+        row.insertCell(0).innerText = element?.cedule;      //1
+        row.insertCell(1).innerText = element?.fullName;    //2
 
-        // const statusSpan = document.createElement('span');
-        // statusSpan.innerText = statusData[element.id_status];
-        // statusSpan.classList.add("status", statusClass[element.id_status]);
-        
-        // row.insertCell(4).appendChild(statusSpan);
-        // row.insertCell(5).appendChild(button.cloneNode(true));
-
+        for (const key in arrayInputs) {
+            const inputCloned = arrayInputs[key].cloneNode(true);
+            inputCloned.id = `S${element?.id}-A${inputCloned.id}`
+            row.insertCell(key+2).appendChild(inputCloned);
+        }
     });
 
 }
