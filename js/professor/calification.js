@@ -3,10 +3,10 @@ const token = sessionStorage.getItem('token');
 var printData = [];
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
-document.getElementById("select-classroon").addEventListener("click", async () => await createModalList());
+document.getElementById("select-classroon").addEventListener("click", async () => await createModalList("classroom"));
 
 // Crear modal box con el nombre de las secciones activas.
-async function createModalList(){
+async function createModalList(type){
 
     // const validateModalMenu = document.getElementById("modal-menu");
     const div = document.createElement("div");
@@ -16,7 +16,14 @@ async function createModalList(){
     const ul = document.createElement("ul");
     ul.id = "classList";
 
-    await fetch(`${API_URL}/program/`,{
+    let url = `${API_URL}/program/`;
+
+    if(type != "classroom"){
+        const classroom = document.getElementById("classroom").value;
+        url = `${API_URL}/program/?idClassroom=${classroom}`;
+    }
+
+    await fetch(url,{
         method: "GET",
         headers: {authorization: 'Bearer ' + token}
     })
@@ -25,8 +32,14 @@ async function createModalList(){
         data.forEach(element => {
             const li = document.createElement("li");
             const a = document.createElement("a");
-            a.innerHTML = element.classroom.name;
-            a.addEventListener("click", () => loadClassroomEvents(element.classroom.id, element.classroom.name))
+
+            if(type == "classroom"){
+                a.innerHTML = element.classroom.name;
+                a.addEventListener("click", () => createModalList("subject"))
+            }else{
+                a.innerHTML = element.subject.name;
+                a.addEventListener("click", () => loadClassroomEvents(element.classroom.id, element.classroom.name))
+            }
 
             li.appendChild(a);
             ul.appendChild(li);
@@ -173,12 +186,11 @@ async function load(){
 
     }
     
-    await fetch(`${API_URL}/enrollment`, {
+    await fetch(`${API_URL}/evaluation/all`, {
         method: "POST",
         headers: {"content-type": "application/json"},
         body: JSON.stringify({
-            "student": value,
-            "classroom": document.getElementById("classroom").value
+            "data": califications,
         })
     })
     .then(response => response.json())
