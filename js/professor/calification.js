@@ -3,10 +3,10 @@ const token = sessionStorage.getItem('token');
 var printData = [];
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
-document.getElementById("select-classroon").addEventListener("click", async () => await createModalList("classroom"));
+document.getElementById("select-classroon").addEventListener("click", async () => await createModalList("classroom", null));
 
 // Crear modal box con el nombre de las secciones activas.
-async function createModalList(type){
+async function createModalList(type, classroom){
 
     // const validateModalMenu = document.getElementById("modal-menu");
     const div = document.createElement("div");
@@ -19,7 +19,6 @@ async function createModalList(type){
     let url = `${API_URL}/program/`;
 
     if(type != "classroom"){
-        const classroom = document.getElementById("classroom").value;
         url = `${API_URL}/program/?idClassroom=${classroom}`;
     }
 
@@ -35,10 +34,10 @@ async function createModalList(type){
 
             if(type == "classroom"){
                 a.innerHTML = element.classroom.name;
-                a.addEventListener("click", () => createModalList("subject"))
+                a.addEventListener("click", () => createModalList("subject", element.classroom.id))
             }else{
                 a.innerHTML = element.subject.name;
-                a.addEventListener("click", () => loadClassroomEvents(element.classroom.id, element.classroom.name))
+                a.addEventListener("click", () => loadClassroomEvents(element.subject.id, classroom, element.classroom.name))
             }
 
             li.appendChild(a);
@@ -67,12 +66,9 @@ async function createModalList(type){
 }
 
 // Agregar eventos de click para a la lista de secciones, para obtener datos de la seccion seleccionada.
-async function loadClassroomEvents(id, name){
-    const classroom = document.getElementById("classroom");
-    // classroom.value = name;
-    classroom.value = id;
+async function loadClassroomEvents(subject, classroom, name){
 
-    await fetch(`${API_URL}/assignment_entry/assignment_students/?idClassroom=${id}`,{
+    await fetch(`${API_URL}/assignment_entry/assignment_students/?idClassroom=${classroom}&idSubject=${subject}`,{
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
@@ -114,6 +110,7 @@ async function dataTable(data) {
     const arrayAssignmentEntries = [];
     data.assignment_entry.forEach(element => {
 
+        console.log(element);
         const th = document.createElement("th");
         th.innerHTML = element?.title;
         thead.appendChild(th);
@@ -176,19 +173,23 @@ async function load(){
                 continue;
             }
 
-            const [idStudent, idAssignmentEntry] = input.id.split('-');
+            if(!input.value && !input.value !== "0"){
+                continue;
+            }
+
+            const [idEnrollment, idAssignmentEntry] = input.id.split('-');
             
-            if(!idStudent || !idAssignmentEntry){
+            if(!idEnrollment || !idAssignmentEntry){
                 continue;
             }
             if(input.id.startsWith('A')){
-                [idStudent, idAssignmentEntry] = [idAssignmentEntry, idStudent];
+                [idEnrollment, idAssignmentEntry] = [idAssignmentEntry, idStudent];
             }
 
             const data = {
-                idStudent: idStudent.slice(1),
+                idEnrollment: idEnrollment.slice(1),
                 idAssignmentEntry: idAssignmentEntry.slice(1),
-                value: input.value,
+                grade: input.value,
             }
             califications.push(data);
 
@@ -196,11 +197,12 @@ async function load(){
 
     }
     
+    console.log(califications);
     await fetch(`${API_URL}/evaluation/all`, {
         method: "POST",
         headers: {"content-type": "application/json"},
         body: JSON.stringify({
-            "data": califications,
+            "data": JSON.stringify(califications),
         })
     })
     .then(response => response.json())
