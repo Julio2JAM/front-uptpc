@@ -97,13 +97,13 @@ async function search() {
         headers: {authorization: 'Bearer ' + token}
     })
     .then(response => response.json())
-    .then(data => dataTable(data))
+    .then(data => async () => await dataTable(data))
     .catch(error => console.log(error));
 
 }
 
 // Cargar registros en la tabla HTML
-function dataTable(data) {
+async function dataTable(data) {
 
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
@@ -111,10 +111,11 @@ function dataTable(data) {
     const thead = document.querySelector("thead").querySelector('tr');
 
     const arrayInputs = [];
+    const arrayAssignmentEntries = [];
     data.assignment_entry.forEach(element => {
 
         const th = document.createElement("th");
-        th.innerHTML = element?.assignment.title;
+        th.innerHTML = element?.title;
         thead.appendChild(th);
 
         const input = document.createElement("input");
@@ -123,9 +124,18 @@ function dataTable(data) {
         input.max = element?.base;
         input.id = element?.id;
 
+        arrayAssignmentEntries.push(element?.id);
         arrayInputs.push(input);
 
     });
+
+    const evaluations = await fetch(`${API_URL}/evaluation/?idAssignment_entry=${arrayAssignmentEntries.join()}`, {
+            method: "GET",
+            headers: {authorization: 'Bearer ' + token}
+        })
+        .then(response => response.json())
+        .then(data => data)
+        .catch(error => console.log(error));
 
     data.student.forEach(element => {
         const row = tbody.insertRow(-1);
