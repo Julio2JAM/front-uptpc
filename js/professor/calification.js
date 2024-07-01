@@ -126,14 +126,7 @@ async function dataTable(data) {
 
     });
 
-    const evaluations = await fetch(`${API_URL}/evaluation/?idAssignment_entry=${arrayAssignmentEntries.join()}`, {
-            method: "GET",
-            headers: {authorization: 'Bearer ' + token}
-        })
-        .then(response => response.json())
-        .then(data => data)
-        .catch(error => console.log(error));
-
+    const arrayEnrollment = [];
     data.student.forEach(element => {
         const row = tbody.insertRow(-1);
         row.insertCell(0).innerText = element?.cedule;      //1
@@ -144,7 +137,21 @@ async function dataTable(data) {
             inputCloned.id = `S${element?.id}-A${inputCloned.id}`
             row.insertCell(key+2).appendChild(inputCloned);
         }
+        arrayEnrollment.push(element.id);
     });
+
+    const evaluations = await fetch(`${API_URL}/evaluation/assignmentEntries/?assignmentEntries=${arrayAssignmentEntries.join()}&enrollments=${arrayEnrollment.join()}`, {
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.json())
+    .then(data => data)
+    .catch(error => console.log(error));
+
+    for (const value of evaluations) {
+        const input = document.getElementById(`S${value?.enrollment}-A${value.assignment_entry}`);
+        input.value = value.grade;
+    }
 
     const loadBtn = document.getElementById('new');
     loadBtn.addEventListener("click", async () => await load());
