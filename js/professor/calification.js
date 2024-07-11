@@ -203,8 +203,7 @@ async function load(){
         }
 
     }
-    
-    console.log(califications);
+
     await fetch(`${API_URL}/evaluation/all`, {
         method: "POST",
         headers: {"content-type": "application/json"},

@@ -99,8 +99,6 @@ async function search() {
 // Cargar registros en la tabla HTML
 function dataTable(data) {
 
-    console.log(data);
-
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
@@ -169,6 +167,8 @@ async function detail(event){
 
 function createModalBox(data){
 
+    // data = data.professor.person;
+    
     // Crear divs contenedores
     var modal = document.createElement("div");
     modal.className = "modal";
@@ -202,35 +202,35 @@ function createModalBox(data){
         {
             id: "name",
             placeholder: "Nombre",
-            value: data?.student?.person.name ?? "",
+            value: data?.professor?.person.name ?? "",
             type:"text",
             disabled: true
         },
         {
             id: "lastname",
             placeholder: "Apellido",
-            value: data?.student?.person.lastname ?? "",
+            value: data?.professor?.person.lastname ?? "",
             type:"text",
             disabled: true
         },
         {
             id: "cedule",
             placeholder: "Cedula",
-            value: data?.student?.person.cedule ?? "",
+            value: data?.professor?.person.cedule ?? "",
             type:"text",
             disabled: true
         },
         {
             id: "phone",
             placeholder: "Phone",
-            value: data?.student?.person.phone ?? "",
+            value: data?.professor?.person.phone ?? "",
             type:"text",
             disabled: true
         },
         {
             id: "email",
             placeholder: "Email",
-            value: data?.student?.person.email ?? "",
+            value: data?.professor?.person.email ?? "",
             type:"text",
             disabled: true
         }
