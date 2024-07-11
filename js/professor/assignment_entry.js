@@ -163,7 +163,7 @@ async function search() {
         printData[name] = element.value;
     }
 
-    await fetch(`${API_URL}/assignment_entry/?idClassroom=${classroom}&title=${data["title"]}&datatimeStart=${data["datatime_start"]}&datetimeEnd=${data["datetime_end"]}&idStatus=${data["status"]}`, {
+    await fetch(`${API_URL}/assignment_entry/?idClassroom=${classroom}&title=${data["title"]}&datetimeStart=${data["datetime_start"]}&datetimeEnd=${data["datetime_end"]}&idStatus=${data["status"]}`, {
         method: 'GET',
         headers: {authorization: 'Bearer ' + token}
     })
