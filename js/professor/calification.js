@@ -2,6 +2,15 @@ const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 var printData = [];
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("select-classroon").addEventListener("click", async () => await createModalList("classroom", null));
 

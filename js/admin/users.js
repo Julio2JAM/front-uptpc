@@ -2,6 +2,15 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => {
     await role();
