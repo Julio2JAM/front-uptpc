@@ -2,6 +2,15 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 // Al cargar el archivo, obtener todos los registros de la tabla professor
 window.addEventListener("load", async () => await search());
 
@@ -55,11 +64,11 @@ function dataTable(data) {
         const row = tbody.insertRow(-1);
 
         // Crear columnas
-        row.insertCell(0).innerText = id;
-        row.insertCell(1).innerText = person.name || "";
-        row.insertCell(2).innerText = person.lastName || "";
-        row.insertCell(3).innerText = person.cedule || "";
-        row.insertCell(4).innerText = person.profession || "";
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element.person.name || "";
+        row.insertCell(2).innerText = element.person.lastName || "";
+        row.insertCell(3).innerText = element.person.cedule || "";
+        row.insertCell(4).innerText = element.person.profession || "";
 
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
@@ -227,7 +236,10 @@ function createModalBox(data){
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";

@@ -2,6 +2,15 @@
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => {
     await role();
@@ -223,8 +232,6 @@ function createModalBox(data) {
     selectRole = selectRole.cloneNode(true);
     selectRole.id = "idRole";
     selectRole.value = data?.role?.id ?? "";
-    console.log(data?.role?.id);
-    console.log(selectRole.value);
 
     form.appendChild(labelRole);
     form.appendChild(selectRole);

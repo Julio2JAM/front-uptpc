@@ -32,7 +32,7 @@ async function verifyToken() {
         return;
     }
 
-/*
+    /*
     Asi deberia ser la data de rol:
 
     const role = await fetch(`${API_URL}/role/?id=${token.user.role}`)
@@ -44,12 +44,13 @@ async function verifyToken() {
         student: "/student/assignmentStudent.html",
         professor: "/professor/assignmentStudent.html",
     }
-*/
+    */
 
     location.href = roles[token.user.role];
 }
 
 document.getElementById("login-btn").addEventListener("click", async event => {
+
     event.preventDefault();
 
     const jsonData = {

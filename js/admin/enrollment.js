@@ -4,6 +4,15 @@ const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 var printData = [];
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 // Cambiar de pagina.
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
@@ -296,7 +305,10 @@ function createModalBox(data){
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -481,12 +493,10 @@ async function createModalBoxTable(){
     dataBD.forEach(element => {
 
         const row = tbody.insertRow(-1);
-        var iterator = 0;
-
-        for (const value of filterFields) {
-            const td = row.insertCell(iterator++);
-            td.innerText = element[value.id];
-        }
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element.person.name ?? "No posee.";
+        row.insertCell(2).innerText = element.person.lastName ?? "No posee.";
+        row.insertCell(3).innerText = element.person.cedule;
 
         const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
