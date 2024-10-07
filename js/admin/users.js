@@ -1,6 +1,7 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+const token = sessionStorage.getItem('token');
 
 if(!token){
     location.href = "../index.html";
