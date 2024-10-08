@@ -530,3 +530,31 @@ async function save() {
     .then(data => search())
     .catch(error => console.error('Ha ocurrido un error: ', error));
 };
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for(const element of elements) {
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+    }
+
+    await fetch(`${API_URL}/user/pdf/?username=${data["username"]}&idRole=${data["role"]}&id_status=${data["status"]}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
+}

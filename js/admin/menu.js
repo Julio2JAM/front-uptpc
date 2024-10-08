@@ -1,3 +1,15 @@
+const API_URL = "http://localhost:3000/api";
+const token = sessionStorage.getItem('token');
+
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 document.querySelector(".card-container").addEventListener("click", (event) => {
     const element = event.target;
 

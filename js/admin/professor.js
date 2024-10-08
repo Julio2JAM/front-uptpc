@@ -69,14 +69,14 @@ function dataTable(data) {
         row.insertCell(1).innerText = element.person.name || "";
         row.insertCell(2).innerText = element.person.lastName || "";
         row.insertCell(3).innerText = element.person.cedule || "";
-        row.insertCell(4).innerText = element.person.profession || "";
+        // row.insertCell(4).innerText = element.person.profession || "";
 
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
 
-        row.insertCell(5).appendChild(statusSpan);
-        row.insertCell(6).appendChild(actionButton.cloneNode(true));
+        row.insertCell(4).appendChild(statusSpan);
+        row.insertCell(5).appendChild(actionButton.cloneNode(true));
 
     });
 
@@ -324,3 +324,31 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
         location.href = `${element.id.replace("-change", "")}.html`;
     });
 });
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for(const element of elements) {
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+    }
+
+    await fetch(`${API_URL}/professor/pdf/?id=${data["id"]}&name=${data["name"]}&lastName=${data["lastName"]}&cedule=${data["cedule"]}&id_status=${data["status"]}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
+}
