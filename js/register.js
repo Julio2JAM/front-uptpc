@@ -123,7 +123,7 @@ function handleMessage(obj,message){
         span ? span.remove() : "" ;
 
         if(obj){
-            obj.style.cssText = "border-color: green !important";;
+            obj.style.cssText = "border-color: green !important";
         }
 
         return;

@@ -239,7 +239,7 @@ function createModalBox(data){
     var buttonSubmit = document.createElement("button");
     buttonSubmit.addEventListener("click", async () => {
         await save();
-        closeModal();
+        //closeModal();
     });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
@@ -292,6 +292,17 @@ function createModalBox(data){
 async function save(){
 
     // Obtener datos para crear o actualizar el registro.
+    if(!document.getElementById("cedule").value){
+        document.getElementById("cedule").style.cssText = "border-color: red !important";
+        return;
+    }else if(!document.getElementById("name").value){
+        document.getElementById("name").style.cssText = "border-color: red !important";
+        return;
+    }else if(document.getElementById("lastname").value){
+        document.getElementById("lastname").style.cssText = "border-color: red !important";
+        return;
+    }
+
     const id  = document.getElementById("id").value;
     const jsonData = {
         person: {
@@ -317,6 +328,8 @@ async function save(){
     .then(response => response.json())
     .then(data => search())
     .catch(error => console.log(error));
+
+    document.getElementsByClassName("close-btn")[0].click();
 }
 
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {

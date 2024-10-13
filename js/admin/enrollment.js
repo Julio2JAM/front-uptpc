@@ -224,6 +224,7 @@ function createModalBox(data){
     labelName.for = "name";
     labelName.innerHTML = "Nombre:";
     var inputName = document.createElement("input");
+    inputName.disabled = true;
     inputName.type = "text";
     inputName.id = "name";
     inputName.placeholder = "Nombre";
@@ -237,6 +238,7 @@ function createModalBox(data){
     labelLastname.for = "lastname";
     labelLastname.innerHTML = "Apellido:";
     var inputLastname = document.createElement("input");
+    inputLastname.disabled = true;
     inputLastname.type = "text";
     inputLastname.id = "lastname";
     inputLastname.placeholder = "Apellido";
@@ -250,6 +252,7 @@ function createModalBox(data){
     labelCedule.for = "cedule";
     labelCedule.innerHTML = "Cedula:";
     var inputCedule = document.createElement("input");
+    inputCedule.disabled = true;
     inputCedule.type = "text";
     inputCedule.id = "cedule";
     inputCedule.placeholder = "Cedula";
@@ -263,6 +266,7 @@ function createModalBox(data){
     labelPhone.for = "phone";
     labelPhone.innerHTML = "Telefono:";
     var inputPhone = document.createElement("input");
+    inputPhone.disabled = true;
     inputPhone.type = "text";
     inputPhone.id = "phone";
     inputPhone.placeholder = "Telefono";
@@ -276,6 +280,7 @@ function createModalBox(data){
     labelEmail.for = "email";
     labelEmail.innerHTML = "Email:";
     var inputEmail = document.createElement("input");
+    inputEmail.disabled = true;
     inputEmail.type = "email";
     inputEmail.id = "email";
     inputEmail.placeholder = "Email";
@@ -600,4 +605,32 @@ async function loadEnrollment(){
         modal.remove();
     }, 260);
 
+}
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+
+    const idClassroom = document.getElementById("classroom").value;
+    await fetch(`${API_URL}/enrollment/pdf/?idClassroom=${idClassroom}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
 }

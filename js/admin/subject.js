@@ -188,7 +188,7 @@ function createModalBox(data){
     var buttonSubmit = document.createElement("button");
     buttonSubmit.addEventListener("click", async () => {
         await save();
-        closeModal();
+        //closeModal();
     });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
@@ -251,6 +251,13 @@ function createModalBox(data){
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
+
+    // Obtener datos para crear o actualizar el registro.
+    if(!document.getElementById("name").value){
+        document.getElementById("name").style.cssText = "border-color: red !important";
+        return;
+    }
+
     // Obtener datos para crear o actualizar el registro.
     const id = document.getElementById("id").value;
     const jsonData = {
@@ -273,8 +280,7 @@ async function save (){
     .then(data => search())
     .catch(error => console.error('Ha ocurrido un error: ', error));
 
-    // Comentado puede que temporalmente
-    //document.getElementById("modal-box").remove();
+    document.getElementsByClassName("close-btn")[0].click();
 };
 
 // Exportar a PDF
