@@ -175,13 +175,13 @@ function createModalBox(data) {
     const h3 = document.createElement("h3");
 
     const img = document.createElement("img");
-    img.src = "../../source/user-icon.png";
+    img.src = "../../source/student-icon.png";
     const buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
     h3.appendChild(img);
-    h3.innerHTML += "User:";
+    h3.innerHTML += "Actividades:";
     header.appendChild(h3);
     header.appendChild(buttonClose);
 
@@ -205,6 +205,7 @@ function createModalBox(data) {
     const inputBase = document.createElement("input");
     inputBase.type = "text";
     inputBase.id = "base";
+    inputBase.disabled = true;
     inputBase.placeholder = "Base";
     inputBase.value = data?.base ?? "";
 
@@ -216,6 +217,7 @@ function createModalBox(data) {
     labelPercentage.innerHTML = "Porcentaje:";
     const inputPercentage = document.createElement("input");
     inputPercentage.type = "text";
+    inputPercentage.disabled = true;
     inputPercentage.id = "percentage";
     inputPercentage.placeholder = "Porcentaje";
     inputPercentage.value = data?.percentage ?? "";

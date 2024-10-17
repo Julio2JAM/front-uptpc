@@ -115,11 +115,23 @@ async function dataTable(data) {
 
     const thead = document.querySelector("thead").querySelector('tr');
 
+    const thList = thead.querySelectorAll("th");
+    thList.forEach(th => th.remove());
+
+    // Cedula 
+    const thCI = document.createElement("th");
+    thCI.innerHTML = "CEDULA";
+    thead.appendChild(thCI);
+
+    // Nombre
+    const thName = document.createElement("th");
+    thName.innerHTML = "NOMBRE";
+    thead.appendChild(thName);
+
     const arrayInputs = [];
     const arrayAssignmentEntries = [];
     data.assignment_entry.forEach(element => {
 
-        console.log(element);
         const th = document.createElement("th");
         th.innerHTML = element?.title;
         thead.appendChild(th);
@@ -157,13 +169,18 @@ async function dataTable(data) {
     .then(data => data)
     .catch(error => console.log(error));
 
+    const loadBtn = document.getElementById('new');
+    loadBtn.addEventListener("click", async () => await load());
+
+    if(!evaluations || !Array.isArray(evaluations)){
+        return;
+    }
+
     for (const value of evaluations) {
         const input = document.getElementById(`S${value?.enrollment}-A${value.assignment_entry}`);
         input.value = value.grade;
     }
 
-    const loadBtn = document.getElementById('new');
-    loadBtn.addEventListener("click", async () => await load());
 }
 
 async function load(){

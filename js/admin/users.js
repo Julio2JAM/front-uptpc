@@ -152,7 +152,7 @@ function createModalBox(data) {
     buttonClose.innerHTML = "&times;"
 
     h3.appendChild(img);
-    h3.innerHTML += "User:";
+    h3.innerHTML += "Usuario:";
     header.appendChild(h3);
     header.appendChild(buttonClose);
 

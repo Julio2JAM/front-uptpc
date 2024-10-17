@@ -295,11 +295,8 @@ async function save(){
     if(!document.getElementById("cedule").value){
         document.getElementById("cedule").style.cssText = "border-color: red !important";
         return;
-    }else if(!document.getElementById("name").value){
+    }else if(!document.getElementById("name").value && !document.getElementById("lastname").value){
         document.getElementById("name").style.cssText = "border-color: red !important";
-        return;
-    }else if(document.getElementById("lastname").value){
-        document.getElementById("lastname").style.cssText = "border-color: red !important";
         return;
     }
 

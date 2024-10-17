@@ -150,7 +150,7 @@ function createModalBox(data){
         },
         {
             id: "phone",
-            placeholder: "Phone",
+            placeholder: "Telefono",
             value: data?.person.phone ?? ""
         },
         {

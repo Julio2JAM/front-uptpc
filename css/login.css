@@ -4,9 +4,13 @@
 }
 
 body {
-  background: linear-gradient(to bottom right, #9db9ff, #c495ff);
-  background-attachment: fixed;
+  /* background: linear-gradient(to bottom right, #9db9ff, #c495ff);
+  background-attachment: fixed; */
   font-family: "Rubik", sans-serif;
+  background-image: url("../../source/henry.jpg");
+  background-size: cover;
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  background-position: center 25%; 
 }
 
 .form {

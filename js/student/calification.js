@@ -174,13 +174,13 @@ function createModalBox(data) {
     const h3 = document.createElement("h3");
 
     const img = document.createElement("img");
-    img.src = "../../source/user-icon.png";
+    img.src = "../../source/subject-icon.png";
     const buttonClose = document.createElement("button");
     buttonClose.className = "close-btn";
     buttonClose.innerHTML = "&times;"
 
     h3.appendChild(img);
-    h3.innerHTML += "User:";
+    h3.innerHTML += "Calificaciones:";
 
     const header = document.createElement("header");
     header.appendChild(h3);
@@ -239,8 +239,9 @@ function createModalBox(data) {
     labelSubject.for = "subject";
     labelSubject.innerHTML = "Materia:";
     const selectSubject = document.getElementById("filter-subject").cloneNode(true);
+    selectSubject.disabled = true;
     selectSubject.id = "idSubject";
-    selectSubject.value = data?.subject?.id ?? "";
+    selectSubject.value = data?.assignment?.subject.id ?? "";
 
     form.appendChild(labelSubject);
     form.appendChild(selectSubject);

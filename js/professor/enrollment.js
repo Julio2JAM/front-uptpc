@@ -211,7 +211,7 @@ function createModalBox(data){
         },
         {
             id: "phone",
-            placeholder: "Phone",
+            placeholder: "Telefono",
             value: data?.student?.person.phone ?? "",
             disabled: true
         },
