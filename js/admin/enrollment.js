@@ -4,6 +4,15 @@ const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 var printData = [];
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
 // Cambiar de pagina.
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
     element.addEventListener("click", () => {
@@ -215,6 +224,7 @@ function createModalBox(data){
     labelName.for = "name";
     labelName.innerHTML = "Nombre:";
     var inputName = document.createElement("input");
+    inputName.disabled = true;
     inputName.type = "text";
     inputName.id = "name";
     inputName.placeholder = "Nombre";
@@ -228,6 +238,7 @@ function createModalBox(data){
     labelLastname.for = "lastname";
     labelLastname.innerHTML = "Apellido:";
     var inputLastname = document.createElement("input");
+    inputLastname.disabled = true;
     inputLastname.type = "text";
     inputLastname.id = "lastname";
     inputLastname.placeholder = "Apellido";
@@ -241,6 +252,7 @@ function createModalBox(data){
     labelCedule.for = "cedule";
     labelCedule.innerHTML = "Cedula:";
     var inputCedule = document.createElement("input");
+    inputCedule.disabled = true;
     inputCedule.type = "text";
     inputCedule.id = "cedule";
     inputCedule.placeholder = "Cedula";
@@ -254,6 +266,7 @@ function createModalBox(data){
     labelPhone.for = "phone";
     labelPhone.innerHTML = "Telefono:";
     var inputPhone = document.createElement("input");
+    inputPhone.disabled = true;
     inputPhone.type = "text";
     inputPhone.id = "phone";
     inputPhone.placeholder = "Telefono";
@@ -267,6 +280,7 @@ function createModalBox(data){
     labelEmail.for = "email";
     labelEmail.innerHTML = "Email:";
     var inputEmail = document.createElement("input");
+    inputEmail.disabled = true;
     inputEmail.type = "email";
     inputEmail.id = "email";
     inputEmail.placeholder = "Email";
@@ -296,7 +310,10 @@ function createModalBox(data){
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -481,12 +498,10 @@ async function createModalBoxTable(){
     dataBD.forEach(element => {
 
         const row = tbody.insertRow(-1);
-        var iterator = 0;
-
-        for (const value of filterFields) {
-            const td = row.insertCell(iterator++);
-            td.innerText = element[value.id];
-        }
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element.person.name ?? "No posee.";
+        row.insertCell(2).innerText = element.person.lastName ?? "No posee.";
+        row.insertCell(3).innerText = element.person.cedule;
 
         const status = row.insertCell(4);
         const statusSpan = document.createElement('span');
@@ -590,4 +605,32 @@ async function loadEnrollment(){
         modal.remove();
     }, 260);
 
+}
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+
+    const idClassroom = document.getElementById("classroom").value;
+    await fetch(`${API_URL}/enrollment/pdf/?idClassroom=${idClassroom}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
 }

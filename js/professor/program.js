@@ -3,7 +3,41 @@
 const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 
-window.addEventListener("load", async () => await search());
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
+
+window.addEventListener("load", async () => {
+    await classroom();
+    await search();
+});
+    
+async function classroom() {
+    const select = document.getElementById("filter-classroom");
+    select.innerHTML = "";
+
+    const startOption = new Option("Seleccione una seccion", "");
+    select.add(startOption);
+    
+    await fetch(`${API_URL}/program/`,{
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(element => {
+            const option = new Option(element.classroom.name, element.classroom.id);
+            select.add(option);
+        });
+    })
+    .catch(err => console.log(err))
+}
+
 document.getElementById('search-filter-btn').addEventListener('click', async () => await search());
 async function search() {
 
@@ -13,7 +47,7 @@ async function search() {
         data[element.id.replace("filter-", "")] = element.value;
     }
 
-    await fetch(`${API_URL}/program/?subjectName=${data["subjectName"]}&subjectDescripcion=${data["subjectDescripcion"]}&classroomName=${data["classroomName"]}&idStatus=${data["status"]}`, {
+    await fetch(`${API_URL}/program/?subjectName=${data["subjectName"]}&subjectDescripcion=${data["subjectDescripcion"]}&idClassroom=${data["classroom"]}&idStatus=${data["status"]}`, {
         method: "GET",
         headers: {authorization: 'Bearer ' + token}
     })
@@ -69,4 +103,33 @@ function dataTable(data) {
         status.appendChild(statusSpan);
     });
 
+}
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+    await fetch(`${API_URL}/program/pdf/?subjectName=${data["subjectName"]}&subjectDescripcion=${data["subjectDescripcion"]}&idClassroom=${data["classroom"]}&idStatus=${data["status"]}`, {
+        method: "GET",
+        headers: {authorization: 'Bearer ' + token}
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
 }

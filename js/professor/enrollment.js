@@ -2,6 +2,14 @@ const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 var printData = [];
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("select-classroon").addEventListener("click", async () => await createModalList());
@@ -143,14 +151,18 @@ async function detail(event){
     const row = event.target.closest('tr');
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/program/?id=${id}`)
+    await fetch(`${API_URL}/enrollment/?id=${id}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
-    .then(data => data/*createModalBox(data[0])*/)
-    .catch(err => console.error(err));
+    .then(data => createModalBox(data[0]))
+    .catch(err => console.log(err));
 
 }
 
 function createModalBox(data){
+    console.log(data);
     // Crear divs contenedores
     var modal = document.createElement("div");
     modal.className = "modal";
@@ -176,39 +188,38 @@ function createModalBox(data){
     header.appendChild(h3);
     header.appendChild(buttonClose);
 
-    var section = document.createElement("section");
     var form = document.createElement("form");
 
     const personData = [
         {
-            id: "id",
-            placeholder: "id",
-            value: data?.id ?? "",
-        },
-        {
             id: "name",
             placeholder: "Nombre",
-            value: data?.person.name ?? ""
+            value: data?.student?.person.name ?? "",
+            disabled: true
         },
         {
             id: "lastname",
             placeholder: "Apellido",
-            value: data?.person.lastname ?? ""
+            value: data?.student?.person.lastname ?? "",
+            disabled: true
         },
         {
             id: "cedule",
             placeholder: "Cedula",
-            value: data?.person.cedule ?? ""
+            value: data?.student?.person.cedule ?? "",
+            disabled: true
         },
         {
             id: "phone",
-            placeholder: "Phone",
-            value: data?.person.phone ?? ""
+            placeholder: "Telefono",
+            value: data?.student?.person.phone ?? "",
+            disabled: true
         },
         {
             id: "email",
             placeholder: "Email",
-            value: data?.person.email ?? ""
+            value: data?.student?.person.email ?? "",
+            disabled: true
         }
     ];
 
@@ -216,15 +227,11 @@ function createModalBox(data){
         const label = document.createElement("label");
         label.for = value.id;
         label.innerHTML = value.placeholder + ":";
-        // label.style.display = "none";
         const input = document.createElement("input");
         Object.assign(input, value);
-        // input.style.display = "none";
         form.appendChild(label);
         form.appendChild(input);
     }
-    form.querySelector('label').style.display = "none";
-    form.querySelector('input').style.display = "none";
 
     // Status
     var labelStatus = document.createElement("label");
@@ -240,36 +247,22 @@ function createModalBox(data){
         selectStatus.add(new Option(option.label, option.value));
     }
     selectStatus.value = data?.id_status ?? 1;
+    selectStatus.disabled = true;
 
     form.appendChild(labelStatus);
     form.appendChild(selectStatus);
 
-    var footer = document.createElement("footer");
+    var section = document.createElement("section");
+    section.appendChild(form);
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
-    buttonSubmit.type = "submit";
-    buttonSubmit.id = "save";
-    buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
+    buttonSubmit.addEventListener("click", async () => await closeModal());
+    buttonSubmit.type = "button";
+    buttonSubmit.id = "close";
+    buttonSubmit.innerHTML = "Cerrar";
 
-    var buttonReset = document.createElement("button");
-    buttonReset.type = "reset";
-    buttonReset.id = "reset";
-    buttonReset.innerHTML = "Borrar";
-    buttonReset.addEventListener("click", () => {
-        inputId.value = data?.id ?? "";
-        inputName.value = data?.person.name ?? "";
-        inputLastname.value = data?.person.lastName ?? "";
-        inputCedule.value = data?.person.cedule ?? "";
-        inputPhone.value = data?.person.phone ?? "";
-        inputEmail.value = data?.person.email ?? "";
-        selectStatus.value = data?.id_status ?? 1;
-    });
-    
-    section.appendChild(form);
-    
+    var footer = document.createElement("footer");
     footer.appendChild(buttonSubmit);
-    footer.appendChild(buttonReset);
     
     modalContent.appendChild(header);
     modalContent.appendChild(section);
@@ -293,4 +286,33 @@ function createModalBox(data){
             modal.remove();
         }, 260);
     }
+}
+
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for (const element of elements) {
+        data[element.id.replace("filter-", "")] = element.value;
+    }
+
+    const idClassroom = document.getElementById("classroom").value;
+    await fetch(`${API_URL}/enrollment/pdf/?idClassroom=${idClassroom}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
 }

@@ -1,7 +1,17 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+const token = sessionStorage.getItem('token');
 var printData = new Object;
+
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
 
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await search());
@@ -12,17 +22,12 @@ document.getElementById("search-filter-btn").addEventListener("click", async () 
 // Funcion para buscar un registro en la tabla search
 async function search(){
 
-    printData = {
-        model:"subject"
-    };
-
     // Obtener de los elementos de busqueda su contenido
     const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
     const data = {};
     for(const element of elements) {
         const name = element.id.replace("filter-","");
         data[name] = element.value;
-        printData[name] = element.value;
     }
 
     // Obtener los datos de la busqueda
@@ -183,7 +188,7 @@ function createModalBox(data){
     var buttonSubmit = document.createElement("button");
     buttonSubmit.addEventListener("click", async () => {
         await save();
-        closeModal();
+        //closeModal();
     });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
@@ -246,6 +251,13 @@ function createModalBox(data){
 
 // Obtener el elemento "save" y agregarle un evento
 async function save (){
+
+    // Obtener datos para crear o actualizar el registro.
+    if(!document.getElementById("name").value){
+        document.getElementById("name").style.cssText = "border-color: red !important";
+        return;
+    }
+
     // Obtener datos para crear o actualizar el registro.
     const id = document.getElementById("id").value;
     const jsonData = {
@@ -268,16 +280,33 @@ async function save (){
     .then(data => search())
     .catch(error => console.error('Ha ocurrido un error: ', error));
 
-    // Comentado puede que temporalmente
-    //document.getElementById("modal-box").remove();
+    document.getElementsByClassName("close-btn")[0].click();
 };
 
 // Exportar a PDF
-document.getElementById("export-pdf").addEventListener("click", () => exportPDF());
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
 
-function exportPDF() {
-    // En la página A
-    const queryString = new URLSearchParams(printData).toString();
-    const url = `../TABLE-TO-PDF.html?${queryString}`;
-    window.open(url, "_blank");
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for(const element of elements) {
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+    }
+
+    await fetch(`${API_URL}/subject/pdf/?id=${data["id"]}&name=${data["name"]}&description=${data["description"]}&id_status=${data["id_status"]}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
 }

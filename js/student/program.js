@@ -2,6 +2,14 @@ const API_URL = "http://localhost:3000/api"
 const token = sessionStorage.getItem('token');
 var printData = [];
 
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
 
 // Agregar evento de click para mostrar una lista con todas las secciones activas.
 document.getElementById("select-classroon").addEventListener("click", async () => await createModalList());
@@ -99,8 +107,6 @@ async function search() {
 // Cargar registros en la tabla HTML
 function dataTable(data) {
 
-    console.log(data);
-
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
@@ -157,9 +163,145 @@ async function detail(event){
     const row = event.target.closest('tr');
     const id = row.cells[0].textContent;
 
-    await fetch(`${API_URL}/program/?id=${id}`)
+    await fetch(`${API_URL}/program/?id=${id}`,{
+        method: 'GET',
+        headers: {authorization: 'Bearer ' + token}
+    })
     .then(response => response.json())
-    .then(data => data/*createModalBox(data[0])*/)
+    .then(data => createModalBox(data[0]))
     .catch(err => console.error(err));
 
+}
+
+function createModalBox(data){
+
+    // data = data.professor.person;
+    
+    // Crear divs contenedores
+    var modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "modal";
+
+    var modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+
+    var header = document.createElement("header");
+    
+    // Crear elementos del DOM
+    var h3 = document.createElement("h3");
+    var img = document.createElement("img");
+    img.src = "../../source/subject-icon.png";
+
+    h3.appendChild(img);
+    h3.innerHTML += "Asignatura";
+
+    var buttonClose = document.createElement("button");
+    buttonClose.className = "close-btn";
+    buttonClose.innerHTML = "&times;"
+
+    header.appendChild(h3);
+    header.appendChild(buttonClose);
+
+    var section = document.createElement("section");
+    var form = document.createElement("form");
+    form.id = "modal-form";
+
+    const personData = [
+        {
+            id: "name",
+            placeholder: "Nombre",
+            value: data?.professor?.person.name ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "lastname",
+            placeholder: "Apellido",
+            value: data?.professor?.person.lastname ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "cedule",
+            placeholder: "Cedula",
+            value: data?.professor?.person.cedule ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "phone",
+            placeholder: "Telefono",
+            value: data?.professor?.person.phone ?? "",
+            type:"text",
+            disabled: true
+        },
+        {
+            id: "email",
+            placeholder: "Email",
+            value: data?.professor?.person.email ?? "",
+            type:"text",
+            disabled: true
+        }
+    ];
+
+    for (const value of personData) {
+        const label = document.createElement("label");
+        label.for = value.id;
+        label.innerHTML = value.placeholder + ":";
+        const input = document.createElement("input");
+        Object.assign(input, value);
+        form.appendChild(label);
+        form.appendChild(input);
+    }
+
+    var labelStatus = document.createElement("label");
+    var selectStatus = document.createElement("select");
+    var options = [
+        {value: -1, label: "Eliminado"},
+        {value: 0, label: "No disponible"},
+        {value: 1, label: "Disponible"}
+    ];
+    labelStatus.textContent = "Estado";
+    selectStatus.id = "status";
+    for (var option of options) {
+        selectStatus.add(new Option(option.label, option.value));
+    }
+    selectStatus.value = data?.id_status ?? 1;
+    selectStatus.disabled = true;
+
+    form.appendChild(labelStatus);
+    form.appendChild(selectStatus);
+
+    const closebBtn = document.createElement("button");
+    closebBtn.addEventListener("click", () => closeModal());
+    closebBtn.type = "button";
+    closebBtn.id = "close";
+    closebBtn.innerHTML = "Cerrar";
+
+    var footer = document.createElement("footer");
+    footer.appendChild(closebBtn);
+    
+    section.appendChild(form);
+    modalContent.appendChild(header);
+    modalContent.appendChild(section);
+    modalContent.appendChild(footer);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    buttonClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (event) => {
+        if(event.target.id == "modal"){
+            closeModal();
+        }
+    });
+
+    function closeModal() {
+        modal.classList.add("close-modal");
+        setTimeout(() => {
+            modal.style.display = "none";
+            modal.classList.remove("close-modal");
+            modal.remove();
+        }, 260);
+    }
 }

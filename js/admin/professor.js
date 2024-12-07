@@ -1,6 +1,16 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+const token = sessionStorage.getItem('token');
+
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
 
 // Al cargar el archivo, obtener todos los registros de la tabla professor
 window.addEventListener("load", async () => await search());
@@ -55,18 +65,18 @@ function dataTable(data) {
         const row = tbody.insertRow(-1);
 
         // Crear columnas
-        row.insertCell(0).innerText = id;
-        row.insertCell(1).innerText = person.name || "";
-        row.insertCell(2).innerText = person.lastName || "";
-        row.insertCell(3).innerText = person.cedule || "";
-        row.insertCell(4).innerText = person.profession || "";
+        row.insertCell(0).innerText = element.id;
+        row.insertCell(1).innerText = element.person.name || "";
+        row.insertCell(2).innerText = element.person.lastName || "";
+        row.insertCell(3).innerText = element.person.cedule || "";
+        // row.insertCell(4).innerText = element.person.profession || "";
 
         const statusSpan = document.createElement('span');
         statusSpan.innerHTML = statusData[element.id_status];
         statusSpan.classList.add("status", statusClass[element.id_status]);
 
-        row.insertCell(5).appendChild(statusSpan);
-        row.insertCell(6).appendChild(actionButton.cloneNode(true));
+        row.insertCell(4).appendChild(statusSpan);
+        row.insertCell(5).appendChild(actionButton.cloneNode(true));
 
     });
 
@@ -227,7 +237,10 @@ function createModalBox(data){
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        //closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -279,6 +292,14 @@ function createModalBox(data){
 async function save(){
 
     // Obtener datos para crear o actualizar el registro.
+    if(!document.getElementById("cedule").value){
+        document.getElementById("cedule").style.cssText = "border-color: red !important";
+        return;
+    }else if(!document.getElementById("name").value && !document.getElementById("lastname").value){
+        document.getElementById("name").style.cssText = "border-color: red !important";
+        return;
+    }
+
     const id  = document.getElementById("id").value;
     const jsonData = {
         person: {
@@ -304,6 +325,8 @@ async function save(){
     .then(response => response.json())
     .then(data => search())
     .catch(error => console.log(error));
+
+    document.getElementsByClassName("close-btn")[0].click();
 }
 
 document.querySelectorAll(".table-container button[id*=change]").forEach(element => {
@@ -311,3 +334,31 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
         location.href = `${element.id.replace("-change", "")}.html`;
     });
 });
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for(const element of elements) {
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+    }
+
+    await fetch(`${API_URL}/professor/pdf/?id=${data["id"]}&name=${data["name"]}&lastName=${data["lastName"]}&cedule=${data["cedule"]}&id_status=${data["status"]}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
+}

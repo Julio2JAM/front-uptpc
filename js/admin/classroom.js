@@ -1,6 +1,16 @@
 //Importar la constante con la URL utilizado para hacer peticiones a la API
 //import { API_URL } from './globals.js';
 const API_URL = "http://localhost:3000/api"
+const token = sessionStorage.getItem('token');
+
+if(!token){
+    location.href = "../index.html";
+}
+document.getElementById("logout").addEventListener("click", logout);
+function logout(){
+    sessionStorage.removeItem('token');
+    location.href = "../index.html";
+}
 
 // Al cargar el archivo, obtener todos los registros de la tabla subject
 window.addEventListener("load", async () => await loadData());
@@ -187,7 +197,10 @@ async function createModalBox(data) {
     var footer = document.createElement("footer");
 
     var buttonSubmit = document.createElement("button");
-    buttonSubmit.addEventListener("click", async () => await save());
+    buttonSubmit.addEventListener("click", async () => {
+        await save();
+        closeModal();
+    });
     buttonSubmit.type = "submit";
     buttonSubmit.id = "save";
     buttonSubmit.innerHTML = data?.id ? "Actualizar" : "Crear";
@@ -246,8 +259,8 @@ async function save(){
     const id  = document.getElementById("id").value;
     const jsonData = {
         name: document.getElementById("name").value, 
-        datetime_start: !document.getElementById("datetime_start").value ? null : document.getElementById("datetime_start").value , 
-        datetime_end: !document.getElementById("datetime_end").value ? null : document.getElementById("datetime_end").value,
+        datetime_start: !document.getElementById("datetimeStart").value ? null : document.getElementById("datetimeStart").value , 
+        datetime_end: !document.getElementById("datetimeEnd").value ? null : document.getElementById("datetimeEnd").value,
         id_status: Number(document.getElementById("status").value)
     };
 
@@ -271,3 +284,31 @@ document.querySelectorAll(".table-container button[id*=change]").forEach(element
         location.href = `${element.id.replace("-change", "")}.html`;
     });
 });
+
+// Exportar a PDF
+document.getElementById("export-pdf").addEventListener("click", async () => await exportPDF());
+
+async function exportPDF() {
+
+    // Obtener de los elementos de busqueda su contenido
+    const elements = document.querySelector(".filter-container").querySelectorAll("input, select");
+    const data = {};
+    for(const element of elements) {
+        const name = element.id.replace("filter-","");
+        data[name] = element.value;
+    }
+
+    await fetch(`${API_URL}/classroom/pdf/?name=${data["name"]}&datetime_start=${data["datetime_start"]}&datetime_end=${data["datetime_end"]}&id_status=${data["status"]}`)
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'file.pdf'; // Nombre del archivo
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => console.error('Error al descargar el PDF:', error));
+}
